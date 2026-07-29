@@ -16,6 +16,7 @@ FILES = [
     "KOICA_건축사업_사례DB_2016-2025.sqlite",
     "KOICA_건축사업_사례라이브러리_2016-2025.xlsx",
     "KOICA_건축사업_검토사례_2016-2025.csv",
+    "KOICA_국가별_가격지수_적용현황_28개국.csv",
     "reviewed_cases_2016_2025.json",
     "DEMO_네팔_직업교육시설_3000m2.md",
     "README.md",

@@ -193,6 +193,70 @@ CREATE TABLE fee_benchmarks (
   evidence_summary TEXT
 );
 
+CREATE TABLE price_index_policy (
+  priority INTEGER PRIMARY KEY,
+  index_class TEXT NOT NULL UNIQUE,
+  label TEXT NOT NULL,
+  intended_use TEXT NOT NULL,
+  requirements TEXT NOT NULL
+);
+
+CREATE TABLE price_index_sources (
+  source_id TEXT PRIMARY KEY,
+  country TEXT NOT NULL,
+  iso3 TEXT NOT NULL,
+  priority INTEGER REFERENCES price_index_policy(priority),
+  index_class TEXT NOT NULL,
+  series_name TEXT NOT NULL,
+  provider TEXT NOT NULL,
+  provider_url TEXT NOT NULL,
+  indicator_code TEXT,
+  frequency TEXT NOT NULL,
+  unit TEXT NOT NULL,
+  construction_specific INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL,
+  notes TEXT
+);
+
+CREATE TABLE price_index_values (
+  source_id TEXT NOT NULL REFERENCES price_index_sources(source_id),
+  period TEXT NOT NULL,
+  value REAL NOT NULL CHECK (value > 0),
+  is_actual INTEGER NOT NULL CHECK (is_actual IN (0,1)),
+  retrieved_at TEXT NOT NULL,
+  PRIMARY KEY (source_id, period)
+);
+
+CREATE TABLE national_index_source_audit (
+  country TEXT PRIMARY KEY,
+  iso3 TEXT NOT NULL,
+  candidate_priority INTEGER,
+  candidate_name TEXT,
+  provider TEXT NOT NULL,
+  source_url TEXT NOT NULL,
+  status TEXT NOT NULL,
+  fallback_loaded INTEGER NOT NULL CHECK (fallback_loaded IN (0,1)),
+  audited_at TEXT NOT NULL
+);
+
+CREATE TABLE normalization_runs (
+  run_id INTEGER PRIMARY KEY AUTOINCREMENT,
+  bid_no TEXT NOT NULL REFERENCES reviewed_cases(bid_no),
+  target_period TEXT NOT NULL,
+  source_id TEXT NOT NULL REFERENCES price_index_sources(source_id),
+  source_period TEXT NOT NULL,
+  index_source REAL NOT NULL,
+  index_target REAL NOT NULL,
+  index_factor REAL NOT NULL,
+  fx_source REAL,
+  fx_target REAL,
+  fx_factor REAL,
+  adjusted_unit_usd_m2 REAL,
+  result_status TEXT NOT NULL,
+  limitation_note TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
 CREATE INDEX idx_bids_notice_date ON bids(notice_date);
 CREATE INDEX idx_bids_contract_type ON bids(contract_type);
 CREATE INDEX idx_projects_country ON projects(country_en);
@@ -202,6 +266,11 @@ CREATE INDEX idx_documents_bid ON documents(bid_no);
 CREATE INDEX idx_evidence_bid_category ON evidence(bid_no, category);
 CREATE INDEX idx_reviewed_country_type ON reviewed_cases(country, facility_type, work_type);
 CREATE INDEX idx_reviewed_notice_date ON reviewed_cases(notice_date);
+CREATE INDEX idx_price_source_country_priority
+  ON price_index_sources(country, priority);
+CREATE INDEX idx_price_values_period ON price_index_values(period);
+CREATE INDEX idx_normalization_bid_target
+  ON normalization_runs(bid_no, target_period);
 
 CREATE VIEW v_sample_coverage AS
 SELECT
@@ -233,6 +302,38 @@ FROM attachments
 WHERE sha256 IS NOT NULL AND sha256 <> ''
 GROUP BY sha256
 HAVING COUNT(*) > 1;
+
+CREATE VIEW v_price_index_coverage AS
+SELECT
+  s.country,
+  s.iso3,
+  s.priority,
+  s.index_class,
+  s.series_name,
+  s.provider,
+  s.frequency,
+  COUNT(v.period) AS actual_observation_count,
+  MIN(v.period) AS earliest_period,
+  MAX(v.period) AS latest_period,
+  s.provider_url
+FROM price_index_sources s
+LEFT JOIN price_index_values v
+  ON v.source_id = s.source_id AND v.is_actual = 1
+WHERE s.priority IS NOT NULL
+GROUP BY
+  s.source_id, s.country, s.iso3, s.priority, s.index_class,
+  s.series_name, s.provider, s.frequency, s.provider_url;
+
+CREATE VIEW v_best_available_price_index AS
+SELECT c.*
+FROM v_price_index_coverage c
+WHERE c.actual_observation_count >= 2
+  AND c.priority = (
+    SELECT MIN(c2.priority)
+    FROM v_price_index_coverage c2
+    WHERE c2.country = c.country
+      AND c2.actual_observation_count >= 2
+  );
 """
 
 
@@ -371,13 +472,92 @@ def main() -> None:
             f"VALUES ({','.join('?' for _ in fee_fields)})",
             [tuple(row.get(field) for field in fee_fields) for row in fees],
         )
+        policy = load(ROOT / "data" / "manifests" / "price_index_policy.json")
+        connection.executemany(
+            """INSERT INTO price_index_policy
+            (priority,index_class,label,intended_use,requirements)
+            VALUES (?,?,?,?,?)""",
+            [
+                (
+                    tier["priority"], tier["index_class"], tier["label"],
+                    tier["use"], tier["requirements"],
+                )
+                for tier in policy["tiers"]
+            ],
+        )
+        index_documents = []
+        for name in (
+            "price_indices_national.json",
+            "price_indices_world_bank.json",
+        ):
+            path = ROOT / "data" / "manifests" / name
+            if path.exists():
+                index_documents.append(load(path))
+        for index_document in index_documents:
+            connection.executemany(
+                """INSERT INTO price_index_sources
+                (source_id,country,iso3,priority,index_class,series_name,provider,
+                 provider_url,indicator_code,frequency,unit,construction_specific,
+                 status,notes)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                [
+                    (
+                        row["source_id"], row["country"], row["iso3"],
+                        row.get("priority"), row["index_class"], row["series_name"],
+                        row["provider"], row["provider_url"],
+                        row.get("indicator_code", ""), row["frequency"], row["unit"],
+                        int(bool(row.get("construction_specific"))),
+                        row["status"], row.get("notes", ""),
+                    )
+                    for row in index_document["sources"]
+                ],
+            )
+            connection.executemany(
+                """INSERT INTO price_index_values
+                (source_id,period,value,is_actual,retrieved_at)
+                VALUES (?,?,?,?,?)""",
+                [
+                    (
+                        row["source_id"], row["period"], row["value"],
+                        int(bool(row["is_actual"])), row["retrieved_at"],
+                    )
+                    for row in index_document["values"]
+                ],
+            )
+        audit = load(
+            ROOT / "data" / "manifests" / "national_index_source_audit.json"
+        )
+        connection.executemany(
+            """INSERT INTO national_index_source_audit
+            (country,iso3,candidate_priority,candidate_name,provider,source_url,
+             status,fallback_loaded,audited_at)
+            VALUES (?,?,?,?,?,?,?,?,?)""",
+            [
+                (
+                    row["country"], row["iso3"], row.get("candidate_priority"),
+                    row.get("candidate_name", ""), row["provider"],
+                    row["source_url"], row["status"],
+                    int(bool(row["fallback_loaded"])), audit["audited_at"],
+                )
+                for row in audit["countries"]
+            ],
+        )
         connection.executemany(
             "INSERT INTO metadata VALUES (?,?)",
             [
-                ("schema_version", "1.0"),
+                ("schema_version", "1.1"),
                 ("coverage", "2016-01-01/2025-12-31"),
                 ("source_of_truth", "SQLite"),
-                ("price_treatment", "공고일 연속값; 명목 USD/㎡; 물가 미보정"),
+                (
+                    "price_treatment",
+                    "명목 USD/㎡; 국가별 실제 지수 우선순위 1~5; "
+                    "보정 실행 전 원금액의 통화구성 확인",
+                ),
+                (
+                    "price_index_priority",
+                    "국가 건설지수 > BOQ 구성요소 가중합 > 건설자재 PPI/WPI "
+                    "> GDP 디플레이터 > CPI",
+                ),
                 ("recommended_unit_rate_count", "0"),
                 ("usage_warning", "현지 견적·BOQ·물가보정 없이 미래 사업 단가로 직접 사용 금지"),
             ],
@@ -397,6 +577,9 @@ def main() -> None:
             for table in (
                 "bids", "details", "projects", "attachments", "documents",
                 "evidence", "reviewed_cases", "fee_benchmarks",
+                "price_index_policy", "price_index_sources",
+                "price_index_values", "national_index_source_audit",
+                "normalization_runs",
             )
         }
         integrity = check.execute("PRAGMA integrity_check").fetchone()[0]
