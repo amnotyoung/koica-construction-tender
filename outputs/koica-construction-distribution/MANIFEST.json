@@ -1,0 +1,38 @@
+{
+  "package": "KOICA_건축사업_사례데이터_배포패키지_2016-2025.zip",
+  "created_at": "2026-07-29T22:25:23+00:00",
+  "source_of_truth": "KOICA_건축사업_사례DB_2016-2025.sqlite",
+  "raw_attachments_included": false,
+  "files": [
+    {
+      "name": "KOICA_건축사업_사례DB_2016-2025.sqlite",
+      "bytes": 5869568,
+      "sha256": "fdc448021571d4236317785dadd556edc4f7485f0b19f63d24cf454ce6c4ab5d"
+    },
+    {
+      "name": "KOICA_건축사업_사례라이브러리_2016-2025.xlsx",
+      "bytes": 34489,
+      "sha256": "2973651581ff6c20f063769e8b981020d166b90273d1a2bbedecdf317dcf2eb2"
+    },
+    {
+      "name": "KOICA_건축사업_검토사례_2016-2025.csv",
+      "bytes": 38547,
+      "sha256": "fd2adfc1809b8961aa21378254e0408909ed4d3d4fc50f9d52f9e90f8d5471a9"
+    },
+    {
+      "name": "reviewed_cases_2016_2025.json",
+      "bytes": 76356,
+      "sha256": "458b27ba541287c72d88b72e15a447f65860cc907d0679725d38bc8ffd25e5e9"
+    },
+    {
+      "name": "DEMO_네팔_직업교육시설_3000m2.md",
+      "bytes": 5530,
+      "sha256": "a447a81de2cf7f447d8179ca477e4976d9e52e51d81af5dec1e4566d3a18b647"
+    },
+    {
+      "name": "README.md",
+      "bytes": 4388,
+      "sha256": "8d58a562ecc24efe7fd787f2282cda31b6381ba7ec44e69924c17f8dca0fd5be"
+    }
+  ]
+}

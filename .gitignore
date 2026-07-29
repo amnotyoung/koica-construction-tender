@@ -1,0 +1,34 @@
+# macOS / editors
+.DS_Store
+**/.DS_Store
+*.swp
+*.tmp
+
+# Python / Node caches
+__pycache__/
+*.py[cod]
+node_modules/
+
+# Local runtime state and scratch files
+tmp/
+**/.state/
+*.partial.json
+
+# Downloaded source documents and intermediate extraction products are large
+# and reproducible from the manifests and collection scripts.
+data/*
+!data/manifests/
+!data/manifests/**
+
+data_2016_2020/*
+!data_2016_2020/README.md
+!data_2016_2020/manifests/
+!data_2016_2020/manifests/**
+# Incomplete duplicate left by an interrupted collection run.
+data_2016_2020/manifests/attachments 2.json
+
+# Generated inspection dumps are large and can be recreated.
+outputs/**/*.inspect.ndjson
+
+# The ZIP duplicates the versioned distribution files in the same directory.
+outputs/**/*.zip

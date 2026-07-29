@@ -1,0 +1,15 @@
+* text=auto
+*.py text eol=lf
+*.mjs text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.csv text eol=lf
+*.ndjson text eol=lf
+
+*.doc binary
+*.docx binary
+*.hwp binary
+*.png binary
+*.sqlite binary
+*.xlsx binary
+*.zip binary
