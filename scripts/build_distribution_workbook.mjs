@@ -8,6 +8,21 @@ const previewDir = path.join(outputDir, "previews");
 const cases = JSON.parse(
   await fs.readFile(path.join(outputDir, "reviewed_cases_2016_2025.json"), "utf8"),
 );
+const priceIndexCsv = await fs.readFile(
+  path.join(outputDir, "KOICA_국가별_가격지수_적용현황_28개국.csv"),
+  "utf8",
+);
+const priceIndexCsvWorkbook = await Workbook.fromCSV(priceIndexCsv, {
+  sheetName: "국가지수현황",
+});
+const priceIndexMatrix = priceIndexCsvWorkbook.worksheets
+  .getItem("국가지수현황")
+  .getUsedRange(true)
+  .values;
+const priceIndexHeaders = priceIndexMatrix[0].map((value, index) => (
+  index === 0 ? String(value).replace(/^\uFEFF/, "") : value
+));
+const priceIndexRows = priceIndexMatrix.slice(1);
 
 const COLORS = {
   navy: "#17365D",
@@ -140,17 +155,29 @@ guide.getRange("A15").values = [[
 guide.getRange("A15").format = { fill: COLORS.paleRed, wrapText: true, verticalAlignment: "top" };
 guide.getRange("A15").format.rowHeight = 72;
 guide.getRange("A21:H21").merge();
-guide.getRange("A21").values = [["미래 사업 조사 절차"]];
+guide.getRange("A21").values = [["국가별 적용 분기"]];
 guide.getRange("A21").format = {
   fill: COLORS.teal,
   font: { bold: true, color: COLORS.white },
 };
-guide.getRange("A22:H26").merge();
+guide.getRange("A22:H27").merge();
 guide.getRange("A22").values = [[
-  "1) SQLite에서 국가·시설·사업유형이 유사한 사례 검색 → 2) A/B등급 원문 확인 → 3) 현지 QS 개략견적·BOQ 및 시공사 견적 2~3개 확보 → 4) 공고일 기준 물가·환율·세금·범위 보정 → 5) 보정 근거와 불확실성을 보고서에 기록",
+  "• 동일 국가 사례+공식 건설지수: 범위·기간을 맞춘 뒤 교차검증\n• 동일 국가 사례만 있음: 현지 견적을 주자료로 하고 지수 부재를 명시\n• 동일 국가 사례 없음: 타 국가 사례는 설계·공종 참고에만 사용\n• 수입재 비중 큼: 현지비와 수입비를 통화·공급국별로 분리\n• 기준일까지 지수 미공개: 관측종료일까지만 계산하고 이후는 시나리오",
 ]];
-guide.getRange("A22").format = { fill: COLORS.gray, wrapText: true, verticalAlignment: "top" };
-guide.getRange("A22").format.rowHeight = 66;
+guide.getRange("A22").format = { fill: COLORS.paleBlue, wrapText: true, verticalAlignment: "top" };
+guide.getRange("A22").format.rowHeight = 90;
+guide.getRange("A30:H30").merge();
+guide.getRange("A30").values = [["미래 사업 조사 절차"]];
+guide.getRange("A30").format = {
+  fill: COLORS.teal,
+  font: { bold: true, color: COLORS.white },
+};
+guide.getRange("A31:H36").merge();
+guide.getRange("A31").values = [[
+  "1) 국가별 템플릿의 사업 입력·비용경계 작성 → 2) SQLite에서 국가·시설·사업유형이 유사한 사례 검색 → 3) A/B등급 원문과 가격단계·세금·범위 확인 → 4) 현지 QS 개략견적·BOQ 및 시공사 견적 2~3개 확보 → 5) 실제 관측 지수의 원래 기간·잠정상태·관측종료일 기록 → 6) 통화·수입재 구성 확인 후 보정 → 7) 복수변수 시나리오와 불확실성 보고",
+]];
+guide.getRange("A31").format = { fill: COLORS.gray, wrapText: true, verticalAlignment: "top" };
+guide.getRange("A31").format.rowHeight = 82;
 guide.getRange("A:H").format.columnWidth = 16;
 guide.getRange("A:A").format.columnWidth = 24;
 guide.getRange("D:H").format.columnWidth = 18;
@@ -242,6 +269,29 @@ coverageSheet.getRange(`D3:D${coverage.length + 2}`).conditionalFormats.add(
   { operator: "lessThan", formula: 5, format: { fill: COLORS.paleYellow, font: { color: "#9C6500" } } },
 );
 
+const priceIndexSheet = addTableSheet(
+  "국가지수현황",
+  "28개국 가격지수 후보·현재 선택·관측상태",
+  priceIndexHeaders,
+  priceIndexRows,
+  {
+    tableName: "CountryPriceIndexStatus",
+    freezeColumns: 3,
+    wrapColumns: ["E", "F", "G", "H", "J", "K", "L", "Q", "S", "T"],
+    widths: {
+      A: 18, B: 9, C: 12, D: 13, E: 34, F: 28, G: 34, H: 46, I: 13,
+      J: 30, K: 42, L: 30, M: 12, N: 14, O: 13, P: 13, Q: 16, R: 22,
+      S: 46, T: 42,
+    },
+  },
+);
+priceIndexSheet.getRange(`N3:N${priceIndexRows.length + 2}`).format.numberFormat = "#,##0";
+priceIndexSheet.getRange(`R3:R${priceIndexRows.length + 2}`).format.numberFormat = "yyyy-mm-dd hh:mm";
+priceIndexSheet.getRange(`Q3:Q${priceIndexRows.length + 2}`).conditionalFormats.add(
+  "containsText",
+  { text: "provisional", format: { fill: COLORS.paleYellow, font: { color: "#9C6500" } } },
+);
+
 const dictionaryRows = [
   ["datasets", "수집기간별 품질·건수 메타데이터", "dataset_id"],
   ["bids", "공개 현지입찰 목록 575건", "bid_no"],
@@ -252,6 +302,10 @@ const dictionaryRows = [
   ["evidence", "자동 추출 수치근거 3,563건", "evidence_id, bid_no"],
   ["reviewed_cases", "수동 검토 단가사례 66건", "bid_no"],
   ["fee_benchmarks", "설계·감리 비용 검토사례", "fee_id, bid_no"],
+  ["price_index_sources", "국가별 가격지수 출처·범위·우선순위", "source_id"],
+  ["price_index_values", "분석용 기간·원래 기간·값·잠정/수정 상태·공개 URL", "source_id, period"],
+  ["v_price_index_coverage", "국가·지수별 실제 관측기간과 최신값 상태", "조회용 VIEW"],
+  ["v_best_available_price_index", "국가별 현재 선택 가능한 최고 우선순위 실제 지수", "조회용 VIEW"],
   ["v_sample_coverage", "국가×시설×유형 표본수와 명목범위", "조회용 VIEW"],
   ["v_yearly_inventory", "연도별 검토사례·미보정 건수", "조회용 VIEW"],
   ["v_duplicate_attachments", "동일 SHA-256 첨부파일", "조회용 VIEW"],
@@ -269,10 +323,12 @@ addTableSheet(
 );
 
 const sqlRows = [
-  ["유사사례 검색", "SELECT * FROM reviewed_cases WHERE country = 'Nepal' AND work_type LIKE '%신축%' ORDER BY notice_date DESC;"],
-  ["표본수 확인", "SELECT * FROM v_sample_coverage WHERE country = 'Nepal' ORDER BY reviewed_case_count DESC;"],
-  ["근거 추적", "SELECT category, source_file, source_locator, evidence_text FROM evidence WHERE bid_no = 'L2022-00029-1';"],
-  ["첨부 확인", "SELECT original_name, bytes, sha256, relative_path FROM attachments WHERE bid_no = 'L2022-00029-1';"],
+  ["국가·시설 유사사례", "WITH p(country_name, facility_keyword) AS (VALUES ('Nepal','교육')) SELECT r.* FROM reviewed_cases r CROSS JOIN p WHERE r.country=p.country_name ORDER BY CASE WHEN r.facility_type LIKE '%'||p.facility_keyword||'%' THEN 0 ELSE 1 END, r.notice_date DESC;"],
+  ["국가별 표본수", "WITH p(country_name) AS (VALUES ('Nepal')) SELECT c.* FROM v_sample_coverage c CROSS JOIN p WHERE c.country=p.country_name ORDER BY reviewed_case_count DESC;"],
+  ["국가별 지수 선택", "WITH p(country_name) AS (VALUES ('Nepal')) SELECT b.* FROM v_best_available_price_index b CROSS JOIN p WHERE b.country=p.country_name;"],
+  ["지수 원래 기간·상태", "SELECT period, native_period, value, observation_status, release_url, retrieved_at FROM price_index_values WHERE source_id='NSO_NPL_IPICS_OVERALL' ORDER BY period;"],
+  ["근거 추적", "SELECT category, source_file, source_locator, evidence_text FROM evidence WHERE bid_no = '<공고번호>';"],
+  ["첨부 확인", "SELECT original_name, bytes, sha256, relative_path FROM attachments WHERE bid_no = '<공고번호>';"],
   ["연도별 현황", "SELECT * FROM v_yearly_inventory ORDER BY notice_year;"],
 ];
 addTableSheet(
@@ -289,9 +345,10 @@ addTableSheet(
 
 await fs.mkdir(previewDir, { recursive: true });
 const renderRanges = {
-  "사용안내": "A1:H27",
+  "사용안내": "A1:H37",
   "검토사례": `A1:W${caseRows.length + 2}`,
   "표본현황": `A1:K${coverage.length + 2}`,
+  "국가지수현황": `A1:T${priceIndexRows.length + 2}`,
   "데이터사전": `A1:C${dictionaryRows.length + 2}`,
   "SQL 예시": `A1:B${sqlRows.length + 2}`,
 };
@@ -305,9 +362,9 @@ for (const [sheetName, range] of Object.entries(renderRanges)) {
 const checks = [];
 checks.push((await workbook.inspect({
   kind: "table",
-  range: "사용안내!A1:H27",
+  range: "사용안내!A1:H37",
   include: "values,formulas",
-  tableMaxRows: 30,
+  tableMaxRows: 40,
   tableMaxCols: 8,
 })).ndjson);
 checks.push((await workbook.inspect({

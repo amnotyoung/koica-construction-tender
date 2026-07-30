@@ -1,43 +1,48 @@
 {
   "package": "KOICA_건축사업_사례데이터_배포패키지_2016-2025.zip",
-  "created_at": "2026-07-29T23:41:06+00:00",
+  "created_at": "2026-07-30T00:34:16+00:00",
   "source_of_truth": "KOICA_건축사업_사례DB_2016-2025.sqlite",
   "raw_attachments_included": false,
   "files": [
     {
       "name": "KOICA_건축사업_사례DB_2016-2025.sqlite",
-      "bytes": 6074368,
-      "sha256": "5582f37e03ff4ca80996d120ce4b14eac65d5a51368d38954987f82d65119ea3"
+      "bytes": 6090752,
+      "sha256": "35d20cef48f6f7f48b5ec38533aeee120895a73cbe584cc2d251f2d659551d60"
     },
     {
       "name": "KOICA_건축사업_사례라이브러리_2016-2025.xlsx",
-      "bytes": 34489,
-      "sha256": "2973651581ff6c20f063769e8b981020d166b90273d1a2bbedecdf317dcf2eb2"
+      "bytes": 42919,
+      "sha256": "82bdce2367ac4fd422ea5aa4dd6e4399d3ff306753862a94326e31fbecedc705"
     },
     {
       "name": "KOICA_건축사업_검토사례_2016-2025.csv",
-      "bytes": 38547,
-      "sha256": "fd2adfc1809b8961aa21378254e0408909ed4d3d4fc50f9d52f9e90f8d5471a9"
+      "bytes": 38907,
+      "sha256": "99d14c5b82b4108184d586601481b83c2beb0156edff4da3be76167c969ce1aa"
     },
     {
       "name": "KOICA_국가별_가격지수_적용현황_28개국.csv",
-      "bytes": 13742,
-      "sha256": "f4d8f9077a98e3e5f94c3cef765a1beed7966e617e58aa677916373533f99cd7"
+      "bytes": 14825,
+      "sha256": "59a0745417054ea12bd8b9dcac22fad31004411e7fb7be6094dd137d6ebec2e7"
     },
     {
       "name": "reviewed_cases_2016_2025.json",
-      "bytes": 76356,
-      "sha256": "458b27ba541287c72d88b72e15a447f65860cc907d0679725d38bc8ffd25e5e9"
+      "bytes": 76714,
+      "sha256": "29ae0378cb1ef20794fdc4a0aef48f20d15d9cf86f15b0e2127b845c9c49887b"
     },
     {
       "name": "DEMO_네팔_직업교육시설_3000m2.md",
-      "bytes": 6562,
-      "sha256": "bab9bb3339b2a20a6ccf080309807271913f3c7398daa3e0cb8ca8db8880a023"
+      "bytes": 13095,
+      "sha256": "ecf57ea909f3b97254a19b2cccb5a120f17c71f90ce851c08b34b392d7baab9f"
+    },
+    {
+      "name": "TEMPLATE_국가별_건축사업비_산정.md",
+      "bytes": 11008,
+      "sha256": "8a4aa2cd7dcdc0e8dfe73fd3f4870972c74ed3991a576185db0206f3c123abf0"
     },
     {
       "name": "README.md",
-      "bytes": 5944,
-      "sha256": "c6be0840b39ae0dc62f339ebf09c5537f7567d2429d94517165665dc24c21741"
+      "bytes": 7579,
+      "sha256": "2d00baaf3e2caa7db3e9c06538d72a2e11e613eecb92d9ecc1f5a49cfb64a64a"
     }
   ]
 }

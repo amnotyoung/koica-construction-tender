@@ -221,8 +221,11 @@ CREATE TABLE price_index_sources (
 CREATE TABLE price_index_values (
   source_id TEXT NOT NULL REFERENCES price_index_sources(source_id),
   period TEXT NOT NULL,
+  native_period TEXT,
   value REAL NOT NULL CHECK (value > 0),
   is_actual INTEGER NOT NULL CHECK (is_actual IN (0,1)),
+  observation_status TEXT NOT NULL,
+  release_url TEXT,
   retrieved_at TEXT NOT NULL,
   PRIMARY KEY (source_id, period)
 );
@@ -315,6 +318,14 @@ SELECT
   COUNT(v.period) AS actual_observation_count,
   MIN(v.period) AS earliest_period,
   MAX(v.period) AS latest_period,
+  (
+    SELECT v2.observation_status
+    FROM price_index_values v2
+    WHERE v2.source_id = s.source_id AND v2.is_actual = 1
+    ORDER BY v2.period DESC
+    LIMIT 1
+  ) AS latest_observation_status,
+  MAX(v.retrieved_at) AS latest_retrieved_at,
   s.provider_url
 FROM price_index_sources s
 LEFT JOIN price_index_values v
@@ -514,12 +525,20 @@ def main() -> None:
             )
             connection.executemany(
                 """INSERT INTO price_index_values
-                (source_id,period,value,is_actual,retrieved_at)
-                VALUES (?,?,?,?,?)""",
+                (source_id,period,native_period,value,is_actual,
+                 observation_status,release_url,retrieved_at)
+                VALUES (?,?,?,?,?,?,?,?)""",
                 [
                     (
-                        row["source_id"], row["period"], row["value"],
-                        int(bool(row["is_actual"])), row["retrieved_at"],
+                        row["source_id"], row["period"],
+                        row.get("native_period", row["period"]), row["value"],
+                        int(bool(row["is_actual"])),
+                        row.get(
+                            "observation_status",
+                            "published" if row["is_actual"] else "forecast",
+                        ),
+                        row.get("release_url", ""),
+                        row["retrieved_at"],
                     )
                     for row in index_document["values"]
                 ],
@@ -545,7 +564,7 @@ def main() -> None:
         connection.executemany(
             "INSERT INTO metadata VALUES (?,?)",
             [
-                ("schema_version", "1.1"),
+                ("schema_version", "1.2"),
                 ("coverage", "2016-01-01/2025-12-31"),
                 ("source_of_truth", "SQLite"),
                 (

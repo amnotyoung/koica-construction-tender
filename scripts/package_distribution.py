@@ -19,6 +19,7 @@ FILES = [
     "KOICA_국가별_가격지수_적용현황_28개국.csv",
     "reviewed_cases_2016_2025.json",
     "DEMO_네팔_직업교육시설_3000m2.md",
+    "TEMPLATE_국가별_건축사업비_산정.md",
     "README.md",
 ]
 ZIP_PATH = OUT / "KOICA_건축사업_사례데이터_배포패키지_2016-2025.zip"

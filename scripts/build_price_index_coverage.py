@@ -37,6 +37,8 @@ SELECT
   b.actual_observation_count,
   b.earliest_period,
   b.latest_period,
+  b.latest_observation_status,
+  b.latest_retrieved_at,
   b.provider_url AS selected_source_url,
   CASE
     WHEN b.priority <= 3 THEN
@@ -68,6 +70,8 @@ HEADERS = [
     "실제관측값수",
     "최초기간",
     "최근기간",
+    "최근값상태",
+    "최근조회시각",
     "현재선택_URL",
     "자동사용_주의사항",
 ]
