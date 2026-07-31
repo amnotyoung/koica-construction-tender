@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_records": 127,
+  "unique_candidate_projects": 96,
+  "countries_including_unknown": 39,
+  "candidate_record_grade_counts": {
+    "A": 5,
+    "B": 14,
+    "C": 108
+  },
+  "candidate_record_cost_status_counts": {
+    "A": 2,
+    "B": 4,
+    "C": 3,
+    "U": 57,
+    "X": 61
+  },
+  "project_grade_counts": {
+    "A": 2,
+    "B": 6,
+    "C": 88
+  },
+  "candidate_bids": 105,
+  "current_candidate_bids": 98,
+  "historical_reference_bids_without_current_corpus": 7,
+  "current_bids_with_indexed_files": 72,
+  "connected_candidate_records": 66,
+  "connected_candidate_projects": 40,
+  "connected_countries": 21,
+  "attachment_candidate_records": 57,
+  "attachment_candidate_projects": 34,
+  "attachment_countries": 19,
+  "top_level_candidate_attachments": 266,
+  "indexed_candidate_attachments": 1642,
+  "unique_scanned_spreadsheet_hashes": 321,
+  "spreadsheet_scan_errors": 0,
+  "grade_definition": {
+    "A": "품목별 수량과 양수 단가/금액을 결합해 사업별 직접 추정 가능",
+    "B": "품목별 수량은 있으나 usable 단가가 없어 현지단가 입력 필요",
+    "C": "면적·상한·범위·문서추적 수준이며 직접 수량×단가 산정 불가"
+  },
+  "safeguard_status_definition": {
+    "U": "건축 관련 후보이나 직접 산정요건 미충족 또는 첨부·범위 추가확인 필요",
+    "X": "설계·감리·물품·전체사업비 등 건축공사비 표본에서 제외"
+  },
+  "country_boundary": "국가 최고등급은 한 사업의 준비도이며 국가 대표단가 또는 충분한 표본을 뜻하지 않는다.",
+  "source_candidate_csv": "outputs/koica-official-open-data/KOICA_공식데이터_건축관련후보.csv",
+  "source_file_index": "data/manifests/file_index.json"
+}

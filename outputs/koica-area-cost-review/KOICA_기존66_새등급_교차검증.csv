@@ -1,0 +1,67 @@
+﻿bid_no,project_no,legacy_evidence_grade,legacy_area_m2,legacy_cost_usd,legacy_cost_stage,legacy_recommended_unit_rate,new_notice_grade,new_project_grade,new_scope_status,mapping_method,discrepancy_rule
+L2017-00001-1,201701,B,8694.0,5784000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2017-00005-1,L2017-0004,A,2541.35,3572800.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2017-00007-1,2016-00028,B,1562.68,1227580.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2017-00011-1,2014-00024,B,2250.0,2550000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2018-00011-1,2016-00002,A,1987.0,1623300.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2018-00012-1,2016-20150,B,6615.0,4486860.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2018-00014-1,2016-00003,A,6428.0,4580780.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2018-00020-1,2016-00206,A,7599.0,5497600.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2018-00029-1,2013-00007,A,2879.23,4114500.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2019-00010-1,2015-00012,A,1549.83,1200000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2019-00011-1,2016-00202,A,5625.0,5600000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2019-00021-1,2017-07115,A,5455.0,5350000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2019-00024-1,2015-00011,A,12974.0,7300000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2019-00043-1,2016-00206,A,3944.3,2654320.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2020-00001-2,2017-07192,A,4177.94,4080000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2020-00009-1,2016-00067,B,7450.0,3685199.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2020-00022-2,2015-00006,A,4916.0,3116205.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2020-00023-1,2016-00005,A,6906.0,16440000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2021-00015-1,2019-00064,A,2299.26,2746477.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2021-00016-1,2019-00066,A,1325.32,1022588.0,입찰공고 추정예산,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2021-00029-1,2020-00114,A,1120.3,929600.0,입찰 Construction Budget,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2021-00030-1,2019-00032,B,945.0,892000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2021-00031-1,2019-00045,A,2349.2,1839007.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2021-00045-1,2019-00032,A,2866.41,2415000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2022-00007-2,2016-20098,C,1458.0,275400.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2022-00027-1,2020-00073,A,3100.0,2670000.0,CM 보고서 기반 추정공사비,아니오,C,C,MATCH_ATTACHMENT_CONSTRUCTION_BUDGET,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2022-00029-1,2021-00139,A,5640.1,3744400.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2022-00043-1,2020-00113,A,2194.0,1575000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2022-00046-1,2016-20176,A,858.0,1507000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2022-00055-1,2019-00015,B,449.72,420285.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2023-00009-1,2019-00005,B,827.4,272603.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2023-00011-1,2021-00043,C,6456.0,1540000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2023-00018-1,2020-00087,C,6149.0,2355000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2023-00021-1,2021-00064,A,,,사무소 협의 적용단가,아니오,X,X,NO_MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2023-00022-1,2021-00075,C,826.8,1570000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2023-00035-1,2019-00015,C,1739.82,388511.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2023-00038-1,2022-00076,B,2700.0,5627206.0,설계입찰 단계 공사비 예산,아니오,C-부분,B,PARTIAL_ATTACHMENT_CONSTRUCTION_BUDGET,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2023-00045-1,2021-00055,B,453.0,297000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2023-00053-1,2020-00086,A,6963.0,5361576.0,공사 입찰 집행한도,아니오,C,B,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2023-00060-1,2019-00037,A,2983.0,3875000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2023-00067-1,2020-00099,B,420.0,280621.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2023-00068-1,2011-00008,C,3500.0,239882.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2024-00031-1,2022-00009,A,5898.25,4653720.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2024-00039-1,2014-00016,C,8217.0,1811491.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2024-00049-2,2021-00111,A,788.12,965000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2024-00050-1,2021-00042,B,4032.0,3910000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2024-00066-1,2023-00032,A,1060.0,2406346.0,ToR 공사비 예산,아니오,C,C,MATCH_ATTACHMENT_CONSTRUCTION_BUDGET,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2024-00075-1,2020-00023,A,700.0,624034.0,BDS Project Budget,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2024-00078-1,2020-00070,A,936.2,1187000.0,공사 입찰 집행한도,아니오,B-부분,B-부분,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2024-00079-1,2023-00052,A,4996.62,3534542.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00002-1,2022-00079,A,2457.53,2361000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00008-1,2021-00126,A,404.94,555810.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00012-2,2013-00064,B,87.22,98954.0,공사 입찰 집행한도,아니오,B,B,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00016-2,2018-56501,C,15500.0,230586.0,공사 입찰 집행한도,아니오,C-부분,C-부분,PARTIAL_SCOPE,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00018-1,2021-00016,A,2684.36,4333427.0,공사 입찰 집행한도,아니오,A,A,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00036-1,2024-00015,A,3700.0,6600000.0,심층기획조사 결과 추정공사비,아니오,C,C,MATCH_ATTACHMENT_CONSTRUCTION_BUDGET,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00047-1,2022-00598,B,1980.0,1964270.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00051-2,2022-00076,A,2686.4,6767312.0,공사 입찰 집행한도,아니오,B,B,PARTIAL_SCOPE,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00052-1,2023-00067,B,1500.0,1963286.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00062-1,2021-00042,C,2378.8,1123590.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00071-1,2020-00119,A,5486.0,13292831.0,공사 입찰 집행한도,아니오,C,A-부분,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00073-1,2022-00027,A,9053.0,11277000.0,공사 입찰 집행한도,아니오,B,B,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00078-1,2023-00004,B,1600.0,3226604.0,예비조사 추정 건축공사비,아니오,C-부분,C-부분,PARTIAL_ATTACHMENT_CONSTRUCTION_BUDGET,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00084-1,2022-00064,A,4040.0,4383000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00097-1,2024-00105,A,1179.0,1704050.0,설계 ToR 공사예산 한도,아니오,C,C,MATCH_ATTACHMENT_CONSTRUCTION_BUDGET,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음
+L2025-00099-1,2019-03655,B,255.52,200000.0,공사 입찰 집행한도,아니오,C,C,MATCH,exact_bid_no,legacy A/B/C는 비교가능성 등급이라 새 A/B/C로 승계하지 않음

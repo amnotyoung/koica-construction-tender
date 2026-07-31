@@ -1,0 +1,179 @@
+{
+  "sourcePath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/data/unpacked/L2023-00009-1/2. 입찰서류(영문)/Part 2(░·╛≈┴÷╜├╝¡)/Section 4. Bill of Quantities_unpriced.xlsx",
+  "sheets": [
+    {
+      "index": 0,
+      "name": "COVER SHEET",
+      "usedAddress": "G6:H33",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/01_COVER_SHEET.png"
+    },
+    {
+      "index": 1,
+      "name": "General Summary",
+      "usedAddress": "A1:E42",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/02_General_Summary.png"
+    },
+    {
+      "index": 2,
+      "name": "CV bill 1",
+      "usedAddress": "C7:C9",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/03_CV_bill_1.png"
+    },
+    {
+      "index": 3,
+      "name": "PRELIMINARIES",
+      "usedAddress": "A2:C54",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/04_PRELIMINARIES.png"
+    },
+    {
+      "index": 4,
+      "name": "CS BILL 02",
+      "usedAddress": "B6:B8",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/05_CS_BILL_02.png"
+    },
+    {
+      "index": 5,
+      "name": "EARTHWORKS",
+      "usedAddress": "A1:F6",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/06_EARTHWORKS.png"
+    },
+    {
+      "index": 6,
+      "name": "CS BILL 03",
+      "usedAddress": "B8:B10",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/07_CS_BILL_03.png"
+    },
+    {
+      "index": 7,
+      "name": "2-Stance Pit Latrine",
+      "usedAddress": "A1:F84",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/08_2-Stance_Pit_Latrine.png"
+    },
+    {
+      "index": 8,
+      "name": "2-Stance summary",
+      "usedAddress": "A1:F26",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/09_2-Stance_summary.png"
+    },
+    {
+      "index": 9,
+      "name": "CS BILL 04",
+      "usedAddress": "B9:B12",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/10_CS_BILL_04.png"
+    },
+    {
+      "index": 10,
+      "name": "6-Stance water borne Toilet",
+      "usedAddress": "A1:F117",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/11_6-Stance_water_borne_Toilet.png"
+    },
+    {
+      "index": 11,
+      "name": "6-Stance summary",
+      "usedAddress": "A1:F29",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/12_6-Stance_summary.png"
+    },
+    {
+      "index": 12,
+      "name": "CS BILL 05",
+      "usedAddress": "B8:B11",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/13_CS_BILL_05.png"
+    },
+    {
+      "index": 13,
+      "name": "Milling Facility.",
+      "usedAddress": "A1:F224",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/14_Milling_Facility..png"
+    },
+    {
+      "index": 14,
+      "name": "Summary-Milling Facility",
+      "usedAddress": "A1:C30",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/15_Summary-Milling_Facility.png"
+    },
+    {
+      "index": 15,
+      "name": "CS BILL 06",
+      "usedAddress": "B7:B11",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/16_CS_BILL_06.png"
+    },
+    {
+      "index": 16,
+      "name": "ADMIN BLOCK",
+      "usedAddress": "A1:F238",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/17_ADMIN_BLOCK.png"
+    },
+    {
+      "index": 17,
+      "name": "ADMIN BLOCK SUMMARY",
+      "usedAddress": "A1:E30",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/18_ADMIN_BLOCK_SUMMARY.png"
+    },
+    {
+      "index": 18,
+      "name": "CS BILL 07",
+      "usedAddress": "B7:B12",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/19_CS_BILL_07.png"
+    },
+    {
+      "index": 19,
+      "name": "MARKET SHED.",
+      "usedAddress": "A1:M110",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/20_MARKET_SHED..png"
+    },
+    {
+      "index": 20,
+      "name": "SUMMARY MAKET SHED",
+      "usedAddress": "A1:C25",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/21_SUMMARY_MAKET_SHED.png"
+    },
+    {
+      "index": 21,
+      "name": "CS BILL 08",
+      "usedAddress": "B8:B12",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/22_CS_BILL_08.png"
+    },
+    {
+      "index": 22,
+      "name": "RAINWATER HARVESTING",
+      "usedAddress": "A1:D26",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/23_RAINWATER_HARVESTING.png"
+    },
+    {
+      "index": 23,
+      "name": "CS BILL 09",
+      "usedAddress": "B6:B11",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/24_CS_BILL_09.png"
+    },
+    {
+      "index": 24,
+      "name": "FIRE SUPRESSION SYSTEM",
+      "usedAddress": "A1:F8",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/25_FIRE_SUPRESSION_SYSTEM.png"
+    },
+    {
+      "index": 25,
+      "name": "CS 10",
+      "usedAddress": "B6:B10",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/26_CS_10.png"
+    },
+    {
+      "index": 26,
+      "name": "EXTERNAL WORKS",
+      "usedAddress": "A1:F67",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/27_EXTERNAL_WORKS.png"
+    },
+    {
+      "index": 27,
+      "name": "CS BILL 11",
+      "usedAddress": "B7:B12",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/28_CS_BILL_11.png"
+    },
+    {
+      "index": 28,
+      "name": "SUPPLY OF 33KV LINE",
+      "usedAddress": "B1:G49",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/source-previews/29_SUPPLY_OF_33KV_LINE.png"
+    }
+  ]
+}

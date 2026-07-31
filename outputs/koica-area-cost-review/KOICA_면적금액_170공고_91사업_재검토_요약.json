@@ -1,0 +1,100 @@
+{
+  "schema_version": "2.0.0",
+  "grade_system_version": "KOICA-AREA-COST-READINESS-2.0",
+  "audit_date": "2026-08-01",
+  "universe": {
+    "candidate_rule": "construction_candidate=1 AND area evidence exists AND USD/KRW ceiling raw exists",
+    "notice_rows": 170,
+    "unique_bid_nos": 170,
+    "bid_base_groups": 154,
+    "project_rows": 91,
+    "historical_notices": 40,
+    "recent_notices": 130,
+    "legacy_reviewed66_overlap": 66,
+    "warning": "91 project_no는 91개 독립 비용표본이 아니며 서로 다른 package/Lot을 포함할 수 있음"
+  },
+  "notice_grade_counts": {
+    "A": 2,
+    "B": 7,
+    "C": 60,
+    "C?": 25,
+    "U": 9,
+    "X": 67
+  },
+  "project_grade_counts": {
+    "A": 2,
+    "B": 5,
+    "C": 53,
+    "C?": 7,
+    "U": 7,
+    "X": 17
+  },
+  "scope_status_counts_all_170": {
+    "MATCH": 86,
+    "MATCH_ATTACHMENT_CONSTRUCTION_BUDGET": 4,
+    "NO_MATCH": 69,
+    "PARTIAL_ATTACHMENT_CONSTRUCTION_BUDGET": 2,
+    "PARTIAL_MIXED_COST": 1,
+    "PARTIAL_SCOPE": 8
+  },
+  "record_scope_status_counts_all_170": {
+    "MATCH": 86,
+    "NO_MATCH": 75,
+    "PARTIAL_MIXED_COST": 1,
+    "PARTIAL_SCOPE": 8
+  },
+  "recent_2021_2025_role_counts": {
+    "goods": 2,
+    "service_or_other": 54,
+    "works": 74
+  },
+  "recent_2021_2025_record_scope_counts": {
+    "MATCH": 63,
+    "NO_MATCH": 59,
+    "PARTIAL_SCOPE": 8
+  },
+  "historical_2016_2020_manual_result": {
+    "C_scope_matched_notices": 23,
+    "mixed_or_unresolved_notices": 2,
+    "excluded_service_or_nonbuilding_notices": 15
+  },
+  "strict_attachment_readiness": {
+    "exact_notice_A_or_A_partial": 2,
+    "exact_notice_B_or_B_partial": 7,
+    "direct_future_estimate_ready_projects": 1,
+    "related_other_package_B_not_promoted": 1
+  },
+  "price_stage_finding": {
+    "contract_or_award_or_final_cost_rows": 0,
+    "manually_preserved_basic_or_advertised_price_rows": 8,
+    "finding": "집행한도와 기초·광고예산은 대체로 약 2~3% 차이가 있어 병렬 보존"
+  },
+  "attachment_audit": {
+    "indexed_attachment_rows": 2935,
+    "candidate_bids_with_indexed_attachments": 170,
+    "spreadsheet_rows": 675,
+    "reused_previous_spreadsheet_scans": 632,
+    "new_unique_spreadsheet_scans": 38,
+    "boq_named_file_rows": 689,
+    "quantity_table_signal_rows": 312,
+    "priced_table_signal_rows": 35,
+    "warning": "자동 표 신호는 상품표·인력투입표 등을 포함할 수 있어 최종 A/B로 승격하지 않음"
+  },
+  "grade_definitions": {
+    "A": "V3 검증된 실제 사업 BOQ의 수량과 양수 단가/금액; 부분범위는 A-부분",
+    "B": "V3 검증된 실제 사업 BOQ 수량, usable 단가 없음; 부분범위는 B-부분",
+    "C": "수동 재검토된 동일/제한 범위 공사금액+면적; 초기 스크리닝 전용",
+    "C?": "추출자료를 사람이 검토한 잠정 범위일치; 원본 V3 확인 전 직접 사용 금지",
+    "U": "건축공사 후보이나 면적·금액 범위 결합요건 미충족",
+    "X": "설계·감리·물품·비건축 또는 면적 오탐으로 제외"
+  },
+  "non_inheritance_rule": "reviewed_cases.evidence_grade와 기존 127 project grade는 새 등급으로 승계하지 않음",
+  "allowed_use": {
+    "A_full": "검증된 가격범위의 직접 BOQ 산정",
+    "A_partial": "검증된 부분 Bill만; 전체사업 환산 금지",
+    "B": "현지 단가를 결합할 수 있는 수량모델",
+    "C": "명목 공사금액÷면적 스크리닝; 물가·환율·세금·범위 보정 전 미래 견적 금지",
+    "C_question": "원본 수동검증 대기",
+    "U_X": "계산 금지"
+  }
+}

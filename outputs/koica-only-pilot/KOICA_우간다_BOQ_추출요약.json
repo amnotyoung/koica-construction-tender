@@ -1,0 +1,791 @@
+{
+  "source_file": "data/unpacked/L2023-00009-1/2. 입찰서류(영문)/Part 2(░·╛≈┴÷╜├╝¡)/Section 4. Bill of Quantities_unpriced.xlsx",
+  "source_type": "KOICA local bidding attachment",
+  "bid_no": "L2023-00009-1",
+  "related_bid_nos": [
+    "L2023-00003-1",
+    "L2023-00009-1"
+  ],
+  "project_no": "2019-00005",
+  "project_name": "우간다 지속가능 농촌개발 시범마을 확산 사업",
+  "bid_title": "Construction of Medium Maize Milling Facility and Women Friendly Market in Bongole Parish, Mpigi District",
+  "all_extracted_rows": 891,
+  "item_rows": 540,
+  "quantified_items": 501,
+  "positive_quantity_items": 462,
+  "zero_quantity_items": 39,
+  "unquantified_items": 39,
+  "formula_quantity_items": 129,
+  "priced_items": 0,
+  "detail_sheets": 11,
+  "facility_components": 11,
+  "trade_item_counts": [
+    {
+      "trade_group": "전기·전력인입",
+      "item_rows": 108
+    },
+    {
+      "trade_group": "급배수·위생",
+      "item_rows": 89
+    },
+    {
+      "trade_group": "창호·철물",
+      "item_rows": 76
+    },
+    {
+      "trade_group": "지붕",
+      "item_rows": 59
+    },
+    {
+      "trade_group": "가설·일반조건",
+      "item_rows": 39
+    },
+    {
+      "trade_group": "콘크리트·철근·거푸집",
+      "item_rows": 34
+    },
+    {
+      "trade_group": "외부공사",
+      "item_rows": 32
+    },
+    {
+      "trade_group": "토공·기초",
+      "item_rows": 30
+    },
+    {
+      "trade_group": "급배수·빗물이용",
+      "item_rows": 22
+    },
+    {
+      "trade_group": "마감",
+      "item_rows": 16
+    },
+    {
+      "trade_group": "설비·장비",
+      "item_rows": 16
+    },
+    {
+      "trade_group": "조적",
+      "item_rows": 12
+    },
+    {
+      "trade_group": "기타",
+      "item_rows": 6
+    },
+    {
+      "trade_group": "소방",
+      "item_rows": 1
+    }
+  ],
+  "unit_totals": [
+    {
+      "trade_group": "급배수·빗물이용",
+      "unit": "item",
+      "base_quantity": 2.0,
+      "scaled_low_quantity": 4.0,
+      "scaled_high_quantity": 4.0,
+      "item_rows": 2
+    },
+    {
+      "trade_group": "급배수·빗물이용",
+      "unit": "m",
+      "base_quantity": 51.0,
+      "scaled_low_quantity": 102.0,
+      "scaled_high_quantity": 102.0,
+      "item_rows": 3
+    },
+    {
+      "trade_group": "급배수·빗물이용",
+      "unit": "m²",
+      "base_quantity": 74.0,
+      "scaled_low_quantity": 148.0,
+      "scaled_high_quantity": 148.0,
+      "item_rows": 10
+    },
+    {
+      "trade_group": "급배수·빗물이용",
+      "unit": "m³",
+      "base_quantity": 7.0,
+      "scaled_low_quantity": 14.0,
+      "scaled_high_quantity": 14.0,
+      "item_rows": 4
+    },
+    {
+      "trade_group": "급배수·빗물이용",
+      "unit": "no.",
+      "base_quantity": 3.0,
+      "scaled_low_quantity": 6.0,
+      "scaled_high_quantity": 6.0,
+      "item_rows": 3
+    },
+    {
+      "trade_group": "급배수·위생",
+      "unit": "item",
+      "base_quantity": 1.0,
+      "scaled_low_quantity": 1.0,
+      "scaled_high_quantity": 1.0,
+      "item_rows": 1
+    },
+    {
+      "trade_group": "급배수·위생",
+      "unit": "kg",
+      "base_quantity": 244.0,
+      "scaled_low_quantity": 244.0,
+      "scaled_high_quantity": 244.0,
+      "item_rows": 3
+    },
+    {
+      "trade_group": "급배수·위생",
+      "unit": "m",
+      "base_quantity": 599.5,
+      "scaled_low_quantity": 599.5,
+      "scaled_high_quantity": 599.5,
+      "item_rows": 28
+    },
+    {
+      "trade_group": "급배수·위생",
+      "unit": "m²",
+      "base_quantity": 1704.36,
+      "scaled_low_quantity": 1704.36,
+      "scaled_high_quantity": 1704.36,
+      "item_rows": 22
+    },
+    {
+      "trade_group": "급배수·위생",
+      "unit": "m³",
+      "base_quantity": 32.968,
+      "scaled_low_quantity": 32.968,
+      "scaled_high_quantity": 32.968,
+      "item_rows": 4
+    },
+    {
+      "trade_group": "급배수·위생",
+      "unit": "no.",
+      "base_quantity": 124.0,
+      "scaled_low_quantity": 180.0,
+      "scaled_high_quantity": 194.0,
+      "item_rows": 31
+    },
+    {
+      "trade_group": "기타",
+      "unit": "item",
+      "base_quantity": 2.0,
+      "scaled_low_quantity": 10.0,
+      "scaled_high_quantity": 12.0,
+      "item_rows": 2
+    },
+    {
+      "trade_group": "기타",
+      "unit": "m",
+      "base_quantity": 92.45,
+      "scaled_low_quantity": 462.25,
+      "scaled_high_quantity": 554.7,
+      "item_rows": 3
+    },
+    {
+      "trade_group": "기타",
+      "unit": "no.",
+      "base_quantity": 1.0,
+      "scaled_low_quantity": 5.0,
+      "scaled_high_quantity": 6.0,
+      "item_rows": 1
+    },
+    {
+      "trade_group": "마감",
+      "unit": "kg",
+      "base_quantity": 3037.0,
+      "scaled_low_quantity": 3037.0,
+      "scaled_high_quantity": 3037.0,
+      "item_rows": 1
+    },
+    {
+      "trade_group": "마감",
+      "unit": "m",
+      "base_quantity": 29.0,
+      "scaled_low_quantity": 29.0,
+      "scaled_high_quantity": 29.0,
+      "item_rows": 2
+    },
+    {
+      "trade_group": "마감",
+      "unit": "m²",
+      "base_quantity": 2539.26,
+      "scaled_low_quantity": 3145.26,
+      "scaled_high_quantity": 3296.76,
+      "item_rows": 13
+    },
+    {
+      "trade_group": "설비·장비",
+      "unit": "item",
+      "base_quantity": 2.0,
+      "scaled_low_quantity": 2.0,
+      "scaled_high_quantity": 2.0,
+      "item_rows": 2
+    },
+    {
+      "trade_group": "설비·장비",
+      "unit": "kg",
+      "base_quantity": 4286.09975,
+      "scaled_low_quantity": 4286.09975,
+      "scaled_high_quantity": 4286.09975,
+      "item_rows": 7
+    },
+    {
+      "trade_group": "설비·장비",
+      "unit": "m",
+      "base_quantity": 75.0,
+      "scaled_low_quantity": 75.0,
+      "scaled_high_quantity": 75.0,
+      "item_rows": 1
+    },
+    {
+      "trade_group": "설비·장비",
+      "unit": "no.",
+      "base_quantity": 273.0,
+      "scaled_low_quantity": 273.0,
+      "scaled_high_quantity": 273.0,
+      "item_rows": 6
+    },
+    {
+      "trade_group": "소방",
+      "unit": "no.",
+      "base_quantity": 8.0,
+      "scaled_low_quantity": 8.0,
+      "scaled_high_quantity": 8.0,
+      "item_rows": 1
+    },
+    {
+      "trade_group": "외부공사",
+      "unit": "item",
+      "base_quantity": 1.0,
+      "scaled_low_quantity": 1.0,
+      "scaled_high_quantity": 1.0,
+      "item_rows": 1
+    },
+    {
+      "trade_group": "외부공사",
+      "unit": "m",
+      "base_quantity": 1315.4,
+      "scaled_low_quantity": 1315.4,
+      "scaled_high_quantity": 1315.4,
+      "item_rows": 7
+    },
+    {
+      "trade_group": "외부공사",
+      "unit": "m²",
+      "base_quantity": 4782.7,
+      "scaled_low_quantity": 4782.7,
+      "scaled_high_quantity": 4782.7,
+      "item_rows": 14
+    },
+    {
+      "trade_group": "외부공사",
+      "unit": "m³",
+      "base_quantity": 18.34,
+      "scaled_low_quantity": 18.34,
+      "scaled_high_quantity": 18.34,
+      "item_rows": 5
+    },
+    {
+      "trade_group": "외부공사",
+      "unit": "no.",
+      "base_quantity": 49.0,
+      "scaled_low_quantity": 49.0,
+      "scaled_high_quantity": 49.0,
+      "item_rows": 5
+    },
+    {
+      "trade_group": "전기·전력인입",
+      "unit": "item",
+      "base_quantity": 8.0,
+      "scaled_low_quantity": 12.0,
+      "scaled_high_quantity": 13.0,
+      "item_rows": 7
+    },
+    {
+      "trade_group": "전기·전력인입",
+      "unit": "m",
+      "base_quantity": 1936.95,
+      "scaled_low_quantity": 2136.95,
+      "scaled_high_quantity": 2186.95,
+      "item_rows": 12
+    },
+    {
+      "trade_group": "전기·전력인입",
+      "unit": "no.",
+      "base_quantity": 418.0,
+      "scaled_low_quantity": 738.0,
+      "scaled_high_quantity": 818.0,
+      "item_rows": 80
+    },
+    {
+      "trade_group": "전기·전력인입",
+      "unit": "pkt",
+      "base_quantity": 26.0,
+      "scaled_low_quantity": 58.0,
+      "scaled_high_quantity": 66.0,
+      "item_rows": 3
+    },
+    {
+      "trade_group": "전기·전력인입",
+      "unit": "set",
+      "base_quantity": 16.0,
+      "scaled_low_quantity": 16.0,
+      "scaled_high_quantity": 16.0,
+      "item_rows": 6
+    },
+    {
+      "trade_group": "조적",
+      "unit": "m",
+      "base_quantity": 93.0,
+      "scaled_low_quantity": 93.0,
+      "scaled_high_quantity": 93.0,
+      "item_rows": 1
+    },
+    {
+      "trade_group": "조적",
+      "unit": "m²",
+      "base_quantity": 1437.0,
+      "scaled_low_quantity": 1967.24,
+      "scaled_high_quantity": 2099.8,
+      "item_rows": 10
+    },
+    {
+      "trade_group": "조적",
+      "unit": "m³",
+      "base_quantity": 1.0,
+      "scaled_low_quantity": 1.0,
+      "scaled_high_quantity": 1.0,
+      "item_rows": 1
+    },
+    {
+      "trade_group": "지붕",
+      "unit": "kg",
+      "base_quantity": 5767.0,
+      "scaled_low_quantity": 5767.0,
+      "scaled_high_quantity": 5767.0,
+      "item_rows": 7
+    },
+    {
+      "trade_group": "지붕",
+      "unit": "m",
+      "base_quantity": 1374.8,
+      "scaled_low_quantity": 2194.4,
+      "scaled_high_quantity": 2399.3,
+      "item_rows": 18
+    },
+    {
+      "trade_group": "지붕",
+      "unit": "m²",
+      "base_quantity": 1716.725,
+      "scaled_low_quantity": 2160.765,
+      "scaled_high_quantity": 2271.775,
+      "item_rows": 21
+    },
+    {
+      "trade_group": "지붕",
+      "unit": "no.",
+      "base_quantity": 293.0,
+      "scaled_low_quantity": 317.0,
+      "scaled_high_quantity": 323.0,
+      "item_rows": 13
+    },
+    {
+      "trade_group": "창호·철물",
+      "unit": "item",
+      "base_quantity": 3.0,
+      "scaled_low_quantity": 3.0,
+      "scaled_high_quantity": 3.0,
+      "item_rows": 3
+    },
+    {
+      "trade_group": "창호·철물",
+      "unit": "kg",
+      "base_quantity": 482.0,
+      "scaled_low_quantity": 482.0,
+      "scaled_high_quantity": 482.0,
+      "item_rows": 6
+    },
+    {
+      "trade_group": "창호·철물",
+      "unit": "m",
+      "base_quantity": 667.5,
+      "scaled_low_quantity": 809.5,
+      "scaled_high_quantity": 845.0,
+      "item_rows": 13
+    },
+    {
+      "trade_group": "창호·철물",
+      "unit": "m²",
+      "base_quantity": 2401.915,
+      "scaled_low_quantity": 2449.495,
+      "scaled_high_quantity": 2461.39,
+      "item_rows": 26
+    },
+    {
+      "trade_group": "창호·철물",
+      "unit": "m³",
+      "base_quantity": 144.62,
+      "scaled_low_quantity": 144.62,
+      "scaled_high_quantity": 144.62,
+      "item_rows": 13
+    },
+    {
+      "trade_group": "창호·철물",
+      "unit": "no.",
+      "base_quantity": 44.0,
+      "scaled_low_quantity": 68.0,
+      "scaled_high_quantity": 74.0,
+      "item_rows": 15
+    },
+    {
+      "trade_group": "콘크리트·철근·거푸집",
+      "unit": "kg",
+      "base_quantity": 575.4864,
+      "scaled_low_quantity": 575.4864,
+      "scaled_high_quantity": 575.4864,
+      "item_rows": 2
+    },
+    {
+      "trade_group": "콘크리트·철근·거푸집",
+      "unit": "m",
+      "base_quantity": 331.2,
+      "scaled_low_quantity": 586.0,
+      "scaled_high_quantity": 649.7,
+      "item_rows": 6
+    },
+    {
+      "trade_group": "콘크리트·철근·거푸집",
+      "unit": "m²",
+      "base_quantity": 1334.34,
+      "scaled_low_quantity": 1660.74,
+      "scaled_high_quantity": 1742.34,
+      "item_rows": 17
+    },
+    {
+      "trade_group": "콘크리트·철근·거푸집",
+      "unit": "m³",
+      "base_quantity": 94.23,
+      "scaled_low_quantity": 98.23,
+      "scaled_high_quantity": 99.23,
+      "item_rows": 8
+    },
+    {
+      "trade_group": "콘크리트·철근·거푸집",
+      "unit": "no.",
+      "base_quantity": 96.0,
+      "scaled_low_quantity": 96.0,
+      "scaled_high_quantity": 96.0,
+      "item_rows": 1
+    },
+    {
+      "trade_group": "토공·기초",
+      "unit": "item",
+      "base_quantity": 2.0,
+      "scaled_low_quantity": 2.0,
+      "scaled_high_quantity": 2.0,
+      "item_rows": 2
+    },
+    {
+      "trade_group": "토공·기초",
+      "unit": "m²",
+      "base_quantity": 6854.016667,
+      "scaled_low_quantity": 7180.416667,
+      "scaled_high_quantity": 7262.016667,
+      "item_rows": 10
+    },
+    {
+      "trade_group": "토공·기초",
+      "unit": "m³",
+      "base_quantity": 1575.832,
+      "scaled_low_quantity": 1717.352,
+      "scaled_high_quantity": 1752.732,
+      "item_rows": 18
+    }
+  ],
+  "sheet_stats": [
+    {
+      "sheet": "PRELIMINARIES",
+      "facility": "공통가설·일반조건",
+      "header_row": 4,
+      "last_meaningful_row": 54,
+      "scope_multiplier_scenario_low": 1,
+      "scope_multiplier_scenario_high": 1,
+      "records": 43,
+      "item_rows": 39,
+      "quantified_items": 0,
+      "positive_quantity_items": 0,
+      "zero_quantity_items": 0,
+      "priced_items": 0
+    },
+    {
+      "sheet": "EARTHWORKS",
+      "facility": "부지 토공",
+      "header_row": 2,
+      "last_meaningful_row": 6,
+      "scope_multiplier_scenario_low": 1,
+      "scope_multiplier_scenario_high": 1,
+      "records": 3,
+      "item_rows": 2,
+      "quantified_items": 2,
+      "positive_quantity_items": 2,
+      "zero_quantity_items": 0,
+      "priced_items": 0
+    },
+    {
+      "sheet": "2-Stance Pit Latrine",
+      "facility": "2칸 재래식 화장실",
+      "header_row": 2,
+      "last_meaningful_row": 84,
+      "scope_multiplier_scenario_low": 1,
+      "scope_multiplier_scenario_high": 1,
+      "records": 74,
+      "item_rows": 42,
+      "quantified_items": 42,
+      "positive_quantity_items": 39,
+      "zero_quantity_items": 3,
+      "priced_items": 0
+    },
+    {
+      "sheet": "6-Stance water borne Toilet",
+      "facility": "6칸 수세식 화장실",
+      "header_row": 2,
+      "last_meaningful_row": 117,
+      "scope_multiplier_scenario_low": 1,
+      "scope_multiplier_scenario_high": 1,
+      "records": 107,
+      "item_rows": 69,
+      "quantified_items": 69,
+      "positive_quantity_items": 67,
+      "zero_quantity_items": 2,
+      "priced_items": 0
+    },
+    {
+      "sheet": "Milling Facility.",
+      "facility": "옥수수 가공시설",
+      "header_row": 2,
+      "last_meaningful_row": 224,
+      "scope_multiplier_scenario_low": 1,
+      "scope_multiplier_scenario_high": 1,
+      "records": 204,
+      "item_rows": 109,
+      "quantified_items": 109,
+      "positive_quantity_items": 101,
+      "zero_quantity_items": 8,
+      "priced_items": 0
+    },
+    {
+      "sheet": "ADMIN BLOCK",
+      "facility": "관리동",
+      "header_row": 2,
+      "last_meaningful_row": 238,
+      "scope_multiplier_scenario_low": 1,
+      "scope_multiplier_scenario_high": 1,
+      "records": 222,
+      "item_rows": 130,
+      "quantified_items": 130,
+      "positive_quantity_items": 113,
+      "zero_quantity_items": 17,
+      "priced_items": 0
+    },
+    {
+      "sheet": "MARKET SHED.",
+      "facility": "여성친화형 시장 쉼터",
+      "header_row": 2,
+      "last_meaningful_row": 110,
+      "scope_multiplier_scenario_low": 5,
+      "scope_multiplier_scenario_high": 6,
+      "records": 102,
+      "item_rows": 53,
+      "quantified_items": 53,
+      "positive_quantity_items": 47,
+      "zero_quantity_items": 6,
+      "priced_items": 0
+    },
+    {
+      "sheet": "RAINWATER HARVESTING",
+      "facility": "빗물저장시설 10,000L",
+      "header_row": 1,
+      "last_meaningful_row": 26,
+      "scope_multiplier_scenario_low": 2,
+      "scope_multiplier_scenario_high": 2,
+      "records": 25,
+      "item_rows": 22,
+      "quantified_items": 22,
+      "positive_quantity_items": 22,
+      "zero_quantity_items": 0,
+      "priced_items": 0
+    },
+    {
+      "sheet": "FIRE SUPRESSION SYSTEM",
+      "facility": "소화설비",
+      "header_row": 1,
+      "last_meaningful_row": 8,
+      "scope_multiplier_scenario_low": 1,
+      "scope_multiplier_scenario_high": 1,
+      "records": 3,
+      "item_rows": 1,
+      "quantified_items": 1,
+      "positive_quantity_items": 1,
+      "zero_quantity_items": 0,
+      "priced_items": 0
+    },
+    {
+      "sheet": "EXTERNAL WORKS",
+      "facility": "외부공사",
+      "header_row": 2,
+      "last_meaningful_row": 67,
+      "scope_multiplier_scenario_low": 1,
+      "scope_multiplier_scenario_high": 1,
+      "records": 64,
+      "item_rows": 32,
+      "quantified_items": 32,
+      "positive_quantity_items": 29,
+      "zero_quantity_items": 3,
+      "priced_items": 0
+    },
+    {
+      "sheet": "SUPPLY OF 33KV LINE",
+      "facility": "33kV 전력인입",
+      "header_row": 5,
+      "last_meaningful_row": 49,
+      "scope_multiplier_scenario_low": 1,
+      "scope_multiplier_scenario_high": 1,
+      "records": 44,
+      "item_rows": 41,
+      "quantified_items": 41,
+      "positive_quantity_items": 41,
+      "zero_quantity_items": 0,
+      "priced_items": 0
+    }
+  ],
+  "skipped_sheets": [
+    {
+      "sheet": "COVER SHEET",
+      "reason": "표지·요약·구분 시트"
+    },
+    {
+      "sheet": "General Summary",
+      "reason": "요약 시트(상세 항목과 중복)"
+    },
+    {
+      "sheet": "CV bill 1",
+      "reason": "표지·요약·구분 시트"
+    },
+    {
+      "sheet": "CS BILL 02",
+      "reason": "표지·요약·구분 시트"
+    },
+    {
+      "sheet": "CS BILL 03",
+      "reason": "표지·요약·구분 시트"
+    },
+    {
+      "sheet": "2-Stance summary",
+      "reason": "요약 시트(상세 항목과 중복)"
+    },
+    {
+      "sheet": "CS BILL 04",
+      "reason": "표지·요약·구분 시트"
+    },
+    {
+      "sheet": "6-Stance summary",
+      "reason": "요약 시트(상세 항목과 중복)"
+    },
+    {
+      "sheet": "CS BILL 05",
+      "reason": "표지·요약·구분 시트"
+    },
+    {
+      "sheet": "Summary-Milling Facility",
+      "reason": "요약 시트(상세 항목과 중복)"
+    },
+    {
+      "sheet": "CS BILL 06",
+      "reason": "표지·요약·구분 시트"
+    },
+    {
+      "sheet": "ADMIN BLOCK SUMMARY",
+      "reason": "요약 시트(상세 항목과 중복)"
+    },
+    {
+      "sheet": "CS BILL 07",
+      "reason": "표지·요약·구분 시트"
+    },
+    {
+      "sheet": "SUMMARY MAKET SHED",
+      "reason": "요약 시트(상세 항목과 중복)"
+    },
+    {
+      "sheet": "CS BILL 08",
+      "reason": "표지·요약·구분 시트"
+    },
+    {
+      "sheet": "CS BILL 09",
+      "reason": "표지·요약·구분 시트"
+    },
+    {
+      "sheet": "CS 10",
+      "reason": "표지·요약·구분 시트"
+    },
+    {
+      "sheet": "CS BILL 11",
+      "reason": "표지·요약·구분 시트"
+    }
+  ],
+  "interpretation_limits": [
+    "원본은 미가격 BOQ로 단가와 금액이 공란이다.",
+    "시장쉼터는 General Summary 5동과 재공고 세부공종 6동이 충돌하여 저·고 시나리오로 분리했다.",
+    "빗물저장시설 2기의 배수는 General Summary를 근거로 한 시나리오이며 설계자 확인이 필요하다.",
+    "수량 0은 실제 무공사보다 미완성 수식·설계값일 가능성이 있어 검토가 필요하다.",
+    "공종별 서로 다른 단위의 수량은 합산해 비교하지 않는다."
+  ],
+  "version_comparison": {
+    "primary_bid_no": "L2023-00009-1",
+    "primary_source": "data/unpacked/L2023-00009-1/2. 입찰서류(영문)/Part 2(░·╛≈┴÷╜├╝¡)/Section 4. Bill of Quantities_unpriced.xlsx",
+    "primary_sha256": "ffa2463b0b5c7a652f98e5087245647a99ddd527c9c6ff31f6d3f17103a9b0e9",
+    "comparison_bid_no": "L2023-00003-1",
+    "comparison_source": "data/unpacked/L2023-00003-1/Bid Document(ESMV II)_separately attached/Bid Document(ESMV II)_separately attached/Part 2 Requirements/Section 4. Bill of Quantities_unpriced.xlsx",
+    "comparison_sha256": "9191125ce5b11b2ef313f17baa235d543e6b21829a995d448c67e4ddd915a6ca",
+    "primary_rows": 891,
+    "comparison_rows": 891,
+    "shared_rows": 891,
+    "only_in_primary": 0,
+    "only_in_comparison": 0,
+    "description_rows_changed": 5,
+    "item_quantity_rows_changed": 0,
+    "description_change_examples": [
+      {
+        "sheet": "MARKET SHED.",
+        "row": 43,
+        "comparison": "ELEMENT NO.3",
+        "primary": "ELEMENT NO.4"
+      },
+      {
+        "sheet": "MARKET SHED.",
+        "row": 58,
+        "comparison": "ELEMENT NO. 4",
+        "primary": "ELEMENT NO. 5"
+      },
+      {
+        "sheet": "MARKET SHED.",
+        "row": 67,
+        "comparison": "ELEMENT NO.5",
+        "primary": "ELEMENT NO.6"
+      },
+      {
+        "sheet": "MARKET SHED.",
+        "row": 80,
+        "comparison": "ELEMENT NO.7",
+        "primary": "ELEMENT NO.9"
+      },
+      {
+        "sheet": "MARKET SHED.",
+        "row": 81,
+        "comparison": "ELECTRICAL INSTALLATION",
+        "primary": "ELECTRICAL INSTALLATIONS FOR ALL 6 No. SHEDS"
+      }
+    ],
+    "item_quantity_change_examples": []
+  }
+}

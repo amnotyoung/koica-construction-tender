@@ -75,9 +75,19 @@ def fx_values(
     source_date: str,
     target_date: str,
 ) -> tuple[float | None, float | None]:
-    source_id = f"WB_PA.NUS.FCRF_{iso3}"
-    source_period = source_date[:4]
-    target_period = target_date[:4]
+    source = connection.execute(
+        """SELECT source_id, frequency
+           FROM price_index_sources
+           WHERE iso3 = ? AND index_class = 'official_exchange_rate'
+           ORDER BY construction_specific DESC, source_id
+           LIMIT 1""",
+        (iso3,),
+    ).fetchone()
+    if source is None:
+        return None, None
+    source_id = source["source_id"]
+    source_period = period_key(source_date, source["frequency"])
+    target_period = period_key(target_date, source["frequency"])
     values = dict(connection.execute(
         """SELECT period, value
            FROM price_index_values

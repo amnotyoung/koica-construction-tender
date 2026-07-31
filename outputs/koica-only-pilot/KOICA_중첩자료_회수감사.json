@@ -1,0 +1,57 @@
+{
+  "scope": "KOICA 현지입찰 첨부 중 재귀적으로 회수된 중첩 ZIP",
+  "pre_recursive_snapshot": {
+    "source_files": 2034,
+    "indexed_files": 2029,
+    "evidence_records": 2800,
+    "errors": 5,
+    "note": "재귀회수 실행 직전 extraction_summary.json 기록"
+  },
+  "current_extraction_summary": {
+    "unpack": {
+      "reused": 266,
+      "nested_reused": 80
+    },
+    "source_files": 3034,
+    "indexed_files": 3034,
+    "evidence_records": 3639,
+    "errors": 0
+  },
+  "root_archive_targets": 186,
+  "nested_archive_targets": 80,
+  "all_marker_targets": 266,
+  "nested_files": 1005,
+  "nested_files_indexed": 1005,
+  "nested_files_not_indexed": 0,
+  "nested_bids": 43,
+  "nested_extension_counts": {
+    ".doc": 21,
+    ".docx": 89,
+    ".dwg": 2,
+    ".hwp": 16,
+    ".pdf": 239,
+    ".xls": 504,
+    ".xlsm": 36,
+    ".xlsx": 94,
+    ".zip": 4
+  },
+  "nested_evidence_records": 1046,
+  "nested_evidence_category_counts": {
+    "공사비": 82,
+    "기간": 29,
+    "부가세·예비비": 810,
+    "연면적·면적": 102,
+    "총사업비·예산": 23
+  },
+  "nested_evidence_bids": 29,
+  "boq_candidate_files": 663,
+  "boq_candidate_bids": 11,
+  "current_errors": [],
+  "interpretation": [
+    "중첩 ZIP 80개는 제한·실패 없이 해제되었는지 extraction_summary의 unpack 통계로 확인한다.",
+    "색인 성공은 텍스트 추출 또는 파일 인벤토리 편입을 뜻하며 비용자료 적합성을 보장하지 않는다.",
+    "스캔 PDF·DWG·ZIP은 파일 인벤토리에는 포함되지만 OCR·CAD 해석이 없으면 내용 활용이 제한된다.",
+    "BOQ 후보명은 파일경로 키워드 기반이며 단가·금액 입력 여부는 별도 원문 검토가 필요하다."
+  ],
+  "claim_boundary": "재귀 압축 및 텍스트 색인 오류는 0건으로 정리했지만, 스캔·DWG·미가격 BOQ와 실제 계약·준공가 부재 때문에 KOICA 자료 100% 의미활용이라고 주장할 수 없다."
+}

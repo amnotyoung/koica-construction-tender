@@ -6,23 +6,18 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import shutil
 import struct
 import subprocess
 import tempfile
 import unicodedata
 import zipfile
 import zlib
-from collections import Counter
+from collections import Counter, deque
 from pathlib import Path
 from typing import Any, Iterable
+from xml.etree import ElementTree
 
-import olefile
-from docx import Document
 from openpyxl import load_workbook
-from pptx import Presentation
-import xlrd
-
 
 COUNTRIES = {
     "가나": "Ghana", "과테말라": "Guatemala", "네팔": "Nepal",
@@ -85,7 +80,7 @@ AREA_RE = re.compile(
     re.I,
 )
 CURRENCY_RE = re.compile(
-    r"(?:(USD|US\$|\$|EUR|€|KRW|원|KES|UGX|RWF|XOF|XAF|PKR|PEN|"
+    r"(?:(USD|US\$|(?<![A-Za-z0-9_])\$|EUR|€|KRW|원|KES|UGX|RWF|XOF|XAF|PKR|PEN|"
     r"IDR|VND|MNT|IQD|DZD|ETB|GHS|TZS|ZMW|MAD|JOD|NPR|BDT)\s*)"
     r"(\d[\d,.\s]{1,22})(?:\s*(million|billion|백만|천))?"
     r"|(\d[\d,.\s]{1,22})\s*"
@@ -94,6 +89,16 @@ CURRENCY_RE = re.compile(
     re.I,
 )
 PERCENT_RE = re.compile(r"(\d+(?:[.,]\d+)?)\s*%")
+
+ROOT_ARCHIVE_SUFFIXES = {".zip", ".hwpx"}
+NESTED_ARCHIVE_SUFFIXES = {".zip"}
+MAX_ARCHIVE_MEMBERS = 5_000
+MAX_ARCHIVE_UNCOMPRESSED_BYTES = 2_000_000_000
+MAX_ARCHIVE_TREE_UNCOMPRESSED_BYTES = 2_000_000_000
+MAX_NESTED_ARCHIVE_DEPTH = 8
+MAX_NESTED_ARCHIVES_PER_TREE = 1_000
+UNPACK_MARKER_VERSION = 1
+COPY_BUFFER_BYTES = 1024 * 1024
 
 
 def clean_text(value: Any) -> str:
@@ -104,47 +109,248 @@ def clean_text(value: Any) -> str:
 
 def safe_member_path(name: str) -> Path | None:
     path = Path(unicodedata.normalize("NFC", name.replace("\\", "/")))
-    if path.is_absolute() or ".." in path.parts:
+    if not path.parts or path.is_absolute() or ".." in path.parts:
         return None
     return path
 
 
+def archive_signature(archive: Path) -> dict[str, int]:
+    stat = archive.stat()
+    return {
+        "archive_size": stat.st_size,
+        "archive_mtime_ns": stat.st_mtime_ns,
+    }
+
+
+def marker_status(marker: Path, archive: Path, allow_legacy: bool) -> str | None:
+    if not marker.is_file():
+        return None
+    try:
+        value = json.loads(marker.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        # Previous versions created empty markers. Trust them only for top-level
+        # archives; an archive member named ".complete" must not spoof a nested
+        # extraction marker.
+        if allow_legacy:
+            try:
+                return "legacy" if marker.stat().st_size == 0 else None
+            except OSError:
+                return None
+        return None
+    if not isinstance(value, dict) or value.get("version") != UNPACK_MARKER_VERSION:
+        return None
+    signature = archive_signature(archive)
+    if all(value.get(key) == expected for key, expected in signature.items()):
+        return "versioned"
+    return None
+
+
+def write_unpack_marker(marker: Path, archive: Path) -> None:
+    value = {"version": UNPACK_MARKER_VERSION, **archive_signature(archive)}
+    marker.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        mode="w",
+        encoding="utf-8",
+        prefix=".complete-",
+        suffix=".tmp",
+        dir=marker.parent,
+        delete=False,
+    ) as handle:
+        json.dump(value, handle, ensure_ascii=False, sort_keys=True)
+        handle.write("\n")
+        temp_marker = Path(handle.name)
+    temp_marker.replace(marker)
+
+
+def path_within(path: Path, root: Path) -> bool:
+    try:
+        path.resolve(strict=False).relative_to(root.resolve(strict=False))
+        return True
+    except ValueError:
+        return False
+
+
+def validated_members(zf: zipfile.ZipFile) -> tuple[list[zipfile.ZipInfo], int]:
+    members = zf.infolist()
+    if len(members) > MAX_ARCHIVE_MEMBERS:
+        raise ValueError(f"archive has more than {MAX_ARCHIVE_MEMBERS:,} members")
+    total = sum(item.file_size for item in members)
+    if total > MAX_ARCHIVE_UNCOMPRESSED_BYTES:
+        raise ValueError(
+            "archive expands beyond "
+            f"{MAX_ARCHIVE_UNCOMPRESSED_BYTES:,} bytes"
+        )
+    return members, total
+
+
+def extract_archive(
+    archive: Path,
+    target: Path,
+    members: Iterable[zipfile.ZipInfo],
+    zf: zipfile.ZipFile,
+) -> None:
+    if target.is_symlink():
+        raise ValueError(f"archive target is a symlink: {target}")
+    target.mkdir(parents=True, exist_ok=True)
+    target_root = target.resolve()
+    extracted_bytes = 0
+    for item in members:
+        member = safe_member_path(item.filename)
+        if member is None or item.is_dir():
+            continue
+        destination = target / member
+        if not path_within(destination, target_root):
+            raise ValueError(f"archive member escapes target: {item.filename}")
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        # Resolve again after mkdir so a pre-existing symlink in a partially
+        # extracted directory cannot redirect writes outside the target.
+        if not path_within(destination, target_root) or destination.is_symlink():
+            raise ValueError(f"unsafe archive destination: {item.filename}")
+        item_bytes = 0
+        with zf.open(item) as src, destination.open("wb") as dst:
+            while True:
+                chunk = src.read(COPY_BUFFER_BYTES)
+                if not chunk:
+                    break
+                item_bytes += len(chunk)
+                extracted_bytes += len(chunk)
+                if (
+                    item_bytes > item.file_size
+                    or extracted_bytes > MAX_ARCHIVE_UNCOMPRESSED_BYTES
+                ):
+                    raise ValueError("archive expanded beyond declared limits")
+                dst.write(chunk)
+
+
+def is_versioned_unpack_dir(path: Path) -> bool:
+    marker = path / ".complete"
+    if not marker.is_file():
+        return False
+    try:
+        value = json.loads(marker.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return False
+    return (
+        isinstance(value, dict)
+        and value.get("version") == UNPACK_MARKER_VERSION
+    )
+
+
+def nested_archives(target: Path) -> list[Path]:
+    """Return ZIPs owned by target, excluding already unpacked child trees."""
+    result: list[Path] = []
+    if not target.is_dir():
+        return result
+    for archive in sorted(target.rglob("*"), key=lambda path: str(path).casefold()):
+        if (
+            not archive.is_file()
+            or archive.is_symlink()
+            or archive.suffix.lower() not in NESTED_ARCHIVE_SUFFIXES
+        ):
+            continue
+        ancestor = archive.parent
+        belongs_to_child_tree = False
+        while ancestor != target:
+            if is_versioned_unpack_dir(ancestor):
+                belongs_to_child_tree = True
+                break
+            if ancestor.parent == ancestor:
+                break
+            ancestor = ancestor.parent
+        if not belongs_to_child_tree:
+            result.append(archive)
+    return result
+
+
 def unpack_archives(raw_dir: Path, unpacked_dir: Path) -> dict[str, int]:
     stats = Counter()
-    for archive in raw_dir.rglob("*"):
-        if not archive.is_file() or archive.suffix.lower() not in {".zip", ".hwpx"}:
+    queue: deque[tuple[Path, Path, int, int]] = deque()
+    queued: set[tuple[str, str]] = set()
+    tree_bytes: dict[int, int] = {}
+    tree_nested_counts: Counter[int] = Counter()
+
+    root_archives = sorted(raw_dir.rglob("*"), key=lambda path: str(path).casefold())
+    for archive in root_archives:
+        if (
+            not archive.is_file()
+            or archive.is_symlink()
+            or archive.suffix.lower() not in ROOT_ARCHIVE_SUFFIXES
+        ):
             continue
         rel = archive.relative_to(raw_dir)
         target = unpacked_dir / rel.with_suffix("")
-        marker = target / ".complete"
-        if marker.exists():
-            stats["reused"] += 1
-            continue
-        try:
-            with zipfile.ZipFile(archive) as zf:
-                members = zf.infolist()
-                if len(members) > 5000:
-                    raise ValueError("archive has more than 5,000 members")
-                total = sum(item.file_size for item in members)
-                if total > 2_000_000_000:
-                    raise ValueError("archive expands beyond 2 GB")
-                target.mkdir(parents=True, exist_ok=True)
-                for item in members:
-                    member = safe_member_path(item.filename)
-                    if member is None or item.is_dir():
-                        continue
-                    destination = target / member
-                    destination.parent.mkdir(parents=True, exist_ok=True)
-                    with zf.open(item) as src, destination.open("wb") as dst:
-                        shutil.copyfileobj(src, dst)
-            marker.touch()
-            stats["unpacked"] += 1
-        except Exception:
+        tree_id = len(tree_bytes)
+        tree_bytes[tree_id] = 0
+        key = (str(archive.resolve()), str(target.resolve(strict=False)))
+        queued.add(key)
+        queue.append((archive, target, 0, tree_id))
+
+    while queue:
+        archive, target, depth, tree_id = queue.popleft()
+        if not path_within(target, unpacked_dir):
             stats["failed"] += 1
+            continue
+        marker = target / ".complete"
+        status = marker_status(marker, archive, allow_legacy=depth == 0)
+        if status:
+            stats["reused"] += 1
+            if depth:
+                stats["nested_reused"] += 1
+            if status == "legacy":
+                write_unpack_marker(marker, archive)
+                stats["legacy_markers_upgraded"] += 1
+        else:
+            try:
+                with zipfile.ZipFile(archive) as zf:
+                    members, total = validated_members(zf)
+                    if (
+                        tree_bytes[tree_id] + total
+                        > MAX_ARCHIVE_TREE_UNCOMPRESSED_BYTES
+                    ):
+                        raise ValueError(
+                            "archive tree expands beyond "
+                            f"{MAX_ARCHIVE_TREE_UNCOMPRESSED_BYTES:,} bytes"
+                        )
+                    # Reserve the budget before writing. A failed partial
+                    # extraction must not regain its consumed safety allowance.
+                    tree_bytes[tree_id] += total
+                    extract_archive(archive, target, members, zf)
+                write_unpack_marker(marker, archive)
+                stats["unpacked"] += 1
+                if depth:
+                    stats["nested_unpacked"] += 1
+            except Exception:
+                stats["failed"] += 1
+                if depth:
+                    stats["nested_failed"] += 1
+                continue
+
+        children = nested_archives(target)
+        if not children:
+            continue
+        if depth >= MAX_NESTED_ARCHIVE_DEPTH:
+            stats["depth_limited"] += len(children)
+            continue
+        for child in children:
+            child_target = child.with_suffix("")
+            key = (str(child.resolve()), str(child_target.resolve(strict=False)))
+            if key in queued:
+                continue
+            if (
+                tree_nested_counts[tree_id]
+                >= MAX_NESTED_ARCHIVES_PER_TREE
+            ):
+                stats["archive_count_limited"] += 1
+                continue
+            queued.add(key)
+            tree_nested_counts[tree_id] += 1
+            queue.append((child, child_target, depth + 1, tree_id))
     return dict(stats)
 
 
 def hwp_chunks(path: Path) -> list[tuple[str, str]]:
+    import olefile
+
     chunks: list[tuple[str, str]] = []
     with olefile.OleFileIO(path) as ole:
         header = ole.openstream("FileHeader").read()
@@ -192,17 +398,43 @@ def pdf_chunks(path: Path) -> list[tuple[str, str]]:
 
 
 def docx_chunks(path: Path) -> list[tuple[str, str]]:
-    doc = Document(path)
-    chunks = [
-        (f"문단 {i}", clean_text(p.text))
-        for i, p in enumerate(doc.paragraphs, 1)
-        if clean_text(p.text)
-    ]
-    for table_no, table in enumerate(doc.tables, 1):
-        for row_no, row in enumerate(table.rows, 1):
-            value = clean_text(" | ".join(cell.text for cell in row.cells))
+    word_namespace = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+    with zipfile.ZipFile(path) as archive:
+        root = ElementTree.fromstring(archive.read("word/document.xml"))
+    body = root.find(f"{{{word_namespace}}}body")
+    if body is None:
+        return []
+    chunks: list[tuple[str, str]] = []
+    paragraph_no = 0
+    table_no = 0
+    for child in body:
+        if child.tag == f"{{{word_namespace}}}p":
+            value = clean_text(
+                " ".join(
+                    node.text or ""
+                    for node in child.iter(f"{{{word_namespace}}}t")
+                )
+            )
             if value:
-                chunks.append((f"표 {table_no} 행 {row_no}", value))
+                paragraph_no += 1
+                chunks.append((f"문단 {paragraph_no}", value))
+        elif child.tag == f"{{{word_namespace}}}tbl":
+            table_no += 1
+            rows = child.findall(f"{{{word_namespace}}}tr")
+            for row_no, row in enumerate(rows, 1):
+                cells = []
+                for cell in row.findall(f"{{{word_namespace}}}tc"):
+                    cells.append(
+                        clean_text(
+                            " ".join(
+                                node.text or ""
+                                for node in cell.iter(f"{{{word_namespace}}}t")
+                            )
+                        )
+                    )
+                value = clean_text(" | ".join(cells))
+                if value:
+                    chunks.append((f"표 {table_no} 행 {row_no}", value))
     return chunks
 
 
@@ -225,6 +457,8 @@ def xlsx_chunks(path: Path) -> list[tuple[str, str]]:
 
 
 def xls_chunks(path: Path) -> list[tuple[str, str]]:
+    import xlrd
+
     workbook = xlrd.open_workbook(path, on_demand=True)
     chunks: list[tuple[str, str]] = []
     try:
@@ -243,18 +477,28 @@ def xls_chunks(path: Path) -> list[tuple[str, str]]:
 
 
 def pptx_chunks(path: Path) -> list[tuple[str, str]]:
-    presentation = Presentation(path)
+    drawing_namespace = (
+        "http://schemas.openxmlformats.org/drawingml/2006/main"
+    )
     chunks: list[tuple[str, str]] = []
-    for slide_number, slide in enumerate(presentation.slides, 1):
-        values = []
-        for shape in slide.shapes:
-            if hasattr(shape, "text") and clean_text(shape.text):
-                values.append(clean_text(shape.text))
-            if getattr(shape, "has_table", False):
-                for row in shape.table.rows:
-                    values.append(clean_text(" | ".join(cell.text for cell in row.cells)))
-        if values:
-            chunks.append((f"슬라이드 {slide_number}", " | ".join(values)))
+    with zipfile.ZipFile(path) as archive:
+        slide_names = sorted(
+            (
+                name
+                for name in archive.namelist()
+                if re.fullmatch(r"ppt/slides/slide\d+\.xml", name)
+            ),
+            key=lambda name: int(re.search(r"\d+", Path(name).stem).group()),
+        )
+        for slide_number, name in enumerate(slide_names, 1):
+            root = ElementTree.fromstring(archive.read(name))
+            values = [
+                clean_text(node.text)
+                for node in root.iter(f"{{{drawing_namespace}}}t")
+                if clean_text(node.text)
+            ]
+            if values:
+                chunks.append((f"슬라이드 {slide_number}", " | ".join(values)))
     return chunks
 
 
@@ -302,6 +546,21 @@ def extract_chunks(path: Path) -> list[tuple[str, str]]:
     if suffix in {".txt", ".csv", ".xml", ".html", ".htm"}:
         return xml_chunks(path)
     return []
+
+
+def is_source_document(relative_path: Path) -> bool:
+    """Keep meaningful dot-directories while excluding generated metadata."""
+    if not relative_path.parts:
+        return False
+    if "__MACOSX" in relative_path.parts:
+        return False
+    name = relative_path.name
+    return not (
+        name in {".complete", ".DS_Store", "Thumbs.db"}
+        or name.startswith(".complete-")
+        or name.startswith("._")
+        or name.startswith("~$")
+    )
 
 
 def find_country(text: str) -> tuple[str, str]:
@@ -430,10 +689,8 @@ def main() -> int:
             if not path.is_file() or path.name == ".complete":
                 continue
             rel = path.relative_to(root)
-            if not rel.parts:
-                continue
-            # Office lock files and hidden metadata are not source documents.
-            if any(part.startswith(".") or part.startswith("~$") for part in rel.parts):
+            # Office lock files and OS/archive metadata are not source documents.
+            if not is_source_document(rel):
                 continue
             sources.append((rel.parts[0], path, root))
     if args.max_files:

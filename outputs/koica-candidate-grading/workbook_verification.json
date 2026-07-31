@@ -1,0 +1,57 @@
+{
+  "keyInspection": "{\"kind\":\"table\",\"sheet\":\"판정요약\",\"address\":\"A1:L40\",\"rows\":40,\"cols\":12,\"values\":[[\"KOICA 건축후보 127건 일괄검사 판정\",null,null,null,null,null,null,null,null,null,null,null],[\"결론: KOICA-only 직접 설계견적 A는 2사업, 수량 BOQ B는 6사업입니다. 127행을 127개 비용표본으로 세면 안 되며, 국가단가를 만들기에는 A 표본이 부족합니다.\",null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[\"공식 후보 레코드\",null,null,\"고유 프로젝트 묶음\",null,null,\"A 직접설계견적\",null,null,\"B 수량BOQ\",null,null],[127,null,null,96,null,null,2,null,null,6,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[\"C 잠정 원단위\",null,null,\"U 직접근거 부족\",null,null,\"현재 연결공고\",null,null,\"첨부·중첩 색인파일\",null,null],[3,null,null,85,null,null,98,null,null,1642,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[\"국가 최고등급\",\"국가수\",null,null,null,null,null,null,null,\"프로젝트 상태\",\"수\",\"뜻\"],[\"A\",2,null,null,null,null,null,null,null,\"A\",2,\"직접 설계견적\"],[\"B\",5,null,null,null,null,null,null,null,\"B\",6,\"현지단가 필요\"],[\"C\",32,null,null,null,null,null,null,null,\"C?\",3,\"초기 원단위\"],[null,null,null,null,null,null,null,null,null,\"U\",85,\"추가확인\"],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[\"핵심 판정\",null,null,null,null,null,null,null,null,null,null,null],[\"• A 2사업: 가나 설계·집행예산 USD 4.333m(전체), 이라크 IKHCC USD 8.373m(건축 Bill 부분)\",null,null,null,null,null,null,null,null,null,null,null],[\"• B 6사업: 볼리비아·도미니카공화국·우즈베키스탄·이라크 자이툰·캄보디아·피지\",null,null,null,null,null,null,null,null,null,null,null],[\"• C 잠정 3사업: 인도네시아 2개와 키르기스스탄 1개; BOQ 확인 전 계획한도÷GFA 스크리닝만\",null,null,null,null,null,null,null,null,null,null,null],[\"• 가나와 이라크도 가격 있는 고유 프로젝트가 각 1개뿐이므로 국가 대표단가를 만들기에는 부족\",null,null,null,null,null,null,null,null,null,null,null],[\"• 우간다 기존 B 사례 2019-00005는 공식 127행 밖이므로 이번 집계에서 제외\",null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[\"첨부 도달 단계\",\"레코드\",\"프로젝트\",\"국가\",\"공고\",\"파일\",null,\"해석 경계\",null,null,null,null],[\"공식 후보\",127,96,39,null,null,null,\"A는 설계견적 산정능력이며 계약·준공 실적을 뜻하지 않습니다.\",null,null,null,null],[\"현재 공고 연결\",66,40,21,98,null,null,\"B는 수량 기반 템플릿으로, 현지단가 없이는 금액을 확정할 수 없습니다.\",null,null,null,null],[\"실제 첨부·색인\",57,34,19,72,1642,null,\"C/U/X를 0원 또는 저비용으로 해석하지 않습니다.\",null,null,null,null],[null,null,null,null,null,null,null,\"국가 최고등급은 시설유형·지역·가격시점 전체를 대표하지 않습니다.\",null,null,null,null]]}",
+  "formulaErrors": "{\"kind\":\"notice\",\"message\":\"Cell search matched 0 entries.\"}",
+  "previews": [
+    {
+      "sheetName": "판정요약",
+      "range": "A1:L40",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-candidate-grading/previews/판정요약.png"
+    },
+    {
+      "sheetName": "국가별 준비도",
+      "range": "A1:L30",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-candidate-grading/previews/국가별 준비도.png"
+    },
+    {
+      "sheetName": "A·B 우선사업",
+      "range": "A1:L12",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-candidate-grading/previews/A·B 우선사업.png"
+    },
+    {
+      "sheetName": "프로젝트 등급",
+      "range": "A1:L20",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-candidate-grading/previews/프로젝트 등급-앞.png"
+    },
+    {
+      "sheetName": "프로젝트 등급",
+      "range": "Y1:AJ20",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-candidate-grading/previews/프로젝트 등급-근거.png"
+    },
+    {
+      "sheetName": "127건 원기록",
+      "range": "A1:N20",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-candidate-grading/previews/127건 원기록-앞.png"
+    },
+    {
+      "sheetName": "127건 원기록",
+      "range": "T1:AF20",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-candidate-grading/previews/127건 원기록-근거.png"
+    },
+    {
+      "sheetName": "첨부검사",
+      "range": "A1:J24",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-candidate-grading/previews/첨부검사-앞.png"
+    },
+    {
+      "sheetName": "첨부검사",
+      "range": "K1:T24",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-candidate-grading/previews/첨부검사-검출.png"
+    },
+    {
+      "sheetName": "등급기준·한계",
+      "range": "A1:H46",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-candidate-grading/previews/등급기준·한계.png"
+    }
+  ],
+  "outputPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-candidate-grading/KOICA_건축후보_127건_국가별_ABC등급.xlsx"
+}

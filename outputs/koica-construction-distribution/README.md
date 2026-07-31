@@ -4,13 +4,15 @@
 
 배포의 기준 파일은 `KOICA_건축사업_사례DB_2016-2025.sqlite`이다.
 XLSX는 비전문가 열람용 스냅샷이며 수정 원본으로 사용하지 않는다.
+기준 DB에는 KOICA 공고·첨부·추출근거와 국가 공식 가격지수만 적재하며,
+외부 공여기관의 사업·계약·거시지표는 포함하지 않는다.
 
 | 파일 | 용도 |
 |---|---|
 | `KOICA_건축사업_사례DB_2016-2025.sqlite` | 기준 데이터베이스·검색·근거 추적 |
 | `KOICA_건축사업_사례라이브러리_2016-2025.xlsx` | 회의·검토·비전문가 열람 |
 | `KOICA_건축사업_검토사례_2016-2025.csv` | R·Python·통계도구 분석 |
-| `KOICA_국가별_가격지수_적용현황_28개국.csv` | 28개국 공식지수 후보·적재상태·현재 대체지수 확인 |
+| `KOICA_국가별_가격지수_적용현황_28개국.csv` | 28개국 공식지수 후보·국가 공식 시계열 적재상태 확인 |
 | `reviewed_cases_2016_2025.json` | API·웹서비스 연계용 검토사례 |
 | `DEMO_네팔_직업교육시설_3000m2.md` | 다국가 재사용 구조를 적용한 네팔 완성 예시 |
 | `TEMPLATE_국가별_건축사업비_산정.md` | 국가·시설·가격기준일별 입력·판정·보고서 템플릿 |
@@ -25,14 +27,15 @@ XLSX는 비전문가 열람용 스냅샷이며 수정 원본으로 사용하지 
 - 공개 현지입찰 목록: 575건
 - 상세페이지가 수집된 건축 후보: 379건
 - 원 첨부파일: 1,000개
-- ZIP 내부 포함 분석 문서: 2,692개
-- 자동 추출 수치 근거: 3,563건
+- ZIP 내부 포함 분석 문서: 3,698개
+- 자동 추출 수치 근거: 4,402건
 - 수동 검토 단가사례: 66건
 - 설계·감리 비용 검토사례: 7건
 - 미래 사업 권고단가: 0건
 - 가격지수 우선순위: 5단계
 - 가격지수 국가 감사: 28개국
-- 실제 가격·환율 관측값: DB의 `price_index_values` 참조
+- 국가 공식 가격지수: 3개국 3개 소스·실제 관측값 60건
+- 환율 관측값: 미적재
 
 ## 핵심 원칙
 
@@ -63,15 +66,20 @@ XLSX는 비전문가 열람용 스냅샷이며 수정 원본으로 사용하지 
 | `attachments` | 첨부파일 경로·크기·SHA-256 |
 | `documents` | ZIP 내부 포함 분석문서 인덱스 |
 | `evidence` | 자동 추출 수치와 원문 위치 |
-| `reviewed_cases` | 수동 검토 단가사례 |
+| `reviewed_cases` | 기존 66개 비교가능성 사례(새 산정준비도 등급과 분리) |
+| `area_cost_notice_review` | 면적·금액을 함께 재검토한 170개 공고와 가격단계·범위·근거 |
+| `area_cost_bid_group_review` | 동일 `bid_base_no`로 묶은 154개 재공고군 |
+| `area_cost_project_review` | 복수 패키지를 보존한 91개 사업별 대표 근거와 A/B/C?/U/X |
+| `area_cost_review_summary` | 전수감사 기준·건수·등급정의 JSON 스냅샷 |
 | `fee_benchmarks` | 설계·감리 비용사례 |
 | `price_index_policy` | 건설지수부터 CPI까지 5단계 선택 원칙 |
 | `price_index_sources` | 국가·지수별 제공기관·주기·URL·품질정보 |
-| `price_index_values` | 실제 지수·환율 관측값, 원래 기간, 잠정·수정 상태, 공개 URL |
+| `price_index_values` | 국가 공식 가격지수 관측값, 원래 기간, 잠정·수정 상태, 공개 URL |
 | `national_index_source_audit` | 28개국 공식 건설지수 후보·적재 상태 |
 | `normalization_runs` | 사업별 보정 실행값·산식·제약사항 |
 
 조회용 VIEW는 `v_sample_coverage`, `v_yearly_inventory`,
+`v_area_cost_ready_projects`, `v_area_cost_followup_queue`,
 `v_duplicate_attachments`, `v_price_index_coverage`,
 `v_best_available_price_index`이다.
 
@@ -85,6 +93,19 @@ SELECT *
 FROM v_sample_coverage
 WHERE country = 'Nepal'
 ORDER BY reviewed_case_count DESC;
+
+-- 새 91사업 중 A/B/C 준비 사례 조회(C? 제외)
+SELECT project_no, country_ko, project_name, best_grade,
+       representative_area_m2, representative_construction_cost_usd,
+       screening_unit_usd_m2, unit_cost_allowed_use,
+       display_representative_bid
+FROM v_area_cost_ready_projects
+ORDER BY country_ko, best_grade, project_no;
+
+-- C?·U 원본확인/추가조사 대기열
+SELECT *
+FROM v_area_cost_followup_queue
+ORDER BY country_ko, best_grade, project_no;
 
 -- 유사사례 검색
 SELECT bid_no, notice_date, country, facility_type, work_type,
@@ -111,8 +132,8 @@ ORDER BY country;
 1. `TEMPLATE_국가별_건축사업비_산정.md`의 사업 입력카드와 비용경계를
    먼저 채운다.
 2. `v_sample_coverage`에서 동일 국가·시설·사업유형의 표본수를 확인한다.
-3. `reviewed_cases`에서 규모·지하층·비용단계·세금·포함범위까지 비교한다.
-4. A/B등급 사례의 `source_file`, `source_locator`, `source_url`을 확인한다.
+3. `area_cost_project_review`에서 A/B/C 기준점을 고르고, `area_cost_notice_review`에서 같은 범위·가격단계·근거를 확인한다.
+4. A/B는 BOQ 준비도, C는 초기 스크리닝, C?는 원본확인 대기임을 구분한다. 기존 `reviewed_cases.evidence_grade`는 새 등급으로 승계하지 않는다.
 5. 현지 QS 개략견적·BOQ 및 시공사 예산견적 2~3개를 확보한다.
 6. 국가 건설지수 → BOQ 가중합 → 건설자재 PPI/WPI → GDP 디플레이터
    → CPI 순으로 실제 관측값이 있는 최고 우선순위 지수를 선택한다.

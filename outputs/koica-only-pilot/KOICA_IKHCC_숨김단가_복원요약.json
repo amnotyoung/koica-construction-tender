@@ -1,0 +1,178 @@
+{
+  "project_no": "2020-00119",
+  "project_name": "이라크 한-이라크 심장병 어린이 전문 병원 건립사업('20-'30/2,793만불)",
+  "representative_bid_no": "L2025-00085-1",
+  "related_bid_nos": [
+    "L2025-00070-1",
+    "L2025-00071-1",
+    "L2025-00085-1"
+  ],
+  "bid_title": "(긴급) 한-이라크 심장병 어린이 전문 병원 신축공사(신규입찰)",
+  "notice_date": "2025-10-06",
+  "detail_url": "https://nebid.koica.go.kr/oep/lobi/localBidManageDetail.do?P_LOAZ_BID_PBLANC_NO=L2025-00085&P_PBLANC_ODR=1",
+  "source_boundary": "KOICA 현지입찰 공개 첨부의 숨김·캐시 설계견적 단가",
+  "currency": "USD",
+  "currency_evidence": {
+    "source_file": "data/unpacked/L2025-00085-1/붙임2. 현지입찰(신규입찰) 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250903_최종/1 Architectural & summery/Bill _Total Cost Summary-Blank 250306.xlsx",
+    "sha256": "91332400de69e34ae40026af2416f1b516644fe7da6004e86983efa25e049eac",
+    "labels": [
+      {
+        "sheet": "Bill-2-SUMMARY",
+        "cell": "E1",
+        "value": "AMOUNT (USD)"
+      },
+      {
+        "sheet": "1. Total Cost Summary",
+        "cell": "H1",
+        "value": "AMOUNT (USD)"
+      },
+      {
+        "sheet": "1. Total Cost Summary",
+        "cell": "I1",
+        "value": "TOTAL (USD)"
+      }
+    ]
+  },
+  "rate_library_rows": 644,
+  "assembly_rate_rows": 298,
+  "direct_resource_rate_rows": 346,
+  "positive_rate_rows": 644,
+  "boq_item_rows": 561,
+  "unique_boq_item_codes": 355,
+  "recovered_item_rows": 561,
+  "recovery_rate": 1.0,
+  "visible_component_prices_blank_rows": 561,
+  "facility_summaries": [
+    {
+      "facility_ko": "병원",
+      "facility_en": "HOSPITAL",
+      "item_rows": 377,
+      "unique_item_codes": 355,
+      "recovered_rows": 377,
+      "visible_component_prices_blank_rows": 377,
+      "recovered_total_amount_usd": 3237630.6756702214,
+      "source_file": "data/unpacked/L2025-00085-1/붙임2. 현지입찰(신규입찰) 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250903_최종/1 Architectural & summery/BILL No1 -Architectural Works-01. HOSPITAL(BLANK BILL).xlsx",
+      "source_sha256": "47d79c95e2c3273f84778935276c94526e369cc1b1bc057f6b03c998f44e253f"
+    },
+    {
+      "facility_ko": "기계·전기동",
+      "facility_en": "MEP BUILDING",
+      "item_rows": 136,
+      "unique_item_codes": 136,
+      "recovered_rows": 136,
+      "visible_component_prices_blank_rows": 136,
+      "recovered_total_amount_usd": 4936190.372168405,
+      "source_file": "data/unpacked/L2025-00085-1/붙임2. 현지입찰(신규입찰) 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250903_최종/1 Architectural & summery/BILL No1 -Architectural Works-02. MEP BUILDING(BLANK BILL).xlsx",
+      "source_sha256": "e882c3f7b2c691fc22ee6ee99fba87f9ca830eb3c133892b8c8800d7d02e97cb"
+    },
+    {
+      "facility_ko": "연결교량",
+      "facility_en": "BRIDGE",
+      "item_rows": 48,
+      "unique_item_codes": 48,
+      "recovered_rows": 48,
+      "visible_component_prices_blank_rows": 48,
+      "recovered_total_amount_usd": 198891.3749381619,
+      "source_file": "data/unpacked/L2025-00085-1/붙임2. 현지입찰(신규입찰) 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250903_최종/1 Architectural & summery/BILL No1 -Architectural Works-03. BRIDGE(BLANK BILL).xlsx",
+      "source_sha256": "9af2b1263622fb9487fbf8ea97b31ead65763962f1c58d657985557a58983e83"
+    }
+  ],
+  "library_consistency_checks": [
+    {
+      "facility_en": "HOSPITAL",
+      "rate_rows": 644,
+      "same_as_hospital": true
+    },
+    {
+      "facility_en": "MEP BUILDING",
+      "rate_rows": 644,
+      "same_as_hospital": true
+    },
+    {
+      "facility_en": "BRIDGE",
+      "rate_rows": 644,
+      "same_as_hospital": true
+    }
+  ],
+  "rate_metadata": {
+    "comparison_exchange_rate_krw_per_usd": 1350.3,
+    "comparison_markup_factor": 1.1,
+    "settings_exchange_rate_krw_per_usd": 1289.0,
+    "assembly_sheet_state": "hidden",
+    "comparison_sheet_state": "hidden",
+    "settings_sheet_state": "hidden"
+  },
+  "recovered_architectural_bill_usd": 8372712.4227767885,
+  "local_bid_ceiling_usd": 13292831.0,
+  "recovered_share_of_bid_ceiling": 0.6298667622252015,
+  "gross_floor_area_m2": 5486.0,
+  "recovered_architectural_bill_usd_per_gfa_m2": 1526.1962126826081,
+  "local_bid_ceiling_usd_per_gfa_m2": 2423.0461173897193,
+  "planned_bid_ceiling_krw": 17940000000.0,
+  "planned_bid_ceiling_krw_per_gfa_m2": 3270142.180094787,
+  "official_plan_source_url": "https://www.data.go.kr/data/15085055/fileData.do",
+  "version_lineage": [
+    {
+      "bid_no": "L2025-00070-1",
+      "facility_en": "HOSPITAL",
+      "source_file": "data/unpacked/L2025-00070-1/붙임3. 현지입찰 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250430/1 Architectural & summery/BILL No1 -Architectural Works-01. HOSPITAL(BLANK BILL).xlsx",
+      "sha256": "47d79c95e2c3273f84778935276c94526e369cc1b1bc057f6b03c998f44e253f"
+    },
+    {
+      "bid_no": "L2025-00070-1",
+      "facility_en": "MEP BUILDING",
+      "source_file": "data/unpacked/L2025-00070-1/붙임3. 현지입찰 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250430/1 Architectural & summery/BILL No1 -Architectural Works-02. MEP BUILDING(BLANK BILL).xlsx",
+      "sha256": "e882c3f7b2c691fc22ee6ee99fba87f9ca830eb3c133892b8c8800d7d02e97cb"
+    },
+    {
+      "bid_no": "L2025-00070-1",
+      "facility_en": "BRIDGE",
+      "source_file": "data/unpacked/L2025-00070-1/붙임3. 현지입찰 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250430/1 Architectural & summery/BILL No1 -Architectural Works-03. BRIDGE(BLANK BILL).xlsx",
+      "sha256": "9af2b1263622fb9487fbf8ea97b31ead65763962f1c58d657985557a58983e83"
+    },
+    {
+      "bid_no": "L2025-00071-1",
+      "facility_en": "HOSPITAL",
+      "source_file": "data/unpacked/L2025-00071-1/붙임2. 현지입찰(재공고입찰) 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250903/1 Architectural & summery/BILL No1 -Architectural Works-01. HOSPITAL(BLANK BILL).xlsx",
+      "sha256": "47d79c95e2c3273f84778935276c94526e369cc1b1bc057f6b03c998f44e253f"
+    },
+    {
+      "bid_no": "L2025-00071-1",
+      "facility_en": "MEP BUILDING",
+      "source_file": "data/unpacked/L2025-00071-1/붙임2. 현지입찰(재공고입찰) 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250903/1 Architectural & summery/BILL No1 -Architectural Works-02. MEP BUILDING(BLANK BILL).xlsx",
+      "sha256": "e882c3f7b2c691fc22ee6ee99fba87f9ca830eb3c133892b8c8800d7d02e97cb"
+    },
+    {
+      "bid_no": "L2025-00071-1",
+      "facility_en": "BRIDGE",
+      "source_file": "data/unpacked/L2025-00071-1/붙임2. 현지입찰(재공고입찰) 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250903/1 Architectural & summery/BILL No1 -Architectural Works-03. BRIDGE(BLANK BILL).xlsx",
+      "sha256": "9af2b1263622fb9487fbf8ea97b31ead65763962f1c58d657985557a58983e83"
+    },
+    {
+      "bid_no": "L2025-00085-1",
+      "facility_en": "HOSPITAL",
+      "source_file": "data/unpacked/L2025-00085-1/붙임2. 현지입찰(신규입찰) 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250903_최종/1 Architectural & summery/BILL No1 -Architectural Works-01. HOSPITAL(BLANK BILL).xlsx",
+      "sha256": "47d79c95e2c3273f84778935276c94526e369cc1b1bc057f6b03c998f44e253f"
+    },
+    {
+      "bid_no": "L2025-00085-1",
+      "facility_en": "MEP BUILDING",
+      "source_file": "data/unpacked/L2025-00085-1/붙임2. 현지입찰(신규입찰) 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250903_최종/1 Architectural & summery/BILL No1 -Architectural Works-02. MEP BUILDING(BLANK BILL).xlsx",
+      "sha256": "e882c3f7b2c691fc22ee6ee99fba87f9ca830eb3c133892b8c8800d7d02e97cb"
+    },
+    {
+      "bid_no": "L2025-00085-1",
+      "facility_en": "BRIDGE",
+      "source_file": "data/unpacked/L2025-00085-1/붙임2. 현지입찰(신규입찰) 서류 및 계약서류(안)/IKHCC Section 4 - IKHCC BLANK BOQ 250903_최종/1 Architectural & summery/BILL No1 -Architectural Works-03. BRIDGE(BLANK BILL).xlsx",
+      "sha256": "9af2b1263622fb9487fbf8ea97b31ead65763962f1c58d657985557a58983e83"
+    }
+  ],
+  "interpretation_limits": [
+    "복원 단가는 입찰자 제시가·계약가·변경계약가·준공가가 아니라 설계견적 기초단가다.",
+    "보이는 BOQ 단가 3개 열은 561개 항목 모두 공란이고, 숨김 시트의 캐시값을 품목코드로 결합했다.",
+    "이번 합계는 Bill No.01 건축공사(병원·MEP동·교량)만 포함하며 토목·기계·전기·통신·소방·동원·사인 공사는 제외한다.",
+    "단가대비표 환율 1,350.3과 공사설정 환율 1,289가 불일치하므로 적용 시점과 최종 환율을 재확인해야 한다.",
+    "공고 3건의 대표 워크북 SHA-256은 동일하므로 독립 비용표본 3건으로 세지 않는다.",
+    "연면적 5,486㎡와 계획 입찰한도액은 KOICA 연간발주계획의 계획값이며 변경 가능하다."
+  ]
+}

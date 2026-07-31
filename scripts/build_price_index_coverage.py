@@ -41,10 +41,12 @@ SELECT
   b.latest_retrieved_at,
   b.provider_url AS selected_source_url,
   CASE
+    WHEN b.priority IS NULL THEN
+      '국가 공식 실제 시계열 미적재; 자동보정 불가'
     WHEN b.priority <= 3 THEN
       '공식 상위지수 실제값 적재; 대상일 관측값 존재 여부를 실행 시 재확인'
     ELSE
-      '상위지수 미적재 또는 기간 미충족 시 거시지표 대체; 보고서에 한계 명시'
+      '국가 공식 대체지수 실제값 적재; 건축비 적용 한계를 별도 검토'
   END AS automatic_use_note
 FROM national_index_source_audit a
 LEFT JOIN reviewed r ON r.country = a.country

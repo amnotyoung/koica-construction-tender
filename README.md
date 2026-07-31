@@ -29,3 +29,5 @@ manifest에 기록된 상대경로, 원문 URL, SHA-256으로 추적한다.
 `outputs/koica-construction-distribution/KOICA_건축사업_사례DB_2016-2025.sqlite`
 이다. XLSX와 CSV는 열람·분석용 스냅샷이며, 자세한 사용법과 제약은 같은
 디렉터리의 `README.md`를 따른다.
+기준 DB에는 KOICA 공고·첨부·추출근거와 국가 공식 가격지수만 포함하며,
+외부 공여기관의 사업·계약·거시지표는 적재하지 않는다.

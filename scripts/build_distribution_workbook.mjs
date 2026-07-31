@@ -108,7 +108,7 @@ guide.getRange("A1").format = {
 guide.getRange("A1").format.rowHeight = 36;
 guide.getRange("A4:H5").merge();
 guide.getRange("A4").values = [[
-  "이 파일은 사례 열람용입니다. 원본 데이터는 SQLite이며, 여기에 미래 사업 권고단가는 없습니다.",
+  "이 파일은 KOICA 사례 열람용입니다. 외부 공여기관 자료는 포함하지 않으며, 미래 사업 권고단가도 제공하지 않습니다.",
 ]];
 guide.getRange("A4").format = {
   fill: COLORS.paleRed,
@@ -271,7 +271,7 @@ coverageSheet.getRange(`D3:D${coverage.length + 2}`).conditionalFormats.add(
 
 const priceIndexSheet = addTableSheet(
   "국가지수현황",
-  "28개국 가격지수 후보·현재 선택·관측상태",
+  "28개국 국가 공식 가격지수 후보·적재·관측상태",
   priceIndexHeaders,
   priceIndexRows,
   {
@@ -299,7 +299,7 @@ const dictionaryRows = [
   ["projects", "건축 후보 사업·입찰 메타데이터", "bid_no, project_no"],
   ["attachments", "원 첨부 1,000개의 경로·크기·SHA-256", "bid_no, attachment_sn"],
   ["documents", "ZIP 내부 포함 분석문서 인덱스", "dataset_id, bid_no, source_file"],
-  ["evidence", "자동 추출 수치근거 3,563건", "evidence_id, bid_no"],
+  ["evidence", "자동 추출 수치근거 4,402건", "evidence_id, bid_no"],
   ["reviewed_cases", "수동 검토 단가사례 66건", "bid_no"],
   ["fee_benchmarks", "설계·감리 비용 검토사례", "fee_id, bid_no"],
   ["price_index_sources", "국가별 가격지수 출처·범위·우선순위", "source_id"],

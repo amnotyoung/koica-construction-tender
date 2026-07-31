@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import csv
 import json
 import sqlite3
 from pathlib import Path
@@ -30,6 +31,23 @@ DATASETS = [
 
 def load(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def load_csv(path: Path) -> list[dict[str, str]]:
+    with path.open(encoding="utf-8-sig", newline="") as handle:
+        return list(csv.DictReader(handle))
+
+
+def nullable_float(value):
+    if value in (None, ""):
+        return None
+    return float(value)
+
+
+def nullable_int(value):
+    if value in (None, ""):
+        return None
+    return int(value)
 
 
 def portable_path(value: str) -> str:
@@ -174,6 +192,115 @@ CREATE TABLE reviewed_cases (
   evidence_summary TEXT
 );
 
+CREATE TABLE area_cost_notice_review (
+  bid_no TEXT PRIMARY KEY REFERENCES bids(bid_no),
+  project_no TEXT NOT NULL,
+  bid_base_no TEXT,
+  package_id TEXT,
+  notice_date TEXT,
+  country_ko TEXT,
+  title TEXT,
+  scope_role TEXT NOT NULL,
+  record_cost_semantics TEXT NOT NULL,
+  record_scope_status TEXT NOT NULL,
+  same_scope_status TEXT NOT NULL,
+  notice_ceiling_usd REAL,
+  selected_construction_cost_usd REAL,
+  amount_stage TEXT,
+  selected_area_m2 REAL,
+  area_semantics TEXT,
+  area_aggregation TEXT,
+  screening_unit_usd_m2 REAL,
+  notice_ceiling_to_selected_gap_pct REAL,
+  final_grade TEXT NOT NULL,
+  compact_grade TEXT NOT NULL CHECK (compact_grade IN ('A','B','C','C?','U','X')),
+  verification_level TEXT NOT NULL,
+  unit_cost_allowed_use TEXT NOT NULL,
+  direct_future_estimate_ready INTEGER NOT NULL CHECK (direct_future_estimate_ready IN (0,1)),
+  sample_weight_notice INTEGER NOT NULL CHECK (sample_weight_notice IN (0,1)),
+  is_bid_base_representative INTEGER NOT NULL CHECK (is_bid_base_representative IN (0,1)),
+  is_project_display_representative INTEGER NOT NULL CHECK (is_project_display_representative IN (0,1)),
+  legacy_reviewed_case INTEGER NOT NULL CHECK (legacy_reviewed_case IN (0,1)),
+  strict_attachment_review INTEGER NOT NULL CHECK (strict_attachment_review IN (0,1)),
+  indexed_attachment_count INTEGER NOT NULL,
+  spreadsheet_count INTEGER NOT NULL,
+  boq_named_file_count INTEGER NOT NULL,
+  quantity_table_file_count INTEGER NOT NULL,
+  priced_table_file_count INTEGER NOT NULL,
+  grade_detail TEXT,
+  manual_note TEXT,
+  amount_source_file TEXT,
+  amount_source_locator TEXT,
+  area_source_file TEXT,
+  area_source_locator TEXT,
+  area_quote TEXT,
+  source_url TEXT,
+  grade_system_version TEXT NOT NULL,
+  audit_date TEXT NOT NULL
+);
+
+CREATE TABLE area_cost_bid_group_review (
+  bid_base_no TEXT PRIMARY KEY,
+  project_no TEXT NOT NULL,
+  country_ko TEXT,
+  notice_count INTEGER NOT NULL,
+  bid_nos TEXT NOT NULL,
+  representative_bid_no TEXT NOT NULL REFERENCES bids(bid_no),
+  latest_notice_date TEXT,
+  representative_title TEXT,
+  best_grade TEXT NOT NULL,
+  scope_role TEXT,
+  same_scope_status TEXT,
+  area_m2 REAL,
+  construction_cost_usd REAL,
+  screening_unit_usd_m2 REAL,
+  duplicate_rule TEXT
+);
+
+CREATE TABLE area_cost_project_review (
+  project_no TEXT PRIMARY KEY,
+  country_ko TEXT,
+  project_name TEXT,
+  notice_count INTEGER NOT NULL,
+  bid_base_group_count INTEGER NOT NULL,
+  valid_area_cost_notice_count INTEGER NOT NULL,
+  valid_bid_nos TEXT,
+  all_bid_nos TEXT NOT NULL,
+  display_representative_bid TEXT NOT NULL REFERENCES bids(bid_no),
+  technical_evidence_bid TEXT,
+  price_evidence_bid TEXT,
+  best_grade TEXT NOT NULL,
+  compact_grade TEXT NOT NULL CHECK (compact_grade IN ('A','B','C','C?','U','X')),
+  verification_level TEXT NOT NULL,
+  scope_status TEXT NOT NULL,
+  representative_area_m2 REAL,
+  representative_construction_cost_usd REAL,
+  representative_amount_stage TEXT,
+  screening_unit_usd_m2 REAL,
+  unit_cost_allowed_use TEXT NOT NULL,
+  direct_future_estimate_ready INTEGER NOT NULL CHECK (direct_future_estimate_ready IN (0,1)),
+  screening_sample_weight INTEGER NOT NULL CHECK (screening_sample_weight IN (0,1)),
+  direct_estimate_sample_weight INTEGER NOT NULL CHECK (direct_estimate_sample_weight IN (0,1)),
+  related_other_package_grade TEXT,
+  related_other_package_bid TEXT,
+  related_other_package_note TEXT,
+  duplicate_and_scope_warning TEXT,
+  grade_detail TEXT,
+  source_url TEXT,
+  grade_system_version TEXT NOT NULL,
+  audit_date TEXT NOT NULL
+);
+
+CREATE TABLE area_cost_review_summary (
+  audit_date TEXT PRIMARY KEY,
+  schema_version TEXT NOT NULL,
+  grade_system_version TEXT NOT NULL,
+  notice_rows INTEGER NOT NULL,
+  bid_base_groups INTEGER NOT NULL,
+  project_rows INTEGER NOT NULL,
+  summary_json TEXT NOT NULL
+);
+
 CREATE TABLE fee_benchmarks (
   fee_id INTEGER PRIMARY KEY AUTOINCREMENT,
   bid_no TEXT,
@@ -269,12 +396,17 @@ CREATE INDEX idx_documents_bid ON documents(bid_no);
 CREATE INDEX idx_evidence_bid_category ON evidence(bid_no, category);
 CREATE INDEX idx_reviewed_country_type ON reviewed_cases(country, facility_type, work_type);
 CREATE INDEX idx_reviewed_notice_date ON reviewed_cases(notice_date);
+CREATE INDEX idx_area_cost_notice_project_grade
+  ON area_cost_notice_review(project_no, compact_grade);
+CREATE INDEX idx_area_cost_notice_country_role
+  ON area_cost_notice_review(country_ko, scope_role);
+CREATE INDEX idx_area_cost_project_country_grade
+  ON area_cost_project_review(country_ko, compact_grade);
 CREATE INDEX idx_price_source_country_priority
   ON price_index_sources(country, priority);
 CREATE INDEX idx_price_values_period ON price_index_values(period);
 CREATE INDEX idx_normalization_bid_target
   ON normalization_runs(bid_no, target_period);
-
 CREATE VIEW v_sample_coverage AS
 SELECT
   country,
@@ -298,6 +430,40 @@ SELECT
   SUM(CASE WHEN normalization_status = '미보정' THEN 1 ELSE 0 END) AS unnormalized_count
 FROM reviewed_cases
 GROUP BY substr(notice_date, 1, 4);
+
+CREATE VIEW v_area_cost_ready_projects AS
+SELECT
+  project_no,
+  country_ko,
+  project_name,
+  best_grade,
+  verification_level,
+  scope_status,
+  representative_area_m2,
+  representative_construction_cost_usd,
+  representative_amount_stage,
+  screening_unit_usd_m2,
+  unit_cost_allowed_use,
+  display_representative_bid,
+  direct_future_estimate_ready,
+  screening_sample_weight,
+  'A/B는 BOQ 준비도, C는 초기 스크리닝; 현지단가·물가·환율·범위 보정 필요' AS use_warning
+FROM area_cost_project_review
+WHERE compact_grade IN ('A','B','C');
+
+CREATE VIEW v_area_cost_followup_queue AS
+SELECT
+  project_no,
+  country_ko,
+  project_name,
+  best_grade,
+  verification_level,
+  scope_status,
+  display_representative_bid,
+  duplicate_and_scope_warning,
+  grade_detail
+FROM area_cost_project_review
+WHERE compact_grade IN ('C?','U');
 
 CREATE VIEW v_duplicate_attachments AS
 SELECT sha256, COUNT(*) AS copies, SUM(bytes) AS total_bytes
@@ -345,6 +511,7 @@ WHERE c.actual_observation_count >= 2
     WHERE c2.country = c.country
       AND c2.actual_observation_count >= 2
   );
+
 """
 
 
@@ -456,6 +623,135 @@ def insert_dataset(connection: sqlite3.Connection, spec: dict) -> None:
     )
 
 
+def insert_area_cost_review(connection: sqlite3.Connection) -> None:
+    review_root = ROOT / "outputs" / "koica-area-cost-review"
+    notice_rows = load_csv(review_root / "KOICA_면적금액_170공고_재검토.csv")
+    group_rows = load_csv(review_root / "KOICA_면적금액_154공고군_재검토.csv")
+    project_rows = load_csv(review_root / "KOICA_면적금액_91사업_재검토.csv")
+    summary = load(review_root / "KOICA_면적금액_170공고_91사업_재검토_요약.json")
+    if (len(notice_rows), len(group_rows), len(project_rows)) != (170, 154, 91):
+        raise RuntimeError(
+            "area-cost review universe must be 170 notices / 154 bid groups / 91 projects"
+        )
+
+    notice_fields = [
+        "bid_no", "project_no", "bid_base_no", "package_id", "notice_date",
+        "country_ko", "title", "scope_role", "record_cost_semantics",
+        "record_scope_status", "same_scope_status", "notice_ceiling_usd",
+        "selected_construction_cost_usd", "amount_stage", "selected_area_m2",
+        "area_semantics", "area_aggregation", "screening_unit_usd_m2",
+        "notice_ceiling_to_selected_gap_pct", "final_grade", "compact_grade",
+        "verification_level", "unit_cost_allowed_use",
+        "direct_future_estimate_ready", "sample_weight_notice",
+        "is_bid_base_representative", "is_project_display_representative",
+        "legacy_reviewed_case", "strict_attachment_review",
+        "indexed_attachment_count", "spreadsheet_count", "boq_named_file_count",
+        "quantity_table_file_count", "priced_table_file_count", "grade_detail",
+        "manual_note", "amount_source_file", "amount_source_locator",
+        "area_source_file", "area_source_locator", "area_quote", "source_url",
+        "grade_system_version", "audit_date",
+    ]
+    notice_float_fields = {
+        "notice_ceiling_usd", "selected_construction_cost_usd",
+        "selected_area_m2", "screening_unit_usd_m2",
+        "notice_ceiling_to_selected_gap_pct",
+    }
+    notice_int_fields = {
+        "direct_future_estimate_ready", "sample_weight_notice",
+        "is_bid_base_representative", "is_project_display_representative",
+        "legacy_reviewed_case", "strict_attachment_review",
+        "indexed_attachment_count", "spreadsheet_count", "boq_named_file_count",
+        "quantity_table_file_count", "priced_table_file_count",
+    }
+    connection.executemany(
+        f"INSERT INTO area_cost_notice_review ({','.join(notice_fields)}) "
+        f"VALUES ({','.join('?' for _ in notice_fields)})",
+        [
+            tuple(
+                nullable_float(row[field]) if field in notice_float_fields
+                else nullable_int(row[field]) if field in notice_int_fields
+                else row[field]
+                for field in notice_fields
+            )
+            for row in notice_rows
+        ],
+    )
+
+    group_fields = [
+        "bid_base_no", "project_no", "country_ko", "notice_count", "bid_nos",
+        "representative_bid_no", "latest_notice_date", "representative_title",
+        "best_grade", "scope_role", "same_scope_status", "area_m2",
+        "construction_cost_usd", "screening_unit_usd_m2", "duplicate_rule",
+    ]
+    group_float_fields = {
+        "area_m2", "construction_cost_usd", "screening_unit_usd_m2",
+    }
+    connection.executemany(
+        f"INSERT INTO area_cost_bid_group_review ({','.join(group_fields)}) "
+        f"VALUES ({','.join('?' for _ in group_fields)})",
+        [
+            tuple(
+                nullable_float(row[field]) if field in group_float_fields
+                else nullable_int(row[field]) if field == "notice_count"
+                else row[field]
+                for field in group_fields
+            )
+            for row in group_rows
+        ],
+    )
+
+    project_fields = [
+        "project_no", "country_ko", "project_name", "notice_count",
+        "bid_base_group_count", "valid_area_cost_notice_count", "valid_bid_nos",
+        "all_bid_nos", "display_representative_bid", "technical_evidence_bid",
+        "price_evidence_bid", "best_grade", "compact_grade", "verification_level",
+        "scope_status", "representative_area_m2",
+        "representative_construction_cost_usd", "representative_amount_stage",
+        "screening_unit_usd_m2", "unit_cost_allowed_use",
+        "direct_future_estimate_ready", "screening_sample_weight",
+        "direct_estimate_sample_weight", "related_other_package_grade",
+        "related_other_package_bid", "related_other_package_note",
+        "duplicate_and_scope_warning", "grade_detail", "source_url",
+        "grade_system_version", "audit_date",
+    ]
+    project_float_fields = {
+        "representative_area_m2", "representative_construction_cost_usd",
+        "screening_unit_usd_m2",
+    }
+    project_int_fields = {
+        "notice_count", "bid_base_group_count", "valid_area_cost_notice_count",
+        "direct_future_estimate_ready", "screening_sample_weight",
+        "direct_estimate_sample_weight",
+    }
+    connection.executemany(
+        f"INSERT INTO area_cost_project_review ({','.join(project_fields)}) "
+        f"VALUES ({','.join('?' for _ in project_fields)})",
+        [
+            tuple(
+                nullable_float(row[field]) if field in project_float_fields
+                else nullable_int(row[field]) if field in project_int_fields
+                else row[field]
+                for field in project_fields
+            )
+            for row in project_rows
+        ],
+    )
+
+    universe = summary["universe"]
+    connection.execute(
+        """INSERT INTO area_cost_review_summary
+        (audit_date,schema_version,grade_system_version,notice_rows,
+         bid_base_groups,project_rows,summary_json)
+        VALUES (?,?,?,?,?,?,?)""",
+        (
+            summary["audit_date"], summary["schema_version"],
+            summary["grade_system_version"], universe["notice_rows"],
+            universe["bid_base_groups"], universe["project_rows"],
+            json.dumps(summary, ensure_ascii=False, sort_keys=True),
+        ),
+    )
+
+
 def main() -> None:
     OUTPUT.mkdir(parents=True, exist_ok=True)
     DB_PATH.unlink(missing_ok=True)
@@ -464,6 +760,7 @@ def main() -> None:
         connection.executescript(SCHEMA)
         for spec in DATASETS:
             insert_dataset(connection, spec)
+        insert_area_cost_review(connection)
         reviewed = load(OUTPUT / "reviewed_cases_2016_2025.json")
         fields = list(reviewed[0])
         connection.executemany(
@@ -499,7 +796,6 @@ def main() -> None:
         index_documents = []
         for name in (
             "price_indices_national.json",
-            "price_indices_world_bank.json",
         ):
             path = ROOT / "data" / "manifests" / name
             if path.exists():
@@ -556,7 +852,7 @@ def main() -> None:
                     row["country"], row["iso3"], row.get("candidate_priority"),
                     row.get("candidate_name", ""), row["provider"],
                     row["source_url"], row["status"],
-                    int(bool(row["fallback_loaded"])), audit["audited_at"],
+                    0, audit["audited_at"],
                 )
                 for row in audit["countries"]
             ],
@@ -564,8 +860,9 @@ def main() -> None:
         connection.executemany(
             "INSERT INTO metadata VALUES (?,?)",
             [
-                ("schema_version", "1.2"),
+                ("schema_version", "1.6"),
                 ("coverage", "2016-01-01/2025-12-31"),
+                ("data_scope", "KOICA procurement and official national indices only"),
                 ("source_of_truth", "SQLite"),
                 (
                     "price_treatment",
@@ -578,6 +875,12 @@ def main() -> None:
                     "> GDP 디플레이터 > CPI",
                 ),
                 ("recommended_unit_rate_count", "0"),
+                ("area_cost_review_notice_count", "170"),
+                ("area_cost_review_project_count", "91"),
+                (
+                    "area_cost_review_boundary",
+                    "170공고/154공고군/91사업; A/B는 BOQ 준비도, C는 스크리닝, C?는 원본확인 대기",
+                ),
                 ("usage_warning", "현지 견적·BOQ·물가보정 없이 미래 사업 단가로 직접 사용 금지"),
             ],
         )
@@ -596,6 +899,8 @@ def main() -> None:
             for table in (
                 "bids", "details", "projects", "attachments", "documents",
                 "evidence", "reviewed_cases", "fee_benchmarks",
+                "area_cost_notice_review", "area_cost_bid_group_review",
+                "area_cost_project_review", "area_cost_review_summary",
                 "price_index_policy", "price_index_sources",
                 "price_index_values", "national_index_source_audit",
                 "normalization_runs",

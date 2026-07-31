@@ -1,10 +1,10 @@
 {
   "unpack": {
-    "reused": 63,
-    "unpacked": 123
+    "reused": 266,
+    "nested_reused": 80
   },
-  "source_files": 2034,
-  "indexed_files": 2029,
-  "evidence_records": 2800,
-  "errors": 5
+  "source_files": 3034,
+  "indexed_files": 3034,
+  "evidence_records": 3639,
+  "errors": 0
 }

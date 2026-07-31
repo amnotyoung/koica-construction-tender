@@ -1,0 +1,37 @@
+{
+  "keyInspection": "{\"kind\":\"table\",\"sheet\":\"판정\",\"address\":\"A1:L23\",\"rows\":23,\"cols\":12,\"values\":[[\"KOICA-only 건축비 데이터 복원 판정\",null,null,null,null,null,null,null,null,null,null,null],[\"결론: KOICA 공개자료만으로도 수량×설계견적 단가 수준의 벤치마크를 만들 수 있습니다. 실제 계약·준공단가는 아직 별도 확보가 필요합니다.\",null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[\"숨김 단가\",null,null,\"BOQ 결합 항목\",null,null,\"항목 복원률\",null,null,\"복원 건축 Bill\",null,null],[644,null,null,561,null,null,1,null,null,8372712.422776783,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[\"핵심 개선: 기존 ‘입찰한도÷연면적’ 수준에서, 355개 고유 품목코드의 재료·노무·경비 단가와 561개 설계수량을 직접 결합하는 단계로 올라갔습니다.\",null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[\"시설\",\"항목수\",\"복원액 USD\",null,null,null,null,null,null,null,null,null],[\"병원\",377,3237630.6756702187,null,null,null,null,null,null,null,null,null],[\"기계·전기동\",136,4936190.372168406,null,null,null,null,null,null,null,null,null],[\"연결교량\",48,198891.37493816187,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[null,null,null,null,null,null,null,null,null,null,null,null],[\"비교지표\",\"값\",\"해석\",null,null,null,null,null,null,null,null,null],[\"복원 건축비/㎡\",1526.1962126826072,\"Bill No.01만 포함\",null,null,null,null,null,null,null,null,null],[\"현지입찰 한도/㎡\",2423.0461173897193,\"전체 입찰 범위 상한\",null,null,null,null,null,null,null,null,null],[\"건축 Bill/한도\",0.6298667622252011,\"63%는 범위차 포함\",null,null,null,null,null,null,null,null,null],[\"중첩자료 색인\",1005,\"중첩 위치 파일 확인·색인\",null,null,null,null,null,null,null,null,null]]}",
+  "formulaErrors": "{\"kind\":\"notice\",\"message\":\"Cell search matched 0 entries.\"}",
+  "previews": [
+    {
+      "sheetName": "판정",
+      "range": "A1:L26",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/ikhcc-previews/판정.png"
+    },
+    {
+      "sheetName": "미래사업 적용",
+      "range": "A1:H27",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/ikhcc-previews/미래사업 적용.png"
+    },
+    {
+      "sheetName": "시설·공종 요약",
+      "range": "A1:J45",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/ikhcc-previews/시설·공종 요약.png"
+    },
+    {
+      "sheetName": "BOQ 수량·단가",
+      "range": "A1:V25",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/ikhcc-previews/BOQ 수량·단가.png"
+    },
+    {
+      "sheetName": "숨김 단가 라이브러리",
+      "range": "A1:Q25",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/ikhcc-previews/숨김 단가 라이브러리.png"
+    },
+    {
+      "sheetName": "회수감사·한계",
+      "range": "A1:H33",
+      "previewPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/ikhcc-previews/회수감사·한계.png"
+    }
+  ],
+  "outputPath": "/Users/nomadresearch/Documents/Claude/Projects/koica-construction-tender/outputs/koica-only-pilot/KOICA_only_IKHCC_숨김설계단가_복원.xlsx"
+}
