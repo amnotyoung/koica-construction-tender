@@ -3,7 +3,7 @@
 기준 SQLite는 GitHub 저장소에서 직접 내려받을 수 있다.
 
 - [KOICA 건축사업 사례DB 2016-2025](KOICA_건축사업_사례DB_2016-2025.sqlite)
-- SHA-256: `81e09f882c2859a06eec85c090ae9c96064686d615710046358703fc0f27fa67`
+- SHA-256: `641dc86399c3b80be152b3a7a60ab8939349ce153c4957586774dce1150cb3f2`
 - SQLite 직접 조회, Supabase 공개 조회, 향후 MCP·플러그인 이용 방법:
   [`../../docs/public-data-access.md`](../../docs/public-data-access.md)
 

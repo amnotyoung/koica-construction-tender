@@ -1,13 +1,13 @@
 {
   "package": "KOICA_건축사업_사례데이터_배포패키지_2016-2025.zip",
-  "created_at": "2026-07-31T23:21:54+00:00",
+  "created_at": "2026-08-08T23:14:33+00:00",
   "source_of_truth": "KOICA_건축사업_사례DB_2016-2025.sqlite",
   "raw_attachments_included": false,
   "files": [
     {
       "name": "KOICA_건축사업_사례DB_2016-2025.sqlite",
       "bytes": 7872512,
-      "sha256": "81e09f882c2859a06eec85c090ae9c96064686d615710046358703fc0f27fa67"
+      "sha256": "641dc86399c3b80be152b3a7a60ab8939349ce153c4957586774dce1150cb3f2"
     },
     {
       "name": "KOICA_건축사업_사례라이브러리_2016-2025.xlsx",
@@ -41,8 +41,8 @@
     },
     {
       "name": "README.md",
-      "bytes": 8931,
-      "sha256": "c9eb35190a5bdee19f483ba3c67c7aa8e2e6dd11a785b1a5104c10ba3237bfb6"
+      "bytes": 9571,
+      "sha256": "137f8078aee4a91648ff0682b73f8fe2c7e1ecb5387686ec4257434b65a47820"
     }
   ]
 }

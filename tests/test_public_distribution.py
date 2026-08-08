@@ -17,7 +17,7 @@ README = (ROOT / "README.md").read_text(encoding="utf-8")
 PUBLIC_ACCESS_DOC = (ROOT / "docs" / "public-data-access.md").read_text(
     encoding="utf-8"
 )
-EXPECTED_SHA256 = "81e09f882c2859a06eec85c090ae9c96064686d615710046358703fc0f27fa67"
+EXPECTED_SHA256 = "641dc86399c3b80be152b3a7a60ab8939349ce153c4957586774dce1150cb3f2"
 
 
 class PublicDistributionTests(unittest.TestCase):

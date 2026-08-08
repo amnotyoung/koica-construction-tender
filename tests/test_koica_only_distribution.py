@@ -149,6 +149,27 @@ class KoicaOnlyDistributionTest(unittest.TestCase):
             )
             self.assertEqual(actual, recorded)
 
+    def test_fergana_project_country_matches_the_koica_source(self):
+        project_rows = self.connection.execute(
+            """SELECT bid_no, country_ko, country_en
+               FROM projects
+               WHERE project_no = '2017-07115'
+               ORDER BY bid_no"""
+        ).fetchall()
+        self.assertEqual(
+            project_rows,
+            [
+                ("L2018-00015-1", "우즈베키스탄", "Uzbekistan"),
+                ("L2019-00021-1", "우즈베키스탄", "Uzbekistan"),
+            ],
+        )
+        self.assertEqual(
+            self.connection.execute(
+                "SELECT country FROM reviewed_cases WHERE project_no = '2017-07115'"
+            ).fetchone()[0],
+            "Uzbekistan",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -41,7 +41,7 @@ manifest에 기록된 상대경로, 원문 URL, SHA-256으로 추적한다.
 [KOICA 건축사업 사례DB 2016-2025](outputs/koica-construction-distribution/KOICA_건축사업_사례DB_2016-2025.sqlite)를
 내려받아 SQLite, DB Browser for SQLite, Python, R 등 원하는 도구로 조회할 수
 있다. 기준 DB의 SHA-256은
-`81e09f882c2859a06eec85c090ae9c96064686d615710046358703fc0f27fa67`이다.
+`641dc86399c3b80be152b3a7a60ab8939349ce153c4957586774dce1150cb3f2`이다.
 
 ```bash
 sqlite3 "KOICA_건축사업_사례DB_2016-2025.sqlite"
