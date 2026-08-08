@@ -38,6 +38,10 @@ COUNTRIES = {
     "솔로몬": "Solomon Islands", "부탄": "Bhutan", "조지아": "Georgia",
 }
 
+COUNTRY_ALIASES = {
+    "우즈벡": ("우즈베키스탄", "Uzbekistan"),
+}
+
 FACILITIES = {
     "병원": ("병원", "의료원", "보건소", "health center", "hospital", "clinic"),
     "학교·교육시설": ("학교", "교실", "교육센터", "school", "classroom", "training center"),
@@ -565,10 +569,22 @@ def is_source_document(relative_path: Path) -> bool:
 
 def find_country(text: str) -> tuple[str, str]:
     lowered = text.lower()
+    matches: list[tuple[int, str, str]] = []
     for korean, english in COUNTRIES.items():
         if korean in text or english.lower() in lowered:
-            return korean, english
-    return "", ""
+            matched_length = max(
+                len(marker)
+                for marker in (korean, english)
+                if marker in text or marker.lower() in lowered
+            )
+            matches.append((matched_length, korean, english))
+    for alias, (korean, english) in COUNTRY_ALIASES.items():
+        if alias in text:
+            matches.append((len(alias), korean, english))
+    if not matches:
+        return "", ""
+    _, korean, english = max(matches, key=lambda match: match[0])
+    return korean, english
 
 
 def classify_facility(text: str) -> str:

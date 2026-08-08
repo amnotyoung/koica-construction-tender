@@ -9,6 +9,7 @@ from openpyxl import Workbook
 
 from scripts.extract_construction_evidence import (
     docx_chunks,
+    find_country,
     is_source_document,
     numeric_tokens,
     pptx_chunks,
@@ -213,6 +214,25 @@ class NumericTokenTests(unittest.TestCase):
             numeric_tokens("Allowance $30.00")["currencies"],
             ["$ 30.00"],
         )
+
+
+class CountryDetectionTests(unittest.TestCase):
+    def test_specific_country_wins_over_country_substring_in_place_name(self) -> None:
+        text = (
+            "우즈벡 페르가나 직업훈련원 건립사업 "
+            "우즈베키스탄 페르가나 직업훈련원 신축공사 "
+            "Fergana City, Uzbekistan"
+        )
+        self.assertEqual(find_country(text), ("우즈베키스탄", "Uzbekistan"))
+
+    def test_uzbek_alias_is_not_misread_as_ghana_inside_fergana(self) -> None:
+        self.assertEqual(
+            find_country("우즈벡 페르가나 직업훈련원 건립사업"),
+            ("우즈베키스탄", "Uzbekistan"),
+        )
+
+    def test_ghana_is_still_detected(self) -> None:
+        self.assertEqual(find_country("가나 관개지구 개선사업"), ("가나", "Ghana"))
 
 
 if __name__ == "__main__":
