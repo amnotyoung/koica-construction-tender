@@ -1,5 +1,12 @@
 # KOICA 건축사업 사례 데이터 배포 패키지
 
+기준 SQLite는 GitHub 저장소에서 직접 내려받을 수 있다.
+
+- [KOICA 건축사업 사례DB 2016-2025](KOICA_건축사업_사례DB_2016-2025.sqlite)
+- SHA-256: `81e09f882c2859a06eec85c090ae9c96064686d615710046358703fc0f27fa67`
+- SQLite 직접 조회, Supabase 공개 조회, 향후 MCP·플러그인 이용 방법:
+  [`../../docs/public-data-access.md`](../../docs/public-data-access.md)
+
 ## 무엇을 배포하는가
 
 배포의 기준 파일은 `KOICA_건축사업_사례DB_2016-2025.sqlite`이다.
@@ -21,6 +28,10 @@ XLSX는 비전문가 열람용 스냅샷이며 수정 원본으로 사용하지 
 원 첨부파일 약 1.67GB는 이 경량 배포 ZIP에 포함하지 않는다. 원문 보존용
 내부 아카이브로 별도 관리하며, DB의 `attachments.relative_path`,
 `attachments.sha256`, `details.detail_url`로 추적한다.
+
+`evidence`에는 공개 조달문서에서 자동 추출한 근거 문장과 원문에 기재된
+담당자명·이메일·전화번호가 포함될 수 있다. 연락처는 원문 근거 확인 외의
+목적으로 사용하지 않는다.
 
 ## 데이터 규모
 
