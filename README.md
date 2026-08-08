@@ -2,6 +2,8 @@
 
 KOICA 전자조달 현지입찰 공고와 첨부문서에서 건축사업 관련 정보를
 수집·구조화하여 미래 사업의 건축조사에 참고할 수 있도록 만든 프로젝트다.
+데이터의 원 출처는
+[KOICA 전자조달 현지입찰공고 목록](https://nebid.koica.go.kr/oep/lobi/localBidManageList.do?P_PRCURE_BSNS_SE_CD=ABID)이다.
 
 과거 사례 단가는 미래 사업의 직접 산정값이 아니라 교차검증 자료로 사용한다.
 최종 사업비는 현지 QS 개략견적, BOQ, 시공사 견적, 물가·환율·세금 및
