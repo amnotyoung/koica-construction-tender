@@ -3,7 +3,7 @@
 기준 SQLite는 GitHub 저장소에서 직접 내려받을 수 있다.
 
 - [KOICA 건축사업 사례DB 2016-2025](KOICA_건축사업_사례DB_2016-2025.sqlite)
-- SHA-256: `641dc86399c3b80be152b3a7a60ab8939349ce153c4957586774dce1150cb3f2`
+- SHA-256: `9546ff7f35ebbb42c5b3f7a068a42e2059e507b4a77cc5bb331dc9c2284a538d`
 - SQLite 직접 조회, Supabase 공개 조회, 향후 MCP·플러그인 이용 방법:
   [`../../docs/public-data-access.md`](../../docs/public-data-access.md)
 
@@ -11,7 +11,7 @@
 
 배포의 기준 파일은 `KOICA_건축사업_사례DB_2016-2025.sqlite`이다.
 XLSX는 비전문가 열람용 스냅샷이며 수정 원본으로 사용하지 않는다.
-기준 DB에는 KOICA 공고·첨부·추출근거와 국가 공식 가격지수만 적재하며,
+기준 DB에는 KOICA 공고·첨부·추출근거, 동일사업 종료평가의 건축 근거와 국가 공식 가격지수만 적재하며,
 외부 공여기관의 사업·계약·거시지표는 포함하지 않는다.
 
 | 파일 | 용도 |
@@ -21,6 +21,8 @@ XLSX는 비전문가 열람용 스냅샷이며 수정 원본으로 사용하지 
 | `KOICA_건축사업_검토사례_2016-2025.csv` | R·Python·통계도구 분석 |
 | `KOICA_국가별_가격지수_적용현황_28개국.csv` | 28개국 공식지수 후보·국가 공식 시계열 적재상태 확인 |
 | `reviewed_cases_2016_2025.json` | API·웹서비스 연계용 검토사례 |
+| `data/manifests/koica_endline_evaluation_reports.json` | 로컬 종료평가 333개 파일감사·공식 목록 586건 스크리닝 메타데이터·동일사업 매칭·페이지 근거 manifest(ZIP 안 경로) |
+| `data/manifests/koica_evaluation_report_index_2026-08-09.json` | KOICA 공식 목록 66페이지·586건의 게시물 ID·목록 페이지·제목 재현 스냅샷 |
 | `DEMO_네팔_직업교육시설_3000m2.md` | 다국가 재사용 구조를 적용한 네팔 완성 예시 |
 | `TEMPLATE_국가별_건축사업비_산정.md` | 국가·시설·가격기준일별 입력·판정·보고서 템플릿 |
 | `README.md` | 활용법·제약·데이터 구조 |
@@ -28,6 +30,9 @@ XLSX는 비전문가 열람용 스냅샷이며 수정 원본으로 사용하지 
 원 첨부파일 약 1.67GB는 이 경량 배포 ZIP에 포함하지 않는다. 원문 보존용
 내부 아카이브로 별도 관리하며, DB의 `attachments.relative_path`,
 `attachments.sha256`, `details.detail_url`로 추적한다.
+
+종료평가 원문 PDF도 ZIP과 Git에 포함하지 않는다. manifest와 DB에는 파일명,
+SHA-256, 페이지 수, 텍스트/OCR 상태와 짧은 공개 승인 근거만 저장한다.
 
 `evidence`에는 공개 조달문서에서 자동 추출한 근거 문장과 원문에 기재된
 담당자명·이메일·전화번호가 포함될 수 있다. 연락처는 원문 근거 확인 외의
@@ -47,6 +52,10 @@ XLSX는 비전문가 열람용 스냅샷이며 수정 원본으로 사용하지 
 - 가격지수 국가 감사: 28개국
 - 국가 공식 가격지수: 3개국 3개 소스·실제 관측값 60건
 - 환율 관측값: 미적재
+- 종료평가 원자료 감사: 로컬 PDF 333개(중복 물리파일 1개, OCR 필요 3개)·KOICA 공식 목록 586건 스냅샷 및 인덱스 다이제스트 기록
+- 종료평가 사업 스크리닝: DB 고유 사업번호 175개 전체(비용감사 표본 91개·공사계약 보유 109개·건축후보 149개 플래그 보존)
+- 동일사업 종료평가: 보고서 42개(로컬 22개·공식 첨부 20개)·45개 사업에 46건 연결
+- 종료평가 건축 근거: 물리 PDF 페이지로 검증한 158건
 
 ## 핵심 원칙
 
@@ -82,6 +91,12 @@ XLSX는 비전문가 열람용 스냅샷이며 수정 원본으로 사용하지 
 | `area_cost_bid_group_review` | 동일 `bid_base_no`로 묶은 154개 재공고군 |
 | `area_cost_project_review` | 복수 패키지를 보존한 91개 사업별 대표 근거와 A/B/C?/U/X |
 | `area_cost_review_summary` | 전수감사 기준·건수·등급정의 JSON 스냅샷 |
+| `evaluation_field_definitions` | 종료평가 건축 필드 19개 정의와 허용 단위 |
+| `evaluation_corpus_files` | 종료평가 PDF 333개 파일·해시·페이지·텍스트/OCR·중복 감사 |
+| `evaluation_reports` | 동일사업으로 채택한 종료평가 보고서 42개(로컬 22개·KOICA 공식 첨부 20개) |
+| `evaluation_project_matches` | 보고서와 DB 사업번호의 수동 승인 매칭 46개 |
+| `evaluation_project_screening` | 고유 사업번호 175개 전체의 범위 플래그·매칭·미채택 상태와 주의문 |
+| `evaluation_findings` | 물리 PDF 페이지로 검증한 건축 주요 근거 158건 |
 | `fee_benchmarks` | 설계·감리 비용사례 |
 | `price_index_policy` | 건설지수부터 CPI까지 5단계 선택 원칙 |
 | `price_index_sources` | 국가·지수별 제공기관·주기·URL·품질정보 |
@@ -91,6 +106,7 @@ XLSX는 비전문가 열람용 스냅샷이며 수정 원본으로 사용하지 
 
 조회용 VIEW는 `v_sample_coverage`, `v_yearly_inventory`,
 `v_area_cost_ready_projects`, `v_area_cost_followup_queue`,
+`v_project_evaluation_findings`,
 `v_duplicate_attachments`, `v_price_index_coverage`,
 `v_best_available_price_index`이다.
 
@@ -130,6 +146,21 @@ ORDER BY notice_date DESC;
 SELECT category, source_file, source_locator, evidence_text
 FROM evidence
 WHERE bid_no = 'L2022-00029-1';
+
+-- 종료평가에서 확인한 건축범위·일정·품질·유지관리 근거
+SELECT project_no, country_ko, project_name, report_title,
+       category, field_code, summary_text,
+       pdf_page_start, evidence_excerpt
+FROM v_project_evaluation_findings
+WHERE project_no = '2014-00024'
+ORDER BY pdf_page_start, finding_id;
+
+-- OCR이 선행되어야 하는 저텍스트 보고서 파일
+SELECT source_file, page_count, meaningful_text_char_count,
+       text_page_coverage
+FROM evaluation_corpus_files
+WHERE extraction_status = 'ocr_required'
+ORDER BY source_file;
 
 -- 국가별 현재 선택 가능한 최고 우선순위 실제 지수
 SELECT country, priority, index_class, series_name,
@@ -172,3 +203,19 @@ ORDER BY country;
 - 재공고와 동일 사업의 설계·시공 단계는 별도 공고로 저장하되
   분석 시 중복 여부를 표시한다.
 - XLSX와 CSV는 SQLite 갱신 후 다시 생성하는 배포 스냅샷이다.
+- 종료평가 미매칭 상태는 보고서 부재 판정이 아니다. 스캔형·명칭 변형·코퍼스
+  범위 밖 자료가 있을 수 있어 `evaluation_project_screening.note`를 함께 본다.
+- 선행·후속 단계나 비슷한 사업명은 동일사업 근거로 연결하지 않는다.
+
+종료평가 자료를 다시 검증·적재할 때는 로컬 원문 디렉터리와 공식 첨부 PDF의
+감사 캐시 디렉터리를 인수로 지정한다. 첫 명령은 로컬 333개의 무결성·OCR
+상태와 공식 첨부의 해시·수동 검토 근거 페이지를 검증해 휴대용 manifest를
+만들고, 두 번째 명령은 임시 DB 검증 후 기준 DB를 원자적으로 교체한다.
+
+```bash
+python3 scripts/ingest_koica_evaluation_reports.py \
+  --report-dir "/path/to/KOICA 종료평가보고서(1)" \
+  --official-cache-dir "/path/to/hash-audited-koica-official-pdfs"
+python3 scripts/build_sqlite_distribution.py
+python3 scripts/package_distribution.py
+```

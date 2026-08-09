@@ -1,9 +1,10 @@
 # KOICA 건축사업 사례 데이터
 
-KOICA 전자조달 현지입찰 공고와 첨부문서에서 건축사업 관련 정보를
-수집·구조화하여 미래 사업의 건축조사에 참고할 수 있도록 만든 프로젝트다.
+KOICA 전자조달 현지입찰 공고·첨부문서와 종료평가보고서에서 건축사업 관련
+정보를 수집·구조화하여 미래 사업의 건축조사에 참고할 수 있도록 만든 프로젝트다.
 데이터의 원 출처는
-[KOICA 전자조달 현지입찰공고 목록](https://nebid.koica.go.kr/oep/lobi/localBidManageList.do?P_PRCURE_BSNS_SE_CD=ABID)이다.
+[KOICA 전자조달 현지입찰공고 목록](https://nebid.koica.go.kr/oep/lobi/localBidManageList.do?P_PRCURE_BSNS_SE_CD=ABID)과
+[KOICA 사업평가보고서 목록](https://www.koica.go.kr/sites/evaluation_kr/article/list/15/1)이다.
 
 과거 사례 단가는 미래 사업의 직접 산정값이 아니라 교차검증 자료로 사용한다.
 최종 사업비는 현지 QS 개략견적, BOQ, 시공사 견적, 물가·환율·세금 및
@@ -31,7 +32,7 @@ manifest에 기록된 상대경로, 원문 URL, SHA-256으로 추적한다.
 `outputs/koica-construction-distribution/KOICA_건축사업_사례DB_2016-2025.sqlite`
 이다. XLSX와 CSV는 열람·분석용 스냅샷이며, 자세한 사용법과 제약은 같은
 디렉터리의 `README.md`를 따른다.
-기준 DB에는 KOICA 공고·첨부·추출근거와 국가 공식 가격지수만 포함하며,
+기준 DB에는 KOICA 공고·첨부·추출근거, 동일사업 종료평가의 건축 근거와 국가 공식 가격지수만 포함하며,
 외부 공여기관의 사업·계약·거시지표는 적재하지 않는다.
 
 ## 공개 이용 방법
@@ -42,7 +43,8 @@ Supabase Data API의 공개 뷰와 읽기 전용 RPC를 publishable key로 호�
 있다. 발행된 사례 156건과 관련 공고 295건이 공개되어 있으며 쓰기와 동기화
 권한은 공개하지 않는다. 대부분의 사용자는 DB를 내려받거나 Supabase SDK를
 설치할 필요 없이 웹 브라우저, `curl` 등 HTTP를 지원하는 도구로 바로 조회할
-수 있으므로 이 방식을 권장한다.
+수 있으므로 이 방식을 권장한다. 종료평가 테이블은 현재 SQLite 배포에만 있고
+Supabase 공개 검색 스냅샷에는 투영하지 않는다.
 
 - Project URL: `https://syzvicjmwnqennthhhcv.supabase.co`
 - Publishable key: `sb_publishable_N2e3PjwiSxGl3MkJokCD-Q_ap6BkmMb`
@@ -55,7 +57,17 @@ SQL을 실행해야 할 때는
 내려받아 SQLite, DB Browser for SQLite, Python, R 등 원하는 도구로 조회할 수
 있다. Python의 `sqlite3`는 일반적인 Python 배포판에 포함된 표준 라이브러리이므로
 별도 `pip` 설치가 필요 없다. 기준 DB의 SHA-256은
-`641dc86399c3b80be152b3a7a60ab8939349ce153c4957586774dce1150cb3f2`이다.
+`9546ff7f35ebbb42c5b3f7a068a42e2059e507b4a77cc5bb331dc9c2284a538d`이다.
+
+로컬 종료평가 코퍼스 PDF 333개와 KOICA 공식 평가정보 목록 586건을 DB의
+고유 사업번호 175개 전체와 대조했다. 동일사업 종료평가 42개(로컬 22개·공식
+첨부 20개)를 45개 사업에 46건 연결하고, 건축 관련 물리 페이지 근거 158건을
+적재했다. 175개는 누락 회수를 우선한 스크리닝 모집단이며, 비용감사 표본
+91개·공사계약 보유 109개·건축후보 149개 여부를 별도 플래그로 보존한다.
+원문 PDF는 배포물에 넣지 않으며
+`data/manifests/koica_endline_evaluation_reports.json`에서 로컬 파일 해시·OCR
+필요 상태, 공식 목록 586행 스냅샷, 원문 URL과 매칭·페이지 근거를 감사할 수
+있다.
 
 ```bash
 sqlite3 "KOICA_건축사업_사례DB_2016-2025.sqlite"
@@ -87,3 +99,5 @@ MCP 도구에서 국가·시설유형·공사유형·연면적·검색어 기반
 - 연락처 정보는 원문 근거 확인 외의 목적으로 사용하지 않는다.
 - Supabase에는 공개 검색에 필요한 축약 사례와 관련 공고만 적재하며, 원문
   근거·파일경로·해시는 적재하지 않는다.
+- 종료평가의 `no_accepted_same_project_report`는 이 코퍼스에서 동일사업 매칭을
+  채택하지 않았다는 뜻이며 보고서가 존재하지 않는다는 판정이 아니다.
