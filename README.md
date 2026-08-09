@@ -36,25 +36,30 @@ manifest에 기록된 상대경로, 원문 URL, SHA-256으로 추적한다.
 
 ## 공개 이용 방법
 
-### 1. SQLite DB를 내려받아 직접 조회
+### 1. Supabase 공개 DB에 접근해 조회 (권장)
 
+Supabase Data API의 공개 뷰와 읽기 전용 RPC를 publishable key로 호출할 수
+있다. 발행된 사례 156건과 관련 공고 295건이 공개되어 있으며 쓰기와 동기화
+권한은 공개하지 않는다. 대부분의 사용자는 DB를 내려받거나 Supabase SDK를
+설치할 필요 없이 웹 브라우저, `curl` 등 HTTP를 지원하는 도구로 바로 조회할
+수 있으므로 이 방식을 권장한다.
+
+- Project URL: `https://syzvicjmwnqennthhhcv.supabase.co`
+- Publishable key: `sb_publishable_N2e3PjwiSxGl3MkJokCD-Q_ap6BkmMb`
+
+### 2. SQLite DB를 내려받아 직접 조회 (선택)
+
+전체 기준 데이터, 자동 추출 근거와 파일 색인을 확인하거나 오프라인에서 자유롭게
+SQL을 실행해야 할 때는
 [KOICA 건축사업 사례DB 2016-2025](outputs/koica-construction-distribution/KOICA_건축사업_사례DB_2016-2025.sqlite)를
 내려받아 SQLite, DB Browser for SQLite, Python, R 등 원하는 도구로 조회할 수
-있다. 기준 DB의 SHA-256은
+있다. Python의 `sqlite3`는 일반적인 Python 배포판에 포함된 표준 라이브러리이므로
+별도 `pip` 설치가 필요 없다. 기준 DB의 SHA-256은
 `641dc86399c3b80be152b3a7a60ab8939349ce153c4957586774dce1150cb3f2`이다.
 
 ```bash
 sqlite3 "KOICA_건축사업_사례DB_2016-2025.sqlite"
 ```
-
-### 2. Supabase 공개 DB에 접근해 조회
-
-Supabase Data API의 공개 뷰와 읽기 전용 RPC를 publishable key로 호출할 수
-있다. 발행된 사례 156건과 관련 공고 295건이 공개되어 있으며 쓰기와 동기화
-권한은 공개하지 않는다.
-
-- Project URL: `https://syzvicjmwnqennthhhcv.supabase.co`
-- Publishable key: `sb_publishable_N2e3PjwiSxGl3MkJokCD-Q_ap6BkmMb`
 
 ### 3. MCP 도구로 LLM 자연어 조회
 

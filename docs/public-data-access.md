@@ -1,69 +1,12 @@
 # KOICA 건축사업 공개 데이터 이용 안내
 
 이 프로젝트는 같은 KOICA 건축사업 데이터를 네 가지 방식으로 이용할 수 있게
-제공한다. SQLite는 전체 기준 DB를 내려받아 직접 분석하는 방식이고, Supabase는
-공개 검색용으로 축약한 읽기 전용 데이터에 접근하는 방식이다.
+제공한다. 대부분의 사용자에게는 별도 DB 다운로드나 SDK 설치 없이 공개 검색용
+읽기 전용 데이터에 접근하는 Supabase 방식을 권장한다. 전체 기준 DB와 자동 추출
+근거가 필요하거나 오프라인에서 자유롭게 SQL을 실행하려면 SQLite를 선택적으로
+이용한다.
 
-## 1. SQLite DB 직접 이용
-
-### 다운로드와 검증
-
-- [KOICA 건축사업 사례DB 2016-2025](../outputs/koica-construction-distribution/KOICA_건축사업_사례DB_2016-2025.sqlite)
-- 파일 크기: 7,872,512 bytes
-- SHA-256: `641dc86399c3b80be152b3a7a60ab8939349ce153c4957586774dce1150cb3f2`
-
-```bash
-shasum -a 256 "KOICA_건축사업_사례DB_2016-2025.sqlite"
-sqlite3 "KOICA_건축사업_사례DB_2016-2025.sqlite"
-```
-
-기준 DB에는 공고 575건, 건축 후보 379건, 첨부파일 색인 1,000건, 분석문서
-색인 3,698건, 자동 추출 근거 4,402건과 91개 사업의 면적·공사비 재검토 결과가
-들어 있다. 원 첨부파일 자체는 포함하지 않는다.
-
-### 예제 쿼리
-
-```sql
--- 테이블과 뷰 확인
-.tables
-
--- 면적·공사비 근거가 준비된 사업
-SELECT project_no,
-       country_ko,
-       project_name,
-       best_grade,
-       representative_area_m2,
-       representative_construction_cost_usd,
-       screening_unit_usd_m2,
-       display_representative_bid
-FROM v_area_cost_ready_projects
-ORDER BY country_ko, best_grade, project_no;
-
--- 특정 국가의 유사사례
-SELECT bid_no,
-       notice_date,
-       country,
-       facility_type,
-       work_type,
-       gross_floor_area_m2,
-       unit_usd_m2_nominal,
-       evidence_grade,
-       source_url
-FROM reviewed_cases
-WHERE country = 'Nepal'
-ORDER BY notice_date DESC;
-
--- 특정 공고의 추출 근거
-SELECT category, source_file, source_locator, evidence_text
-FROM evidence
-WHERE bid_no = 'L2022-00029-1';
-```
-
-전체 테이블 사전과 해석 원칙은
-[`outputs/koica-construction-distribution/README.md`](../outputs/koica-construction-distribution/README.md)에
-정리되어 있다.
-
-## 2. Supabase 공개 DB 이용
+## 1. Supabase 공개 DB 이용 (권장)
 
 ### 접속 정보
 
@@ -74,7 +17,8 @@ Publishable key: sb_publishable_N2e3PjwiSxGl3MkJokCD-Q_ap6BkmMb
 
 publishable key는 공개 클라이언트용 식별자이며 비밀키가 아니다. 실제 데이터
 접근 범위는 Postgres 권한과 RLS가 제한한다. secret/service-role 키는 공개하지
-않으며 동기화 작업에만 사용한다.
+않으며 동기화 작업에만 사용한다. 웹 브라우저, `curl` 등 HTTP를 지원하는 도구로
+호출할 수 있으며 Supabase SDK, CLI와 PostgreSQL 드라이버는 필수가 아니다.
 
 ### 공개 뷰
 
@@ -136,6 +80,65 @@ curl -sS -X POST \
 검색 결과는 최대 50건으로 제한된다. `anon`과 `authenticated`에는 `SELECT`와
 위 조회 RPC 실행 권한만 있고 `INSERT`, `UPDATE`, `DELETE`와 동기화 RPC 실행
 권한은 없다.
+
+## 2. SQLite DB 직접 이용 (선택)
+
+### 다운로드와 검증
+
+- [KOICA 건축사업 사례DB 2016-2025](../outputs/koica-construction-distribution/KOICA_건축사업_사례DB_2016-2025.sqlite)
+- 파일 크기: 7,872,512 bytes
+- SHA-256: `641dc86399c3b80be152b3a7a60ab8939349ce153c4957586774dce1150cb3f2`
+
+```bash
+shasum -a 256 "KOICA_건축사업_사례DB_2016-2025.sqlite"
+sqlite3 "KOICA_건축사업_사례DB_2016-2025.sqlite"
+```
+
+기준 DB에는 공고 575건, 건축 후보 379건, 첨부파일 색인 1,000건, 분석문서
+색인 3,698건, 자동 추출 근거 4,402건과 91개 사업의 면적·공사비 재검토 결과가
+들어 있다. 원 첨부파일 자체는 포함하지 않는다.
+
+### 예제 쿼리
+
+```sql
+-- 테이블과 뷰 확인
+.tables
+
+-- 면적·공사비 근거가 준비된 사업
+SELECT project_no,
+       country_ko,
+       project_name,
+       best_grade,
+       representative_area_m2,
+       representative_construction_cost_usd,
+       screening_unit_usd_m2,
+       display_representative_bid
+FROM v_area_cost_ready_projects
+ORDER BY country_ko, best_grade, project_no;
+
+-- 특정 국가의 유사사례
+SELECT bid_no,
+       notice_date,
+       country,
+       facility_type,
+       work_type,
+       gross_floor_area_m2,
+       unit_usd_m2_nominal,
+       evidence_grade,
+       source_url
+FROM reviewed_cases
+WHERE country = 'Nepal'
+ORDER BY notice_date DESC;
+
+-- 특정 공고의 추출 근거
+SELECT category, source_file, source_locator, evidence_text
+FROM evidence
+WHERE bid_no = 'L2022-00029-1';
+```
+
+전체 테이블 사전과 해석 원칙은
+[`outputs/koica-construction-distribution/README.md`](../outputs/koica-construction-distribution/README.md)에
+정리되어 있다.
 
 ## 3. MCP 도구로 LLM 자연어 조회
 

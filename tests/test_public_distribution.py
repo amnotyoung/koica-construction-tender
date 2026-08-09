@@ -56,13 +56,15 @@ class PublicDistributionTests(unittest.TestCase):
 
     def test_public_docs_cover_all_four_access_methods(self):
         for heading in (
-            "1. SQLite DB",
-            "2. Supabase",
+            "1. Supabase",
+            "2. SQLite DB",
             "3. MCP",
             "4. 플러그인",
         ):
             self.assertIn(heading, README)
             self.assertIn(heading, PUBLIC_ACCESS_DOC)
+        self.assertIn("Supabase 공개 DB에 접근해 조회 (권장)", README)
+        self.assertIn("SQLite DB를 내려받아 직접 조회 (선택)", README)
         self.assertGreaterEqual(PUBLIC_ACCESS_DOC.count("To be continued"), 2)
         self.assertIn(EXPECTED_SHA256, README)
         self.assertIn(EXPECTED_SHA256, PUBLIC_ACCESS_DOC)
