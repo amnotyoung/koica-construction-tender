@@ -17,12 +17,12 @@ README = (ROOT / "README.md").read_text(encoding="utf-8")
 PUBLIC_ACCESS_DOC = (ROOT / "docs" / "public-data-access.md").read_text(
     encoding="utf-8"
 )
-EXPECTED_SHA256 = "641dc86399c3b80be152b3a7a60ab8939349ce153c4957586774dce1150cb3f2"
+EXPECTED_SHA256 = "9546ff7f35ebbb42c5b3f7a068a42e2059e507b4a77cc5bb331dc9c2284a538d"
 
 
 class PublicDistributionTests(unittest.TestCase):
     def test_sqlite_integrity_hash_and_scope(self):
-        self.assertEqual(DATABASE.stat().st_size, 7_872_512)
+        self.assertEqual(DATABASE.stat().st_size, 8_290_304)
         self.assertEqual(
             hashlib.sha256(DATABASE.read_bytes()).hexdigest(), EXPECTED_SHA256
         )
@@ -40,10 +40,24 @@ class PublicDistributionTests(unittest.TestCase):
                   (SELECT COUNT(*) FROM attachments),
                   (SELECT COUNT(*) FROM documents),
                   (SELECT COUNT(*) FROM evidence),
-                  (SELECT COUNT(*) FROM area_cost_project_review)
+                  (SELECT COUNT(*) FROM area_cost_project_review),
+                  (SELECT COUNT(*) FROM evaluation_corpus_files),
+                  (SELECT COUNT(*) FROM evaluation_reports),
+                  (SELECT COUNT(*) FROM evaluation_project_matches),
+                  (SELECT COUNT(*) FROM evaluation_project_screening),
+                  (SELECT COUNT(*) FROM evaluation_findings)
                 """
             ).fetchone()
-            self.assertEqual(counts, (575, 379, 1000, 3698, 4402, 91))
+            self.assertEqual(
+                counts,
+                (575, 379, 1000, 3698, 4402, 91, 333, 42, 46, 175, 158),
+            )
+            self.assertEqual(
+                connection.execute(
+                    "SELECT value FROM metadata WHERE key = 'schema_version'"
+                ).fetchone()[0],
+                "1.9",
+            )
             absolute_paths = connection.execute(
                 """
                 SELECT COUNT(*)

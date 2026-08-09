@@ -17,6 +17,11 @@ Supabase에 올리지 않는다. GitHub에서는 기준 SQLite를 내려받아 �
 추출근거를 조회할 수 있고, Supabase에는 세 도구에 필요한 축약 검색 데이터만
 공개한다. 공개 사례의 고정 근거등급과 검색 요청별 동적 우선순위도 분리한다.
 
+SQLite 1.9에 추가된 `evaluation_*` 테이블과
+`v_project_evaluation_findings`도 현재 검색 스냅샷·동기화 RPC의 범위 밖이다.
+종료평가 페이지 근거는 SQLite에서만 조회하며, 별도의 RLS·권한·공개 뷰 설계
+없이 `public` 스키마에 새 테이블을 자동 노출하지 않는다.
+
 ## 1. 검색 데이터 생성
 
 ```bash

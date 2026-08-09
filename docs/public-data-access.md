@@ -27,6 +27,10 @@ publishable key는 공개 클라이언트용 식별자이며 비밀키가 아니
 | `koica_construction_cases` | 발행된 건축사례 156건 |
 | `koica_construction_related_notices` | 같은 사업의 설계·감리 등 관련 공고 295건 |
 
+종료평가 관련 테이블과 페이지 근거는 현재 SQLite 배포에만 제공한다. 기존
+Supabase 동기화 스냅샷은 위 두 공개 뷰의 사례·관련 공고만 다루며, 새 평가
+테이블을 자동 공개하거나 동기화하지 않는다.
+
 ```bash
 SUPABASE_URL="https://syzvicjmwnqennthhhcv.supabase.co"
 SUPABASE_KEY="sb_publishable_N2e3PjwiSxGl3MkJokCD-Q_ap6BkmMb"
@@ -86,8 +90,8 @@ curl -sS -X POST \
 ### 다운로드와 검증
 
 - [KOICA 건축사업 사례DB 2016-2025](../outputs/koica-construction-distribution/KOICA_건축사업_사례DB_2016-2025.sqlite)
-- 파일 크기: 7,872,512 bytes
-- SHA-256: `641dc86399c3b80be152b3a7a60ab8939349ce153c4957586774dce1150cb3f2`
+- 파일 크기: 8,290,304 bytes
+- SHA-256: `9546ff7f35ebbb42c5b3f7a068a42e2059e507b4a77cc5bb331dc9c2284a538d`
 
 ```bash
 shasum -a 256 "KOICA_건축사업_사례DB_2016-2025.sqlite"
@@ -96,7 +100,14 @@ sqlite3 "KOICA_건축사업_사례DB_2016-2025.sqlite"
 
 기준 DB에는 공고 575건, 건축 후보 379건, 첨부파일 색인 1,000건, 분석문서
 색인 3,698건, 자동 추출 근거 4,402건과 91개 사업의 면적·공사비 재검토 결과가
-들어 있다. 원 첨부파일 자체는 포함하지 않는다.
+들어 있다. 또한 로컬 종료평가 PDF 333개의 무결성·텍스트 상태와
+[KOICA 공식 평가정보 목록](https://www.koica.go.kr/sites/evaluation_kr/article/list/15/1)
+586건의 게시물 ID·목록 페이지·제목 스냅샷과 인덱스 다이제스트를 기록하고,
+DB 고유 사업번호 175개 전체를 스크리닝했다. 동일사업 보고서 42개(로컬
+22개·공식 첨부 20개)를 45개 사업에 46건 연결한 건축 페이지 근거 158건을
+포함한다. 175개 모집단에는 비용감사 표본 91개, 공사계약 보유 109개,
+건축후보 149개 여부를 각각 표시했다. 원 첨부파일과 종료평가 PDF 자체는
+포함하지 않는다.
 
 ### 예제 쿼리
 
@@ -134,6 +145,19 @@ ORDER BY notice_date DESC;
 SELECT category, source_file, source_locator, evidence_text
 FROM evidence
 WHERE bid_no = 'L2022-00029-1';
+
+-- 종료평가의 건축 주요 내용과 물리 PDF 페이지 근거
+SELECT project_no, country_ko, project_name, report_title,
+       category, field_code, summary_text,
+       pdf_page_start, evidence_excerpt
+FROM v_project_evaluation_findings
+WHERE project_no = 'L2017-0004'
+ORDER BY pdf_page_start, finding_id;
+
+-- 고유 사업번호 175개 전체의 종료평가 대조 상태
+SELECT status, COUNT(*)
+FROM evaluation_project_screening
+GROUP BY status;
 ```
 
 전체 테이블 사전과 해석 원칙은
@@ -166,3 +190,6 @@ WHERE bid_no = 'L2022-00029-1';
   목적으로 연락처를 사용하지 않는다.
 - Supabase 공개 데이터에는 원문 근거, 로컬 파일경로와 SHA-256을 포함하지
   않는다.
+- `no_accepted_same_project_report`는 이 코퍼스에서 동일사업 매칭을 채택하지
+  않았다는 의미일 뿐, 종료평가 보고서의 부재를 입증하지 않는다. OCR 필요 파일과
+  코퍼스 밖 자료는 별도 확인해야 한다.

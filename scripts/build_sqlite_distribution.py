@@ -4,9 +4,20 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import sqlite3
+import unicodedata
 from pathlib import Path
+
+try:
+    from scripts.snapshot_koica_evaluation_index import (
+        validate_snapshot as validate_official_index_snapshot,
+    )
+except ModuleNotFoundError:  # Direct execution via ``python scripts/...``.
+    from snapshot_koica_evaluation_index import (
+        validate_snapshot as validate_official_index_snapshot,
+    )
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,6 +44,50 @@ def load(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def load_evaluation_curation(path: Path) -> dict:
+    curation = load(path)
+    include_files = curation.get("include_files", [])
+    if not isinstance(include_files, list) or len(include_files) != len(
+        set(include_files)
+    ):
+        raise RuntimeError("evaluation curation include_files are invalid")
+    for filename in include_files:
+        if not isinstance(filename, str) or Path(filename).name != filename:
+            raise RuntimeError("evaluation curation include must be a basename")
+        fragment = load(path.parent / filename)
+        if fragment.get("fragment_schema_version") != "1.0":
+            raise RuntimeError("evaluation curation fragment schema is invalid")
+        for field in (
+            "multi_project_report_ids", "reports", "matches", "findings"
+        ):
+            values = fragment.get(field, [])
+            if not isinstance(values, list):
+                raise RuntimeError("evaluation curation fragment list is invalid")
+            curation.setdefault(field, []).extend(values)
+        fragment_review = fragment.get("review", {})
+        for field in ("excluded_candidates", "identity_conflicts"):
+            values = fragment_review.get(field, [])
+            if not isinstance(values, list):
+                raise RuntimeError("evaluation curation review fragment is invalid")
+            curation.setdefault("review", {}).setdefault(field, []).extend(values)
+    official = curation.get("official_source") or {}
+    snapshot_file = official.get("index_snapshot_file")
+    if snapshot_file:
+        if not isinstance(snapshot_file, str) or Path(snapshot_file).name != snapshot_file:
+            raise RuntimeError("evaluation index snapshot must be a basename")
+        official["index_snapshot"] = validate_official_index_snapshot(
+            load(path.parent / snapshot_file)
+        )
+    return curation
+
+
+def canonical_json_digest(value: object) -> str:
+    payload = json.dumps(
+        value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
 def load_csv(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8-sig", newline="") as handle:
         return list(csv.DictReader(handle))
@@ -57,7 +112,22 @@ def portable_path(value: str) -> str:
     try:
         return str(path.resolve().relative_to(ROOT))
     except Exception:
+        # Manifests may have been collected from another checkout/worktree of
+        # this repository.  Preserve the repository-relative data tail rather
+        # than re-publishing that checkout's absolute local path.
+        parts = path.parts
+        for marker in ("data_2016_2020", "data"):
+            if marker in parts:
+                return str(Path(*parts[parts.index(marker) :]))
         return value
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 SCHEMA = """
@@ -301,6 +371,211 @@ CREATE TABLE area_cost_review_summary (
   summary_json TEXT NOT NULL
 );
 
+CREATE TABLE evaluation_field_definitions (
+  field_code TEXT PRIMARY KEY CHECK (length(trim(field_code)) > 0),
+  category TEXT NOT NULL CHECK (category IN (
+    'facility_scope','cost_procurement','schedule','quality_safety',
+    'operations_maintenance','utilization_results','risk_issue',
+    'lesson_recommendation'
+  )),
+  value_kind TEXT NOT NULL CHECK (value_kind IN ('text','numeric_optional')),
+  allowed_units_json TEXT NOT NULL CHECK (json_valid(allowed_units_json)),
+  description TEXT NOT NULL CHECK (length(trim(description)) > 0),
+  UNIQUE (field_code, category)
+);
+
+CREATE TABLE evaluation_corpus_files (
+  source_file TEXT PRIMARY KEY CHECK (length(trim(source_file)) > 0),
+  source_collection TEXT NOT NULL CHECK (length(trim(source_collection)) > 0),
+  sha256 TEXT NOT NULL CHECK (
+    length(sha256) = 64 AND sha256 NOT GLOB '*[^0-9a-f]*'
+  ),
+  file_bytes INTEGER NOT NULL CHECK (
+    typeof(file_bytes) = 'integer' AND file_bytes > 0
+  ),
+  page_count INTEGER NOT NULL CHECK (
+    typeof(page_count) = 'integer' AND page_count > 0
+  ),
+  text_char_count INTEGER NOT NULL CHECK (
+    typeof(text_char_count) = 'integer' AND text_char_count >= 0
+  ),
+  meaningful_text_char_count INTEGER NOT NULL CHECK (
+    typeof(meaningful_text_char_count) = 'integer'
+    AND meaningful_text_char_count >= 0
+  ),
+  text_page_coverage REAL NOT NULL CHECK (
+    typeof(text_page_coverage) IN ('real','integer')
+    AND text_page_coverage >= 0 AND text_page_coverage <= 1
+  ),
+  extraction_status TEXT NOT NULL CHECK (
+    extraction_status IN ('text','partial_text','ocr_required')
+  ),
+  duplicate_of_source_file TEXT REFERENCES evaluation_corpus_files(source_file),
+  CHECK (duplicate_of_source_file IS NULL OR duplicate_of_source_file <> source_file)
+);
+
+CREATE TABLE evaluation_reports (
+  report_id TEXT PRIMARY KEY,
+  source_kind TEXT NOT NULL CHECK (
+    source_kind IN ('local_corpus','koica_official_site')
+  ),
+  source_collection TEXT NOT NULL CHECK (length(trim(source_collection)) > 0),
+  source_document_id TEXT NOT NULL CHECK (length(trim(source_document_id)) > 0),
+  source_file TEXT NOT NULL UNIQUE CHECK (length(trim(source_file)) > 0),
+  source_page_url TEXT,
+  source_download_url TEXT,
+  source_post_id TEXT,
+  source_attachment_id TEXT,
+  sha256 TEXT NOT NULL CHECK (
+    length(sha256) = 64 AND sha256 NOT GLOB '*[^0-9a-f]*'
+  ),
+  file_bytes INTEGER NOT NULL CHECK (
+    typeof(file_bytes) = 'integer' AND file_bytes > 0
+  ),
+  page_count INTEGER NOT NULL CHECK (
+    typeof(page_count) = 'integer' AND page_count > 0
+  ),
+  text_char_count INTEGER NOT NULL CHECK (
+    typeof(text_char_count) = 'integer' AND text_char_count >= 0
+  ),
+  meaningful_text_char_count INTEGER NOT NULL CHECK (
+    typeof(meaningful_text_char_count) = 'integer'
+    AND meaningful_text_char_count >= 0
+  ),
+  text_page_coverage REAL NOT NULL CHECK (
+    typeof(text_page_coverage) IN ('real','integer')
+    AND text_page_coverage >= 0 AND text_page_coverage <= 1
+  ),
+  report_title TEXT NOT NULL CHECK (length(trim(report_title)) > 0),
+  report_type TEXT NOT NULL CHECK (report_type = 'endline_evaluation'),
+  project_period TEXT NOT NULL CHECK (length(trim(project_period)) > 0),
+  publication_date TEXT NOT NULL CHECK (length(publication_date) IN (7,10)),
+  publication_date_precision TEXT NOT NULL CHECK (
+    publication_date_precision IN ('month','day')
+    AND (publication_date_precision <> 'month' OR length(publication_date) = 7)
+    AND (publication_date_precision <> 'day' OR length(publication_date) = 10)
+  ),
+  duplicate_of_report_id TEXT REFERENCES evaluation_reports(report_id),
+  extraction_method TEXT NOT NULL CHECK (length(trim(extraction_method)) > 0),
+  extraction_status TEXT NOT NULL
+    CHECK (extraction_status IN ('text','partial_text','ocr_text')),
+  ocr_text_digest TEXT CHECK (
+    ocr_text_digest IS NULL OR (
+      length(ocr_text_digest) = 64
+      AND ocr_text_digest NOT GLOB '*[^0-9a-f]*'
+    )
+  ),
+  ocr_text_page_count INTEGER CHECK (
+    ocr_text_page_count IS NULL OR (
+      typeof(ocr_text_page_count) = 'integer' AND ocr_text_page_count > 0
+    )
+  ),
+  ocr_text_digest_algorithm TEXT,
+  CHECK (duplicate_of_report_id IS NULL OR duplicate_of_report_id <> report_id),
+  CHECK (
+    (extraction_status = 'ocr_text'
+      AND ocr_text_digest IS NOT NULL
+      AND ocr_text_page_count = page_count
+      AND length(trim(ocr_text_digest_algorithm)) > 0)
+    OR
+    (extraction_status <> 'ocr_text'
+      AND ocr_text_digest IS NULL
+      AND ocr_text_page_count IS NULL
+      AND ocr_text_digest_algorithm IS NULL)
+  ),
+  CHECK (
+    (source_kind = 'local_corpus'
+      AND source_page_url IS NULL AND source_download_url IS NULL
+      AND source_post_id IS NULL AND source_attachment_id IS NULL)
+    OR
+    (source_kind = 'koica_official_site'
+      AND source_page_url LIKE
+        'https://www.koica.go.kr/sites/evaluation_kr/article/view/%'
+      AND source_download_url LIKE
+        'https://www.koica.go.kr/sites/evaluation_kr/common/filedownload/%'
+      AND length(trim(source_post_id)) > 0
+      AND length(trim(source_attachment_id)) > 0)
+  )
+);
+
+CREATE TABLE evaluation_project_matches (
+  match_id TEXT PRIMARY KEY,
+  report_id TEXT NOT NULL REFERENCES evaluation_reports(report_id),
+  project_no TEXT NOT NULL REFERENCES evaluation_project_screening(project_no),
+  db_country TEXT NOT NULL CHECK (length(trim(db_country)) > 0),
+  db_project_name TEXT NOT NULL CHECK (length(trim(db_project_name)) > 0),
+  report_project_name TEXT NOT NULL CHECK (length(trim(report_project_name)) > 0),
+  match_method TEXT NOT NULL CHECK (
+    match_method IN ('exact_official_title','exact_component_title')
+  ),
+  relation_scope TEXT NOT NULL CHECK (
+    relation_scope IN ('same_project','same_project_component')
+  ),
+  match_score REAL NOT NULL CHECK (
+    typeof(match_score) IN ('real','integer')
+    AND match_score >= 0.85 AND match_score <= 1
+  ),
+  match_basis TEXT NOT NULL CHECK (length(trim(match_basis)) > 0),
+  review_status TEXT NOT NULL CHECK (review_status IN ('accepted')),
+  reviewed_at TEXT NOT NULL CHECK (length(reviewed_at) = 10),
+  UNIQUE (report_id, project_no)
+);
+
+CREATE TABLE evaluation_project_screening (
+  project_no TEXT PRIMARY KEY,
+  country_ko TEXT NOT NULL CHECK (length(trim(country_ko)) > 0),
+  project_name TEXT NOT NULL CHECK (length(trim(project_name)) > 0),
+  in_area_cost_review INTEGER NOT NULL CHECK (in_area_cost_review IN (0,1)),
+  has_works_contract INTEGER NOT NULL CHECK (has_works_contract IN (0,1)),
+  has_construction_candidate INTEGER NOT NULL
+    CHECK (has_construction_candidate IN (0,1)),
+  manual_construction_relevance INTEGER NOT NULL
+    CHECK (manual_construction_relevance IN (0,1)),
+  status TEXT NOT NULL CHECK (
+    status IN (
+      'accepted_match','candidate_reviewed_not_accepted',
+      'no_accepted_same_project_report'
+    )
+  ),
+  report_ids_json TEXT NOT NULL CHECK (json_valid(report_ids_json)),
+  note TEXT NOT NULL CHECK (length(trim(note)) > 0)
+);
+
+CREATE TABLE evaluation_findings (
+  finding_id TEXT PRIMARY KEY,
+  match_id TEXT NOT NULL REFERENCES evaluation_project_matches(match_id),
+  category TEXT NOT NULL CHECK (category IN (
+    'facility_scope','cost_procurement','schedule','quality_safety',
+    'operations_maintenance','utilization_results','risk_issue',
+    'lesson_recommendation'
+  )),
+  field_code TEXT NOT NULL,
+  summary_text TEXT NOT NULL CHECK (
+    length(trim(summary_text)) BETWEEN 15 AND 600
+  ),
+  value_text TEXT,
+  value_numeric REAL CHECK (
+    value_numeric IS NULL OR typeof(value_numeric) IN ('real','integer')
+  ),
+  unit TEXT,
+  value_context TEXT,
+  pdf_page_start INTEGER NOT NULL CHECK (pdf_page_start > 0),
+  pdf_page_end INTEGER NOT NULL CHECK (pdf_page_end >= pdf_page_start),
+  printed_page_label TEXT,
+  evidence_excerpt TEXT NOT NULL CHECK (
+    length(trim(evidence_excerpt)) BETWEEN 20 AND 400
+  ),
+  conflict_group TEXT,
+  review_note TEXT,
+  confidence TEXT NOT NULL CHECK (confidence IN ('high','medium')),
+  review_status TEXT NOT NULL CHECK (review_status IN ('accepted')),
+  public_excerpt_approved INTEGER NOT NULL CHECK (public_excerpt_approved = 1),
+  FOREIGN KEY (field_code, category)
+    REFERENCES evaluation_field_definitions(field_code, category),
+  CHECK ((value_numeric IS NULL AND unit IS NULL)
+      OR (value_numeric IS NOT NULL AND unit IS NOT NULL))
+);
+
 CREATE TABLE fee_benchmarks (
   fee_id INTEGER PRIMARY KEY AUTOINCREMENT,
   bid_no TEXT,
@@ -402,6 +677,16 @@ CREATE INDEX idx_area_cost_notice_country_role
   ON area_cost_notice_review(country_ko, scope_role);
 CREATE INDEX idx_area_cost_project_country_grade
   ON area_cost_project_review(country_ko, compact_grade);
+CREATE INDEX idx_evaluation_corpus_sha256
+  ON evaluation_corpus_files(sha256);
+CREATE INDEX idx_evaluation_corpus_status
+  ON evaluation_corpus_files(extraction_status);
+CREATE INDEX idx_evaluation_reports_sha256
+  ON evaluation_reports(sha256);
+CREATE INDEX idx_evaluation_matches_project_status
+  ON evaluation_project_matches(project_no, review_status);
+CREATE INDEX idx_evaluation_findings_match_category
+  ON evaluation_findings(match_id, category, field_code);
 CREATE INDEX idx_price_source_country_priority
   ON price_index_sources(country, priority);
 CREATE INDEX idx_price_values_period ON price_index_values(period);
@@ -464,6 +749,54 @@ SELECT
   grade_detail
 FROM area_cost_project_review
 WHERE compact_grade IN ('C?','U');
+
+CREATE VIEW v_project_evaluation_findings AS
+SELECT
+  m.project_no,
+  m.db_country AS country_ko,
+  m.db_project_name AS project_name,
+  s.in_area_cost_review,
+  s.has_works_contract,
+  s.has_construction_candidate,
+  s.manual_construction_relevance,
+  r.report_id,
+  r.source_kind,
+  r.source_collection,
+  r.source_file,
+  r.source_page_url,
+  r.source_download_url,
+  r.sha256 AS report_sha256,
+  r.report_title,
+  r.publication_date,
+  r.extraction_method,
+  r.extraction_status,
+  r.ocr_text_digest,
+  m.match_method,
+  m.relation_scope,
+  m.match_score,
+  m.match_basis,
+  m.reviewed_at,
+  f.finding_id,
+  f.category,
+  f.field_code,
+  f.summary_text,
+  f.value_text,
+  f.value_numeric,
+  f.unit,
+  f.value_context,
+  f.pdf_page_start,
+  f.pdf_page_end,
+  f.printed_page_label,
+  f.evidence_excerpt,
+  f.conflict_group,
+  f.review_note,
+  f.confidence,
+  f.public_excerpt_approved
+FROM evaluation_project_matches m
+JOIN evaluation_project_screening s ON s.project_no = m.project_no
+JOIN evaluation_reports r ON r.report_id = m.report_id
+JOIN evaluation_findings f ON f.match_id = m.match_id
+WHERE m.review_status = 'accepted' AND f.review_status = 'accepted';
 
 CREATE VIEW v_duplicate_attachments AS
 SELECT sha256, COUNT(*) AS copies, SUM(bytes) AS total_bytes
@@ -752,15 +1085,495 @@ def insert_area_cost_review(connection: sqlite3.Connection) -> None:
     )
 
 
+EVALUATION_MANIFEST_PATH = (
+    ROOT / "data" / "manifests" / "koica_endline_evaluation_reports.json"
+)
+EVALUATION_CURATION_PATH = (
+    ROOT / "data" / "manifests" / "koica_endline_evaluation_curation.json"
+)
+
+
+def evaluation_corpus_digest(rows: list[dict]) -> str:
+    digest = hashlib.sha256()
+    for row in sorted(
+        rows, key=lambda item: unicodedata.normalize("NFC", item["source_file"])
+    ):
+        digest.update(
+            unicodedata.normalize("NFC", row["source_file"]).encode("utf-8")
+        )
+        digest.update(b"\0")
+        digest.update(row["sha256"].encode("ascii"))
+        digest.update(b"\0")
+        digest.update(str(row["file_bytes"]).encode("ascii"))
+        digest.update(b"\n")
+    return digest.hexdigest()
+
+
+def load_evaluation_manifest(
+    manifest_path: Path = EVALUATION_MANIFEST_PATH,
+    curation_path: Path = EVALUATION_CURATION_PATH,
+) -> dict:
+    """Load and structurally validate the portable evaluation manifest.
+
+    This runs before a temporary database is created so a missing or tampered
+    manifest can never replace the last known-good SQLite distribution.
+    """
+    manifest = load(manifest_path)
+    if manifest.get("schema_version") != "1.2":
+        raise RuntimeError("evaluation manifest schema_version must be 1.2")
+    target = manifest.get("target_universe") or {}
+    if target.get("table") != "projects":
+        raise RuntimeError("evaluation target table must be projects")
+    if target.get("selector") != "distinct_nonempty_project_no":
+        raise RuntimeError("evaluation target selector is invalid")
+    if target.get("expected_count") != 175 or target.get("actual_count") != 175:
+        raise RuntimeError("evaluation target universe must contain 175 projects")
+    expected_profile = {
+        "in_area_cost_review_count": 91,
+        "has_works_contract_count": 109,
+        "has_construction_candidate_count": 149,
+    }
+    if any(target.get(key) != value for key, value in expected_profile.items()):
+        raise RuntimeError("evaluation target-universe profile changed")
+
+    collection = manifest.get("corpus") or {}
+    inventory = collection.get("inventory") or []
+    reports = manifest.get("reports") or []
+    matches = manifest.get("matches") or []
+    findings = manifest.get("findings") or []
+    definitions = manifest.get("field_definitions") or []
+    screening = manifest.get("project_screening") or []
+    actual_counts = {
+        "field_definitions": len(definitions),
+        "reports": len(reports),
+        "matches": len(matches),
+        "findings": len(findings),
+    }
+    if manifest.get("counts") != actual_counts:
+        raise RuntimeError(
+            f"evaluation manifest count mismatch: {manifest.get('counts')} "
+            f"!= {actual_counts}"
+        )
+    if collection.get("pdf_count") != len(inventory):
+        raise RuntimeError("evaluation corpus inventory count mismatch")
+    if collection.get("digest") != evaluation_corpus_digest(inventory):
+        raise RuntimeError("evaluation corpus digest mismatch")
+    if collection.get("raw_pdfs_included") is not False:
+        raise RuntimeError("raw evaluation PDFs must not be embedded in the manifest")
+    if collection.get("selected_report_count") != len(reports):
+        raise RuntimeError("selected evaluation report count mismatch")
+    local_reports = [
+        row for row in reports if row.get("source_kind") == "local_corpus"
+    ]
+    official_reports = [
+        row for row in reports
+        if row.get("source_kind") == "koica_official_site"
+    ]
+    if len(local_reports) + len(official_reports) != len(reports):
+        raise RuntimeError("unsupported evaluation report source_kind")
+    if collection.get("selected_local_report_count") != len(local_reports):
+        raise RuntimeError("selected local evaluation report count mismatch")
+    if collection.get("selected_official_report_count") != len(official_reports):
+        raise RuntimeError("selected official evaluation report count mismatch")
+    official_source = manifest.get("official_source") or {}
+    if official_source.get("selected_report_count") != len(official_reports):
+        raise RuntimeError("official evaluation source count mismatch")
+    if official_source.get("raw_pdfs_included") is not False:
+        raise RuntimeError("official raw evaluation PDFs must not be embedded")
+    official_index = validate_official_index_snapshot(
+        official_source.get("index_snapshot") or {}
+    )
+    official_index_pairs = (
+        ("list_url", "list_url"),
+        ("screened_at", "screened_at"),
+        ("screened_page_count", "page_count"),
+        ("screened_post_count", "post_count"),
+        ("screened_index_digest_algorithm", "digest_algorithm"),
+        ("screened_index_digest", "digest"),
+        ("screened_index_payload_bytes", "payload_bytes"),
+    )
+    for source_field, index_field in official_index_pairs:
+        if official_source.get(source_field) != official_index.get(index_field):
+            raise RuntimeError(
+                "official evaluation index snapshot differs: " + source_field
+            )
+    indexed_post_ids = {row["post_id"] for row in official_index["posts"]}
+    if any(str(row.get("source_post_id")) not in indexed_post_ids for row in official_reports):
+        raise RuntimeError("official evaluation selection is absent from index snapshot")
+    curation = load_evaluation_curation(curation_path)
+    if curation.get("schema_version") != "1.2":
+        raise RuntimeError("evaluation curation schema_version must be 1.2")
+    if manifest.get("curation_digest_algorithm") != (
+        "sha256(canonical merged JSON)"
+    ) or manifest.get("curation_digest") != canonical_json_digest(curation):
+        raise RuntimeError("evaluation curation digest mismatch")
+    curated_official = {
+        row["report_id"]: row
+        for row in curation.get("reports", [])
+        if row.get("source_kind") == "koica_official_site"
+    }
+    manifested_official = {row["report_id"]: row for row in official_reports}
+    if set(curated_official) != set(manifested_official):
+        raise RuntimeError("official evaluation selection differs from curation")
+    curation_official_source = curation.get("official_source") or {}
+    for field in (
+        "logical_name", "list_url", "index_snapshot_file", "index_snapshot",
+        "screened_page_count",
+        "screened_post_count", "screened_at",
+        "screened_index_digest_algorithm", "screened_index_digest",
+        "screened_index_payload_bytes", "screening_note",
+    ):
+        if official_source.get(field) != curation_official_source.get(field):
+            raise RuntimeError(
+                f"official evaluation source metadata differs: {field}"
+            )
+    official_field_pairs = {
+        "source_file": "source_file",
+        "source_post_id": "source_post_id",
+        "source_attachment_id": "source_attachment_id",
+        "source_page_url": "source_page_url",
+        "source_download_url": "source_download_url",
+        "sha256": "expected_sha256",
+        "file_bytes": "expected_file_bytes",
+        "page_count": "expected_page_count",
+        "report_title": "report_title",
+        "project_period": "project_period",
+        "publication_date": "publication_date",
+        "publication_date_precision": "publication_date_precision",
+        "ocr_text_digest": "expected_ocr_text_digest",
+        "ocr_text_page_count": "expected_ocr_text_page_count",
+    }
+    for report_id, report in manifested_official.items():
+        curated = curated_official[report_id]
+        for manifest_field, curation_field in official_field_pairs.items():
+            if report.get(manifest_field) != curated.get(curation_field):
+                raise RuntimeError(
+                    "official evaluation report differs from curation: "
+                    f"{report_id}.{manifest_field}"
+                )
+        if report.get("extraction_status") == "ocr_text":
+            if report.get("extraction_method") != curated.get(
+                "ocr_extraction_method"
+            ):
+                raise RuntimeError(
+                    "official OCR method differs from curation: " + report_id
+                )
+            if report.get("ocr_text_digest_algorithm") != (
+                "sha256(filename_nfc NUL sha256 NUL bytes LF)"
+            ):
+                raise RuntimeError(
+                    "official OCR digest algorithm is invalid: " + report_id
+                )
+    if collection.get("accepted_match_count") != len(matches):
+        raise RuntimeError("accepted evaluation match count mismatch")
+    matched_projects = {row["project_no"] for row in matches}
+    if collection.get("matched_project_count") != len(matched_projects):
+        raise RuntimeError("matched evaluation project count mismatch")
+    expected_project_count = target["expected_count"]
+    if collection.get("no_accepted_match_project_count") != (
+        expected_project_count - len(matched_projects)
+    ):
+        raise RuntimeError("unmatched evaluation project count mismatch")
+    if len(screening) != expected_project_count:
+        raise RuntimeError(
+            "evaluation project screening must cover all target projects"
+        )
+    if collection.get("ocr_required_file_count") != sum(
+        row.get("extraction_status") == "ocr_required" for row in inventory
+    ):
+        raise RuntimeError("evaluation OCR queue count mismatch")
+    if collection.get("duplicate_physical_file_count") != sum(
+        bool(row.get("duplicate_of_source_file")) for row in inventory
+    ):
+        raise RuntimeError("evaluation duplicate-file count mismatch")
+
+    def unique(rows: list[dict], field: str) -> None:
+        values = [row.get(field) for row in rows]
+        if None in values or len(values) != len(set(values)):
+            raise RuntimeError(f"evaluation manifest has invalid {field} values")
+
+    for rows, field in (
+        (inventory, "source_file"),
+        (definitions, "field_code"),
+        (reports, "report_id"),
+        (reports, "source_file"),
+        (matches, "match_id"),
+        (findings, "finding_id"),
+        (screening, "project_no"),
+    ):
+        unique(rows, field)
+    inventory_by_file = {row["source_file"]: row for row in inventory}
+    report_ids = {row["report_id"] for row in reports}
+    match_ids = {row["match_id"] for row in matches}
+    for match in matches:
+        if match.get("report_id") not in report_ids:
+            raise RuntimeError(f"evaluation match references unknown report: {match}")
+    for finding in findings:
+        if finding.get("match_id") not in match_ids:
+            raise RuntimeError(f"evaluation finding references unknown match: {finding}")
+    expected_screening: dict[str, list[str]] = {}
+    for match in matches:
+        expected_screening.setdefault(match["project_no"], []).append(
+            match["report_id"]
+        )
+    for row in screening:
+        expected_report_ids = sorted(expected_screening.get(row["project_no"], []))
+        if expected_report_ids:
+            expected_status = "accepted_match"
+        elif str(row.get("note", "")).startswith(
+            "종료평가 후보를 검토했으나 미채택:"
+        ):
+            expected_status = "candidate_reviewed_not_accepted"
+        else:
+            expected_status = "no_accepted_same_project_report"
+        if sorted(row.get("report_ids", [])) != expected_report_ids:
+            raise RuntimeError(
+                f"evaluation screening report_ids mismatch: {row['project_no']}"
+            )
+        if row.get("status") != expected_status:
+            raise RuntimeError(
+                f"evaluation screening status mismatch: {row['project_no']}"
+            )
+        for flag in (
+            "in_area_cost_review", "has_works_contract",
+            "has_construction_candidate", "manual_construction_relevance",
+        ):
+            if row.get(flag) not in (0, 1):
+                raise RuntimeError(
+                    f"evaluation screening flag invalid: {row['project_no']}.{flag}"
+                )
+        if row["manual_construction_relevance"] != int(
+            expected_status == "accepted_match"
+        ):
+            raise RuntimeError(
+                "manual construction relevance differs from accepted match: "
+                f"{row['project_no']}"
+            )
+    for flag, count_key in (
+        ("in_area_cost_review", "in_area_cost_review_count"),
+        ("has_works_contract", "has_works_contract_count"),
+        ("has_construction_candidate", "has_construction_candidate_count"),
+    ):
+        if sum(row[flag] for row in screening) != target[count_key]:
+            raise RuntimeError(f"evaluation screening profile mismatch: {flag}")
+    corpus_fields = (
+        "sha256", "file_bytes", "page_count", "text_char_count",
+        "meaningful_text_char_count", "text_page_coverage", "extraction_status",
+    )
+    for report in reports:
+        if report.get("source_kind") == "local_corpus":
+            corpus_row = inventory_by_file.get(report["source_file"])
+            if corpus_row is None:
+                raise RuntimeError(
+                    f"selected report absent from corpus: {report['report_id']}"
+                )
+            if any(
+                report.get(field) != corpus_row.get(field)
+                for field in corpus_fields
+            ):
+                raise RuntimeError(
+                    f"selected report audit fields differ: {report['report_id']}"
+                )
+            if report.get("source_collection") != collection.get("logical_name"):
+                raise RuntimeError(
+                    f"selected report collection differs: {report['report_id']}"
+                )
+        else:
+            post_id = str(report.get("source_post_id") or "")
+            attachment_id = str(report.get("source_attachment_id") or "")
+            if report.get("source_page_url") != (
+                "https://www.koica.go.kr/sites/evaluation_kr/article/view/"
+                + post_id
+            ):
+                raise RuntimeError(
+                    f"invalid official evaluation page URL: {report['report_id']}"
+                )
+            if report.get("source_download_url") != (
+                "https://www.koica.go.kr/sites/evaluation_kr/common/filedownload/"
+                + attachment_id
+            ):
+                raise RuntimeError(
+                    f"invalid official evaluation download URL: {report['report_id']}"
+                )
+            if report.get("source_document_id") != attachment_id:
+                raise RuntimeError(
+                    f"official source document id differs: {report['report_id']}"
+                )
+            if report.get("source_collection") != official_source.get("logical_name"):
+                raise RuntimeError(
+                    f"official report collection differs: {report['report_id']}"
+                )
+    payload = json.dumps(manifest, ensure_ascii=False, sort_keys=True)
+    if '"source_file": "/' in payload or '"source_file":"/' in payload:
+        raise RuntimeError("absolute evaluation source path in manifest")
+    return manifest
+
+
+def insert_evaluation_reports(
+    connection: sqlite3.Connection, manifest: dict
+) -> None:
+    definition_fields = [
+        "field_code", "category", "value_kind", "allowed_units_json",
+        "description",
+    ]
+    definitions = []
+    for row in manifest["field_definitions"]:
+        definitions.append({
+            **row,
+            "allowed_units_json": json.dumps(
+                row.get("units", []), ensure_ascii=False, sort_keys=True
+            ),
+        })
+    connection.executemany(
+        f"INSERT INTO evaluation_field_definitions "
+        f"({','.join(definition_fields)}) "
+        f"VALUES ({','.join('?' for _ in definition_fields)})",
+        [tuple(row.get(field) for field in definition_fields) for row in definitions],
+    )
+
+    corpus_fields = [
+        "source_file", "source_collection", "sha256", "file_bytes",
+        "page_count", "text_char_count", "meaningful_text_char_count",
+        "text_page_coverage", "extraction_status", "duplicate_of_source_file",
+    ]
+    corpus_rows = [
+        {**row, "source_collection": manifest["corpus"]["logical_name"]}
+        for row in manifest["corpus"]["inventory"]
+    ]
+    corpus_rows.sort(
+        key=lambda row: (
+            row.get("duplicate_of_source_file") is not None, row["source_file"]
+        )
+    )
+    connection.executemany(
+        f"INSERT INTO evaluation_corpus_files ({','.join(corpus_fields)}) "
+        f"VALUES ({','.join('?' for _ in corpus_fields)})",
+        [tuple(row.get(field) for field in corpus_fields) for row in corpus_rows],
+    )
+
+    report_fields = [
+        "report_id", "source_kind", "source_collection", "source_document_id",
+        "source_file", "source_page_url", "source_download_url",
+        "source_post_id", "source_attachment_id",
+        "sha256", "file_bytes", "page_count", "text_char_count",
+        "meaningful_text_char_count", "text_page_coverage",
+        "report_title", "report_type", "project_period", "publication_date",
+        "publication_date_precision", "duplicate_of_report_id",
+        "extraction_method", "extraction_status", "ocr_text_digest",
+        "ocr_text_page_count", "ocr_text_digest_algorithm",
+    ]
+    reports = sorted(
+        manifest["reports"],
+        key=lambda row: (row.get("duplicate_of_report_id") is not None, row["report_id"]),
+    )
+    connection.executemany(
+        f"INSERT INTO evaluation_reports ({','.join(report_fields)}) "
+        f"VALUES ({','.join('?' for _ in report_fields)})",
+        [tuple(row.get(field) for field in report_fields) for row in reports],
+    )
+
+    screening_fields = [
+        "project_no", "country_ko", "project_name", "in_area_cost_review",
+        "has_works_contract", "has_construction_candidate",
+        "manual_construction_relevance", "status", "report_ids_json", "note",
+    ]
+    screening_rows = [
+        {
+            **row,
+            "report_ids_json": json.dumps(
+                row.get("report_ids", []), ensure_ascii=False, sort_keys=True
+            ),
+        }
+        for row in manifest["project_screening"]
+    ]
+    connection.executemany(
+        f"INSERT INTO evaluation_project_screening "
+        f"({','.join(screening_fields)}) "
+        f"VALUES ({','.join('?' for _ in screening_fields)})",
+        [tuple(row.get(field) for field in screening_fields) for row in screening_rows],
+    )
+
+    match_fields = [
+        "match_id", "report_id", "project_no", "db_country",
+        "db_project_name", "report_project_name", "match_method",
+        "relation_scope", "match_score", "match_basis", "review_status",
+        "reviewed_at",
+    ]
+    connection.executemany(
+        f"INSERT INTO evaluation_project_matches ({','.join(match_fields)}) "
+        f"VALUES ({','.join('?' for _ in match_fields)})",
+        [
+            tuple(row.get(field) for field in match_fields)
+            for row in manifest["matches"]
+        ],
+    )
+
+    finding_fields = [
+        "finding_id", "match_id", "category", "field_code", "summary_text",
+        "value_text", "value_numeric", "unit", "value_context",
+        "pdf_page_start", "pdf_page_end", "printed_page_label",
+        "evidence_excerpt", "conflict_group", "review_note", "confidence",
+        "review_status", "public_excerpt_approved",
+    ]
+    connection.executemany(
+        f"INSERT INTO evaluation_findings ({','.join(finding_fields)}) "
+        f"VALUES ({','.join('?' for _ in finding_fields)})",
+        [
+            tuple(row.get(field) for field in finding_fields)
+            for row in manifest["findings"]
+        ],
+    )
+
+    invalid_pages = connection.execute(
+        """SELECT f.finding_id, f.pdf_page_start, f.pdf_page_end, r.page_count
+           FROM evaluation_findings f
+           JOIN evaluation_project_matches m ON m.match_id = f.match_id
+           JOIN evaluation_reports r ON r.report_id = m.report_id
+           WHERE f.pdf_page_start < 1
+              OR f.pdf_page_end < f.pdf_page_start
+              OR f.pdf_page_end > r.page_count"""
+    ).fetchall()
+    if invalid_pages:
+        raise RuntimeError(f"evaluation finding page violations: {invalid_pages[:10]}")
+    unmatched_findings = connection.execute(
+        """SELECT m.match_id
+           FROM evaluation_project_matches m
+           LEFT JOIN evaluation_findings f ON f.match_id = m.match_id
+           WHERE m.review_status = 'accepted'
+           GROUP BY m.match_id
+           HAVING COUNT(f.finding_id) = 0"""
+    ).fetchall()
+    if unmatched_findings:
+        raise RuntimeError(
+            f"accepted evaluation matches without findings: {unmatched_findings}"
+        )
+
+    identity_mismatch = connection.execute(
+        """SELECT m.match_id
+           FROM evaluation_project_matches m
+           JOIN evaluation_project_screening s ON s.project_no = m.project_no
+           WHERE m.db_country <> s.country_ko
+              OR m.db_project_name <> s.project_name"""
+    ).fetchall()
+    if identity_mismatch:
+        raise RuntimeError(
+            "evaluation project identity differs from screening rows: "
+            f"{identity_mismatch[:5]}"
+        )
+
+
 def main() -> None:
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    DB_PATH.unlink(missing_ok=True)
-    connection = sqlite3.connect(DB_PATH)
+    evaluation_manifest = load_evaluation_manifest()
+    temporary_db = DB_PATH.with_suffix(DB_PATH.suffix + ".tmp")
+    temporary_db.unlink(missing_ok=True)
+    connection = sqlite3.connect(temporary_db)
     try:
         connection.executescript(SCHEMA)
         for spec in DATASETS:
             insert_dataset(connection, spec)
         insert_area_cost_review(connection)
+        insert_evaluation_reports(connection, evaluation_manifest)
         reviewed = load(OUTPUT / "reviewed_cases_2016_2025.json")
         fields = list(reviewed[0])
         connection.executemany(
@@ -860,9 +1673,12 @@ def main() -> None:
         connection.executemany(
             "INSERT INTO metadata VALUES (?,?)",
             [
-                ("schema_version", "1.6"),
+                ("schema_version", "1.9"),
                 ("coverage", "2016-01-01/2025-12-31"),
-                ("data_scope", "KOICA procurement and official national indices only"),
+                (
+                    "data_scope",
+                    "KOICA procurement, KOICA endline evaluations, and official national indices only",
+                ),
                 ("source_of_truth", "SQLite"),
                 (
                     "price_treatment",
@@ -881,6 +1697,104 @@ def main() -> None:
                     "area_cost_review_boundary",
                     "170공고/154공고군/91사업; A/B는 BOQ 준비도, C는 스크리닝, C?는 원본확인 대기",
                 ),
+                (
+                    "evaluation_target_universe",
+                    json.dumps(
+                        evaluation_manifest["target_universe"],
+                        ensure_ascii=False,
+                        sort_keys=True,
+                    ),
+                ),
+                (
+                    "evaluation_target_project_count",
+                    str(evaluation_manifest["target_universe"]["actual_count"]),
+                ),
+                (
+                    "evaluation_target_area_cost_review_count",
+                    str(
+                        evaluation_manifest["target_universe"][
+                            "in_area_cost_review_count"
+                        ]
+                    ),
+                ),
+                (
+                    "evaluation_target_works_contract_count",
+                    str(
+                        evaluation_manifest["target_universe"][
+                            "has_works_contract_count"
+                        ]
+                    ),
+                ),
+                (
+                    "evaluation_target_construction_candidate_count",
+                    str(
+                        evaluation_manifest["target_universe"][
+                            "has_construction_candidate_count"
+                        ]
+                    ),
+                ),
+                (
+                    "evaluation_corpus_digest",
+                    evaluation_manifest["corpus"]["digest"],
+                ),
+                (
+                    "evaluation_corpus_pdf_count",
+                    str(evaluation_manifest["corpus"]["pdf_count"]),
+                ),
+                (
+                    "evaluation_report_count",
+                    str(evaluation_manifest["counts"]["reports"]),
+                ),
+                (
+                    "evaluation_local_report_count",
+                    str(
+                        evaluation_manifest["corpus"][
+                            "selected_local_report_count"
+                        ]
+                    ),
+                ),
+                (
+                    "evaluation_official_report_count",
+                    str(
+                        evaluation_manifest["corpus"][
+                            "selected_official_report_count"
+                        ]
+                    ),
+                ),
+                (
+                    "evaluation_official_screened_post_count",
+                    str(
+                        evaluation_manifest["official_source"][
+                            "screened_post_count"
+                        ]
+                    ),
+                ),
+                (
+                    "evaluation_official_index_digest",
+                    evaluation_manifest["official_source"][
+                        "screened_index_digest"
+                    ],
+                ),
+                (
+                    "evaluation_matched_project_count",
+                    str(evaluation_manifest["corpus"]["matched_project_count"]),
+                ),
+                (
+                    "evaluation_finding_count",
+                    str(evaluation_manifest["counts"]["findings"]),
+                ),
+                (
+                    "evaluation_manifest_sha256",
+                    sha256(EVALUATION_MANIFEST_PATH),
+                ),
+                (
+                    "evaluation_review_json",
+                    json.dumps(
+                        evaluation_manifest["review"],
+                        ensure_ascii=False,
+                        sort_keys=True,
+                    ),
+                ),
                 ("usage_warning", "현지 견적·BOQ·물가보정 없이 미래 사업 단가로 직접 사용 금지"),
             ],
         )
@@ -889,26 +1803,46 @@ def main() -> None:
             raise RuntimeError(f"Foreign key violations: {violations[:10]}")
         connection.commit()
         connection.execute("VACUUM")
+    except Exception:
+        temporary_db.unlink(missing_ok=True)
+        raise
     finally:
         connection.close()
 
-    check = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
     try:
-        counts = {
-            table: check.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
-            for table in (
-                "bids", "details", "projects", "attachments", "documents",
-                "evidence", "reviewed_cases", "fee_benchmarks",
-                "area_cost_notice_review", "area_cost_bid_group_review",
-                "area_cost_project_review", "area_cost_review_summary",
-                "price_index_policy", "price_index_sources",
-                "price_index_values", "national_index_source_audit",
-                "normalization_runs",
-            )
-        }
-        integrity = check.execute("PRAGMA integrity_check").fetchone()[0]
-    finally:
-        check.close()
+        check = sqlite3.connect(f"file:{temporary_db}?mode=ro", uri=True)
+        try:
+            counts = {
+                table: check.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+                for table in (
+                    "bids", "details", "projects", "attachments", "documents",
+                    "evidence", "reviewed_cases", "fee_benchmarks",
+                    "area_cost_notice_review", "area_cost_bid_group_review",
+                    "area_cost_project_review", "area_cost_review_summary",
+                    "evaluation_field_definitions", "evaluation_corpus_files",
+                    "evaluation_reports", "evaluation_project_matches",
+                    "evaluation_project_screening", "evaluation_findings",
+                    "price_index_policy", "price_index_sources",
+                    "price_index_values", "national_index_source_audit",
+                    "normalization_runs",
+                )
+            }
+            integrity = check.execute("PRAGMA integrity_check").fetchone()[0]
+            foreign_key_violations = check.execute(
+                "PRAGMA foreign_key_check"
+            ).fetchall()
+        finally:
+            check.close()
+    except Exception:
+        temporary_db.unlink(missing_ok=True)
+        raise
+    if integrity != "ok" or foreign_key_violations:
+        temporary_db.unlink(missing_ok=True)
+        raise RuntimeError(
+            f"temporary distribution validation failed: integrity={integrity}, "
+            f"foreign_keys={foreign_key_violations[:10]}"
+        )
+    temporary_db.replace(DB_PATH)
     print(json.dumps({
         "database": str(DB_PATH),
         "bytes": DB_PATH.stat().st_size,

@@ -1,0 +1,866 @@
+{
+  "schema_version": "1.2",
+  "include_files": [
+    "koica_endline_evaluation_curation_local_a.json",
+    "koica_endline_evaluation_curation_local_b.json",
+    "koica_endline_evaluation_curation_official_additions.json"
+  ],
+  "target_universe": {
+    "table": "projects",
+    "selector": "distinct_nonempty_project_no",
+    "expected_count": 175,
+    "scope_note": "projects의 비어 있지 않은 고유 project_no 175개를 회수율 우선 모집단으로 전수 대조했다. 이 중 기존 면적·공사비 검토사업은 91개, 공사계약 보유 사업은 109개, construction_candidate 사업은 149개이며 일부 역사자료 비건축 행이 포함되므로 각 플래그와 수동 건축관련성 판정을 함께 사용한다."
+  },
+  "corpus": {
+    "logical_name": "KOICA 종료평가보고서(1)",
+    "expected_pdf_count": 333,
+    "expected_digest": "3ef41f9a6960abb0e37f3d27be94fa0e3eea0ec60604a44a7224d279d19096f5"
+  },
+  "official_source": {
+    "logical_name": "KOICA 사업평가정보 공개 플랫폼",
+    "list_url": "https://www.koica.go.kr/sites/evaluation_kr/article/list/15/1",
+    "index_snapshot_file": "koica_evaluation_report_index_2026-08-09.json",
+    "screened_page_count": 66,
+    "screened_post_count": 586,
+    "screened_at": "2026-08-09",
+    "screened_index_digest_algorithm": "sha256(post_id NUL list_page NUL title_nfc LF; numeric post_id order)",
+    "screened_index_digest": "b57d89abc0540bb436131ca2a2ad28c34c9a86d008ef87425c6be493d4d57c03",
+    "screened_index_payload_bytes": 64281,
+    "screening_note": "공식 목록 66페이지의 게시물 ID와 제목 586건을 전수 대조하고, 선택한 첨부 PDF는 공식 URL과 SHA-256으로 검증"
+  },
+  "review": {
+    "method": "PDF 제목·사업기간·대상국을 DB의 정규 사업행과 대조한 뒤 건축 관련 문장을 물리 PDF 페이지에서 재확인",
+    "screening_completed_at": "2026-08-09",
+    "limitations": "projects 175개는 회수율 우선 스크리닝 모집단으로 일부 역사자료 비건축 행을 포함한다. 보고서에서 건축·토목·개보수 또는 시설 운영 산출물이 직접 확인된 동일사업만 수동 채택했다. 로컬 코퍼스의 pdftotext 저텍스트 파일은 OCR 필요로 분리하고, 공식 스캔 PDF는 페이지 OCR 파생물의 해시와 시각검증을 남겼다. 공식 플랫폼은 2026-08-09 공개 목록 586건을 제목 기준으로 전수 대조했지만 이후 게시·정정 가능성이 있으므로 매칭되지 않음은 보고서 부재를 뜻하지 않는다. 선행·후속 단계나 유사 명칭 사업은 동일사업으로 채택하지 않았다.",
+    "public_excerpt_policy": "개인정보가 없는 짧은 건축 근거 문장만 공개 DB 적재 승인",
+    "excluded_candidates": [
+      {"source_file": "000000016951_01.pdf", "candidate_project_no": "201701", "decision": "newer_report_selected", "reason": "같은 CIPA 사업의 2019년 구판 대신 건축 부록과 사후정보가 보강된 2022년 보고서 000000017746_01.pdf를 정본으로 선택"},
+      {"source_file": "000000018214_01.pdf", "candidate_project_no": "L2017-0004", "decision": "alternate_copy_not_selected", "reason": "같은 제목·페이지 수의 byte-different 대체본으로, 더 뒤에 등록된 000000018257_01.pdf 한 건만 정본으로 선택"},
+      {"source_file": "000000016333_01.pdf", "candidate_project_no": "2014-00016", "decision": "different_project_or_phase", "reason": "남부 이라크 직업훈련원 보고서는 DB 대상 공고와 명칭이 유사하지만 동일 사업·단계임을 입증하지 못함"},
+      {"source_file": "000000017919_01.pdf", "candidate_project_no": "2016-20150", "decision": "predecessor_phase", "reason": "퀴리노주 사업 1단계 보고서이며 DB 대상은 2단계 사업"},
+      {"source_file": "000000018105_01.pdf", "candidate_project_no": "2021-00042", "decision": "predecessor_project", "reason": "NFLC 기존 건립사업 보고서이며 DB 대상은 자립운영·연수역량강화 후속사업"},
+      {"source_file": "000000018160_01.pdf", "candidate_project_no": "2022-00598", "decision": "predecessor_phase", "reason": "섬유기술훈련센터 1단계 보고서이며 DB 대상은 2단계 사업"},
+      {"source_file": "000000017940_01.pdf", "candidate_project_no": "2018-56501", "decision": "predecessor_project", "reason": "마톨라 산업학교 원사업 보고서이며 DB 대상은 사후지원 보수공사"}
+    ]
+  },
+  "multi_project_report_ids": [],
+  "reports": [
+    {
+      "report_id": "koica-eval-000000018643-01",
+      "source_file": "000000018643_01.pdf",
+      "report_title": "투르크메니스탄 가스직업훈련원 역량강화사업(2014-2021/598만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2014-2021",
+      "publication_date": "2022-02",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-eval-000000018497-01",
+      "source_file": "000000018497_01.pdf",
+      "report_title": "엘살바도르 치안강화를 위한 차량 자동인식 시스템 구축사업 (’14-’21/420만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2014-2021",
+      "publication_date": "2023-12",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-eval-000000018658-01",
+      "source_file": "000000018658_01.pdf",
+      "report_title": "네팔 기술교사 역량강화를 통한 기술직업교육훈련 질 제고사업 (2015-2022 / 500만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2015-2022",
+      "publication_date": "2023-07",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-eval-000000018001-01",
+      "source_file": "000000018001_01.pdf",
+      "report_title": "라오스 청년동맹 IT센터 역량강화사업 (2016-2019/300만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2016-2019",
+      "publication_date": "2019-12",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-eval-000000017821-01",
+      "source_file": "000000017821_01.pdf",
+      "report_title": "엘살바도르 동부건조지역 수계 복원력 증대를 통한 기후변화 대응사업 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2017-2021",
+      "publication_date": "2022-12",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-eval-000000017746-01",
+      "source_file": "000000017746_01.pdf",
+      "report_title": "세네갈 농업기술학교 역량강화사업 (2014-2019/300만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2014-2019",
+      "publication_date": "2022-01",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-eval-000000017830-01",
+      "source_file": "000000017830_01.pdf",
+      "report_title": "세네갈 고등기술 전문대학(ISEP) 설립사업 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2015-2021",
+      "publication_date": "2022-12",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-eval-000000018257-01",
+      "source_file": "000000018257_01.pdf",
+      "report_title": "에콰도르 과야스주 보건의료센터 건립 및 의료인력 역량강화사업 (2014-2020/582만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2014-2020",
+      "publication_date": "2020-12",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-official-eval-1843",
+      "source_kind": "koica_official_site",
+      "source_file": "볼리비아 엘알또 한국병원 3차 지원사업(13~'22, 970만불) 종료평가 결과보고서.pdf",
+      "cache_file": "koica-eval-file-1843.pdf",
+      "expected_sha256": "8322371bc05f1eefd9a3c5a2232b8eae5f58063edb2654f10c8b83fb824f3c86",
+      "expected_file_bytes": 56374953,
+      "expected_page_count": 296,
+      "source_post_id": "1233",
+      "source_attachment_id": "1843",
+      "source_page_url": "https://www.koica.go.kr/sites/evaluation_kr/article/view/1233",
+      "source_download_url": "https://www.koica.go.kr/sites/evaluation_kr/common/filedownload/1843",
+      "report_title": "볼리비아 엘알또 한국병원 3차 지원사업(2013-2022/970만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2013-2022",
+      "publication_date": "2023-10",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-official-eval-2042",
+      "source_kind": "koica_official_site",
+      "source_file": "13. 파라과이 센트럴주 림삐오시 보건의료체계 형성 및 일차의료 강화사업('16-'23_1,443만불) 종료평가 결과보고서.pdf",
+      "cache_file": "koica-eval-file-2042.pdf",
+      "expected_sha256": "31301de6181787c7800674f69f0a451d579c5046ca3ead52112c4fa4e40406c3",
+      "expected_file_bytes": 22145411,
+      "expected_page_count": 113,
+      "source_post_id": "1387",
+      "source_attachment_id": "2042",
+      "source_page_url": "https://www.koica.go.kr/sites/evaluation_kr/article/view/1387",
+      "source_download_url": "https://www.koica.go.kr/sites/evaluation_kr/common/filedownload/2042",
+      "report_title": "파라과이 센트럴주 림삐오시 보건의료체계 형성 및 일차의료 강화사업(2016-2023/1,443만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2016-2023",
+      "publication_date": "2024-12",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-official-eval-1890",
+      "source_kind": "koica_official_site",
+      "source_file": "57. 파라과이 취약계층 노인 보건의료복지센터 정책수립 지원사업.pdf",
+      "cache_file": "koica-eval-file-1890.pdf",
+      "expected_sha256": "d69578c70b96c5a84263a216cb45847eea5a5521dcd683e22093264a9d6d86cb",
+      "expected_file_bytes": 20453120,
+      "expected_page_count": 126,
+      "source_post_id": "1277",
+      "source_attachment_id": "1890",
+      "source_page_url": "https://www.koica.go.kr/sites/evaluation_kr/article/view/1277",
+      "source_download_url": "https://www.koica.go.kr/sites/evaluation_kr/common/filedownload/1890",
+      "report_title": "파라과이 취약계층 노인 보건의료복지센터 정책수립 지원사업(’16-’22/1,000만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2016-2022",
+      "publication_date": "2023-12",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-official-eval-2317",
+      "source_kind": "koica_official_site",
+      "source_file": "라오스 종료평가 결과보고서.pdf",
+      "cache_file": "koica-eval-file-2317.pdf",
+      "expected_sha256": "104af8fe14c89dede22da4edc5373a40f635b1e47e0d08acfd14a5377d776ebc",
+      "expected_file_bytes": 7353131,
+      "expected_page_count": 115,
+      "source_post_id": "1484",
+      "source_attachment_id": "2317",
+      "source_page_url": "https://www.koica.go.kr/sites/evaluation_kr/article/view/1484",
+      "source_download_url": "https://www.koica.go.kr/sites/evaluation_kr/common/filedownload/2317",
+      "report_title": "라오스 한-라 직업기술개발원 역량강화사업(’17-’23/585만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2017-2023",
+      "publication_date": "2025-12",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-official-eval-2031",
+      "source_kind": "koica_official_site",
+      "source_file": "1. 우즈베키스탄 페르가나 직업훈련원 건립사업(18-_23_983만불) 종료평가 결과보고서.pdf",
+      "cache_file": "koica-eval-file-2031.pdf",
+      "expected_sha256": "47e87c5370acec9d6a9a9302691eb8343bf1348f027f0a8025886a866c1a7b9e",
+      "expected_file_bytes": 3762947,
+      "expected_page_count": 142,
+      "source_post_id": "1376",
+      "source_attachment_id": "2031",
+      "source_page_url": "https://www.koica.go.kr/sites/evaluation_kr/article/view/1376",
+      "source_download_url": "https://www.koica.go.kr/sites/evaluation_kr/common/filedownload/2031",
+      "report_title": "우즈베키스탄 페르가나 직업훈련원 건립사업(’18-’23/983만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2018-2023",
+      "publication_date": "2024-09",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-official-eval-1868",
+      "source_kind": "koica_official_site",
+      "source_file": "캄보디아 앙두엉병원 이비인후과(ENT)역량강화사업('18-'22, 800만불) 종료평가 결과보고서.pdf",
+      "cache_file": "koica-eval-file-1868.pdf",
+      "expected_sha256": "bd6cf0e437fadcff9e65d5d3978b76725197c00bcc6a1447db298b1a075a585e",
+      "expected_file_bytes": 19416666,
+      "expected_page_count": 187,
+      "source_post_id": "1257",
+      "source_attachment_id": "1868",
+      "source_page_url": "https://www.koica.go.kr/sites/evaluation_kr/article/view/1257",
+      "source_download_url": "https://www.koica.go.kr/sites/evaluation_kr/common/filedownload/1868",
+      "report_title": "캄보디아 앙두엉병원 이비인후과(ENT) 역량강화사업('18-'22/800만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2018-2022",
+      "publication_date": "2023-12",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-official-eval-2307",
+      "source_kind": "koica_official_site",
+      "source_file": "캄보디아 동북부 소외지역 모자보건 프로그램 종료평가 결과보고서.pdf",
+      "cache_file": "koica-eval-file-2307.pdf",
+      "expected_sha256": "3e1dc7ec0f2f396d42ec723141f7b205e7bf8fae0e851262a2bcd5855e84a867",
+      "expected_file_bytes": 3471629,
+      "expected_page_count": 173,
+      "source_post_id": "1480",
+      "source_attachment_id": "2307",
+      "source_page_url": "https://www.koica.go.kr/sites/evaluation_kr/article/view/1480",
+      "source_download_url": "https://www.koica.go.kr/sites/evaluation_kr/common/filedownload/2307",
+      "report_title": "캄보디아 동북부 소외지역 모자보건 프로그램(2019-2023/700만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2019-2023",
+      "publication_date": "2025-02",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-official-eval-2039",
+      "source_kind": "koica_official_site",
+      "source_file": "10. 라오스 출입국관리 행정역량강화사업(‘17-’23_860만불) 종료평가 결과보고서.pdf",
+      "cache_file": "koica-eval-file-2039.pdf",
+      "expected_sha256": "c2877aeffe711f453234ab105d3a9bb9010c14b14c3456650ff2cc9a36323a64",
+      "expected_file_bytes": 8667671,
+      "expected_page_count": 139,
+      "source_post_id": "1384",
+      "source_attachment_id": "2039",
+      "source_page_url": "https://www.koica.go.kr/sites/evaluation_kr/article/view/1384",
+      "source_download_url": "https://www.koica.go.kr/sites/evaluation_kr/common/filedownload/2039",
+      "report_title": "라오스 출입국관리 행정역량강화사업(2017-2023/860만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2017-2023",
+      "publication_date": "2024-12",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    },
+    {
+      "report_id": "koica-official-eval-2365",
+      "source_kind": "koica_official_site",
+      "source_file": "필리핀 퀴리노주 농촌종합개발 2차 사업(‘18-’24_1,112만불) 종료평가 결과보고서.pdf",
+      "cache_file": "koica-eval-file-2365.pdf",
+      "expected_sha256": "c5808ed9636deaa25c2f51d52dd2f7b4f9a746a38b7f96df8c0656eff320a83d",
+      "expected_file_bytes": 4276748,
+      "expected_page_count": 107,
+      "source_post_id": "1519",
+      "source_attachment_id": "2365",
+      "source_page_url": "https://www.koica.go.kr/sites/evaluation_kr/article/view/1519",
+      "source_download_url": "https://www.koica.go.kr/sites/evaluation_kr/common/filedownload/2365",
+      "report_title": "필리핀 퀴리노주 농촌종합개발 2차 사업(’18-’24/1,112만불) 종료평가 결과보고서",
+      "report_type": "endline_evaluation",
+      "project_period": "2018-2024",
+      "publication_date": "2025-09",
+      "publication_date_precision": "month",
+      "duplicate_of_report_id": null
+    }
+  ],
+  "matches": [
+    {
+      "match_id": "match-2014-00024-018643", "report_id": "koica-eval-000000018643-01", "project_no": "2014-00024",
+      "db_country": "투르크메니스탄", "db_project_name": "투르크메니스탄 가스직업훈련원 역량강화사업 설계시공입찰",
+      "report_project_name": "투르크메니스탄 가스직업훈련원 역량강화사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 1.0,
+      "match_basis": "국가·공식 사업명·사업기간이 일치하고 DB 공고가 해당 사업의 설계시공 패키지임", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2014-00031-018497", "report_id": "koica-eval-000000018497-01", "project_no": "2014-00031",
+      "db_country": "엘살바도르", "db_project_name": "엘살바도르 치안강화를 위한 차량 자동인식시스템 구축사업, CCTV 역량강화센터 2층 리모델링 시공업체 선정",
+      "report_project_name": "엘살바도르 치안강화를 위한 차량 자동인식 시스템 구축사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 1.0,
+      "match_basis": "차량 자동인식 시스템 구축사업명과 2014-2021 사업기간이 일치하며 보고서가 동일 사업의 종료평가임", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2015-00012-018658", "report_id": "koica-eval-000000018658-01", "project_no": "2015-00012",
+      "db_country": "네팔", "db_project_name": "네팔 기술교사 역량강화를 통한 기술직업교육훈련 질적 제고 사업 IT 강의동 시공업체 선정 현지 입찰",
+      "report_project_name": "네팔 기술교사 역량강화를 통한 기술직업교육훈련 질 제고사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 0.99,
+      "match_basis": "질적 제고·질 제고의 표기 차이 외 국가·사업기간·IT 강의동 구성요소가 일치함", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2016-00028-018001", "report_id": "koica-eval-000000018001-01", "project_no": "2016-00028",
+      "db_country": "라오스", "db_project_name": "라오스 청년동맹 IT센터 역량강화사업 시공업체 선정",
+      "report_project_name": "라오스 청년동맹 IT센터 역량강화사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 1.0,
+      "match_basis": "국가·공식 사업명·IT센터 시공 구성요소가 일치하는 동일 사업 종료평가임", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2016-00220-017821", "report_id": "koica-eval-000000017821-01", "project_no": "2016-00220",
+      "db_country": "엘살바도르", "db_project_name": "엘살바도르 동부건조지역 수계 복원력증대를 통한 기후변화대응사업('17-'20/800만불) 수자원확보 시행업체(PC) 선정",
+      "report_project_name": "엘살바도르 동부건조지역 수계 복원력 증대를 통한 기후변화 대응사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 0.99,
+      "match_basis": "띄어쓰기와 최종 기간·예산 변경 외 국가·사업명·수자원 확보 구성요소가 일치함", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-201701-017746", "report_id": "koica-eval-000000017746-01", "project_no": "201701",
+      "db_country": "세네갈", "db_project_name": "세네갈 고등기술전문대학(ISEP) 설립사업 및 농업기술학교(CIPA) 역량강화사업 시공업체 선정",
+      "report_project_name": "세네갈 농업기술학교 역량강화사업", "match_method": "exact_component_title", "relation_scope": "same_project_component", "match_score": 0.98,
+      "match_basis": "DB 통합 시공공고의 CIPA 구성요소와 국가·공식 사업명·사업기간이 일치함", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-201701-017830", "report_id": "koica-eval-000000017830-01", "project_no": "201701",
+      "db_country": "세네갈", "db_project_name": "세네갈 고등기술전문대학(ISEP) 설립사업 및 농업기술학교(CIPA) 역량강화사업 시공업체 선정",
+      "report_project_name": "세네갈 고등기술 전문대학(ISEP) 설립사업", "match_method": "exact_component_title", "relation_scope": "same_project_component", "match_score": 0.98,
+      "match_basis": "DB 통합 시공공고의 ISEP 구성요소와 국가·공식 사업명·사업기간이 일치함", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-L2017-0004-018257", "report_id": "koica-eval-000000018257-01", "project_no": "L2017-0004",
+      "db_country": "에콰도르", "db_project_name": "에콰도르 과야스주 보건의료센터 건립사업 시공사 선정 입찰",
+      "report_project_name": "에콰도르 과야스주 보건의료센터 건립 및 의료인력 역량강화사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 0.99,
+      "match_basis": "국가·과야스주 의료센터 건립 사업명과 시공 구성요소가 일치하는 동일 사업 종료평가임", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2013-00007-official-1843", "report_id": "koica-official-eval-1843", "project_no": "2013-00007",
+      "db_country": "볼리비아", "db_project_name": "(재입찰)볼리비아 El-Alto 한국병원 3차 지원사업 시공업체선정",
+      "report_project_name": "볼리비아 엘알또 한국병원 3차 지원사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 0.99,
+      "match_basis": "El-Alto·엘알또 표기 차이 외 국가·3차 지원사업·한국병원 구성요소가 일치하고, 종료평가의 사업기간·예산은 연장·증액 후 최종값임", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2016-00002-official-2042", "report_id": "koica-official-eval-2042", "project_no": "2016-00002",
+      "db_country": "파라과이", "db_project_name": "파라과이 센트럴주 림삐오시 보건의료체계 형성 및 의료강화사업/ 보건소 신축 1단계 공사",
+      "report_project_name": "파라과이 센트럴주 림삐오시 보건의료체계 형성 및 일차의료 강화사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 0.98,
+      "match_basis": "국가·센트럴주 림삐오시·보건의료체계 및 일차의료 강화라는 고유 사업명이 일치하고 DB 공고는 동일 사업의 보건소 신축 공사임", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2016-00003-official-1890", "report_id": "koica-official-eval-1890", "project_no": "2016-00003",
+      "db_country": "파라과이", "db_project_name": "파라과이 취약계층 노인 보건의료복지센터 정책수립 지원사업 산토 도밍고 노인 보인의료복지센터 신축 공사 시공자 선정 현지국제입찰",
+      "report_project_name": "파라과이 취약계층 노인 보건의료복지센터 정책수립 지원사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 1.0,
+      "match_basis": "국가·공식 사업명이 정확히 일치하고 DB 공고의 산토 도밍고 센터 신축이 종료평가 사업의 건축 구성요소로 확인됨", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2016-00213-official-2317", "report_id": "koica-official-eval-2317", "project_no": "2016-00213",
+      "db_country": "라오스", "db_project_name": "라오스 한라 직업기술개발원 역량강화사업 건축 공사 설계 및 시공 일괄 입찰",
+      "report_project_name": "라오스 한-라 직업기술개발원 역량강화사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 0.99,
+      "match_basis": "한라·한-라 표기 차이 외 국가·직업기술개발원 역량강화 사업명이 일치하고 보고서가 건축 산출물을 명시함", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2017-07115-official-2031", "report_id": "koica-official-eval-2031", "project_no": "2017-07115",
+      "db_country": "우즈베키스탄", "db_project_name": "우즈베키스탄 페르가나 직업훈련원 건립 신축공사 시공업체 선정 현지입찰",
+      "report_project_name": "우즈베키스탄 페르가나 직업훈련원 건립사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 1.0,
+      "match_basis": "보고서 사업개요의 사업번호 2017-07115와 국가·페르가나 직업훈련원 건립 사업명이 DB 정규행과 정확히 일치함", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2017-07192-official-1868", "report_id": "koica-official-eval-1868", "project_no": "2017-07192",
+      "db_country": "캄보디아", "db_project_name": "캄보디아 앙두엉 이비인후과(ENT)병원 역량강화사업 시공업체 선정 입찰",
+      "report_project_name": "캄보디아 앙두엉병원 이비인후과(ENT) 역량강화사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 0.99,
+      "match_basis": "앙두엉·이비인후과 ENT·역량강화라는 고유 사업명과 국가·사업기간이 일치하며 DB 공고는 동일 사업 시공 패키지임", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2019-00066-official-2307", "report_id": "koica-official-eval-2307", "project_no": "2019-00066",
+      "db_country": "캄보디아", "db_project_name": "캄보디아 동북부 소외지역 모자보건 프로그램 시공업체 선정 현지입찰(3차 신규)",
+      "report_project_name": "캄보디아 동북부 소외지역 모자보건 프로그램", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 1.0,
+      "match_basis": "국가·공식 사업명·2019-2023 사업기간이 일치하고 DB 공고는 동일 프로그램의 모자보건센터 시공 패키지임", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2016-00202-official-2039", "report_id": "koica-official-eval-2039", "project_no": "2016-00202",
+      "db_country": "라오스", "db_project_name": "라오스 이민국 신청사 건축 시공용역 현지입찰",
+      "report_project_name": "라오스 출입국관리 행정역량강화사업", "match_method": "exact_component_title", "relation_scope": "same_project_component", "match_score": 0.97,
+      "match_basis": "종료평가의 출입국관리 행정역량강화사업에서 이민국 신청사 건축이 핵심 산출물로 확인되고 국가·사업기간·예산이 DB 사업과 일치함", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    },
+    {
+      "match_id": "match-2016-20150-official-2365", "report_id": "koica-official-eval-2365", "project_no": "2016-20150",
+      "db_country": "필리핀", "db_project_name": "필리핀 퀴리노주 농촌종합개발 2차 사업 설계 및 시공 일괄용역",
+      "report_project_name": "필리핀 퀴리노주 농촌종합개발 2차 사업", "match_method": "exact_official_title", "relation_scope": "same_project", "match_score": 1.0,
+      "match_basis": "국가·퀴리노주·농촌종합개발 2차라는 공식 사업명이 정확히 일치하며 종료평가가 DB 설계시공 패키지의 시설을 직접 평가함", "review_status": "accepted", "reviewed_at": "2026-08-09"
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "f-018643-area", "match_id": "match-2014-00024-018643", "category": "facility_scope", "field_code": "facility_area",
+      "summary_text": "계획 2,250㎡에서 부대 기계실을 포함한 총 3,227㎡로 확대해 완공했다.", "value_text": "3,227㎡", "value_numeric": 3227, "unit": "m2", "value_context": "완공 총연면적",
+      "pdf_page_start": 65, "pdf_page_end": 65, "printed_page_label": "49", "evidence_excerpt": "당초 연면적 2,250㎡ 교육시설 건축을 계획하였으나, 실제로는 건물 연면적 2,927㎡에 보일러·펌프실 (약60㎡)과 물탱크실(약240㎡)이 추가되어 전체 연면적 약 3,227㎡의 건축물이 완공되었음.",
+      "conflict_group": null, "review_note": "DB 공고금액·면적과 혼용하지 않고 종료평가의 완공범위로 저장", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018643-delay", "match_id": "match-2014-00024-018643", "category": "schedule", "field_code": "schedule_delay",
+      "summary_text": "실제 착수 뒤 사업기간이 8개월 지연됐으나 환차손·물류·코로나 요인을 불가피한 사유로 평가했다.", "value_text": "8개월", "value_numeric": 8, "unit": "month", "value_context": "실제 착수 후 사업기간 지연",
+      "pdf_page_start": 15, "pdf_page_end": 15, "printed_page_label": "xi", "evidence_excerpt": "동 사업은 예산이 8만불 증가하고 실제 사업착수 후 사업기간이 8개월 지연되었지만, 환차손 문제와 물류비 소요로 인한 예산 증액과 COVID-19 인한 사업 기간 연장 등의 필수불가결한 상황이었기 때문에 예산 운용 및 기간 운용은 효율적이었음.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018643-safety", "match_id": "match-2014-00024-018643", "category": "quality_safety", "field_code": "safety_issue",
+      "summary_text": "용접실 환기와 실내 가스 보관창고가 안전 위험으로 지적됐다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "용접실 운영 안전",
+      "pdf_page_start": 66, "pdf_page_end": 66, "printed_page_label": "50", "evidence_excerpt": "하지만 용접실습실 환기 문제로 에어 배관 및 환풍기가 준공 직전에 추가 설치된 바, 환기에 대한 지속적인 확인이 필요하고, 외부에 있어야 할 가스 등 보관창고가 현재 용접실습실 내부에 있어 위험을 내포하고 있으므로 이에 대한 대책마련이 필요함.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018643-fire", "match_id": "match-2014-00024-018643", "category": "quality_safety", "field_code": "safety_issue",
+      "summary_text": "소방당국이 실내 가스용접 실습을 금지해 외부 별도 실습공간을 계획했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "가스용접 화재위험",
+      "pdf_page_start": 72, "pdf_page_end": 72, "printed_page_label": "56", "evidence_excerpt": "마리주 소방당국은 화재의 위험성이 있는 가스 용접장비 실습을 건물 내에서 진행하는 것을 금지하고 있어 가스직업훈련원측에서는 신축 건물 외부에 별도의 공간을 마련하여 해당 실습교육을 진행할 계획을 수립한 상황임.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018643-access", "match_id": "match-2014-00024-018643", "category": "lesson_recommendation", "field_code": "construction_recommendation",
+      "summary_text": "장애인 경사로와 장애인 화장실이 없어 향후 증축 때 반영할 필요가 있다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "장애인 접근성",
+      "pdf_page_start": 78, "pdf_page_end": 78, "printed_page_label": "62", "evidence_excerpt": "신규 공과 운영을 위해 신축된 건물에는 장애인을 위한 경사로나 화장실 등 장애인 편의시설이 설치되어 있지 않아 아쉬움이 있는 바, 향후 증축시 이에 대한 고려가 필요할 것으로 판단됨.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-018497-scope", "match_id": "match-2014-00031-018497", "category": "facility_scope", "field_code": "facility_scope_summary",
+      "summary_text": "역량강화센터는 1층 기숙·주방과 2층 사무·강의·실습공간으로 구성됐다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "리모델링 시설 구성",
+      "pdf_page_start": 64, "pdf_page_end": 64, "printed_page_label": null, "evidence_excerpt": "1층 남녀구분 기숙시설, 주방시설 2층 관리사무실, 대형 강의실, 컴퓨터 실습실, 강의실겸 회의실",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018497-budget", "match_id": "match-2014-00031-018497", "category": "cost_procurement", "field_code": "construction_budget",
+      "summary_text": "예비비 30.68만불을 활용해 리모델링 범위를 2층에서 1·2층 전체로 확대했다.", "value_text": "30.68만불", "value_numeric": null, "unit": null, "value_context": "확대 리모델링 투입액",
+      "pdf_page_start": 63, "pdf_page_end": 63, "printed_page_label": null, "evidence_excerpt": "특히 역량강화센터 리모델링의 경우 2층만 대상이었으나, KOICA 예비비를 활용하여 30.68만불의 소규모 예산으로 1층과 2층 모두를 리모델링함으로써",
+      "conflict_group": "2014-00031-remodeling-scope", "review_note": "DB의 2층 입찰 상한액과 보고서의 1·2층 확대 범위 금액은 가격단계와 범위가 다름", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018497-delay", "match_id": "match-2014-00031-018497", "category": "schedule", "field_code": "schedule_delay",
+      "summary_text": "리모델링 입찰 지연으로 사업 종료시점이 2018년 계획에서 2019년으로 바뀌었다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "리모델링 입찰 지연",
+      "pdf_page_start": 63, "pdf_page_end": 63, "printed_page_label": null, "evidence_excerpt": "2014-2018 2017년/리모델링 입찰 지연 2014-2019 2018년/리모델링 입찰 지연",
+      "conflict_group": null, "review_note": null, "confidence": "medium", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018497-quality", "match_id": "match-2014-00031-018497", "category": "quality_safety", "field_code": "construction_quality",
+      "summary_text": "평가에서는 설계변경·공사후 하자·균열·작동상태에 특별한 지적사항이 없다고 봤다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "현장 품질 확인",
+      "pdf_page_start": 50, "pdf_page_end": 50, "printed_page_label": null, "evidence_excerpt": "이에 특별한 설계변경, 공사 후하자, 균열, 정상작동 여부 모두 특별히 지적할 사항이 없으며",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018497-warranty", "match_id": "match-2014-00031-018497", "category": "operations_maintenance", "field_code": "maintenance_arrangement",
+      "summary_text": "별도 유지보수 계약은 없지만 설치 하자에 대한 2년 보증기간이 계약에 포함됐다.", "value_text": "2년", "value_numeric": 2, "unit": "year", "value_context": "설치 하자 보증기간",
+      "pdf_page_start": 90, "pdf_page_end": 90, "printed_page_label": null, "evidence_excerpt": "(유지보수 및 보증기간) 별도의 유지보수 계약을 체결하지는 않았지만, 설치 관련 하자 에 대한 2년 보증기간이 계약에 포함됨.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018497-use", "match_id": "match-2014-00031-018497", "category": "utilization_results", "field_code": "facility_utilization",
+      "summary_text": "수도권 밖 경찰의 연수 숙박과 CCTV 외 다른 경찰부서의 교육에도 시설을 활용했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "역량강화센터 활용",
+      "pdf_page_start": 90, "pdf_page_end": 90, "printed_page_label": null, "evidence_excerpt": "시설이 모두 갖추어졌으며, 수도에서 먼 지역에서 방문한 경찰 인력 연수에 편리함을 제공하고 있음. 또한, 911센터 및 CCTV 관련 인력 외에도 필요시 다른 경찰 부서에서 활용하고 있음.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018497-lesson", "match_id": "match-2014-00031-018497", "category": "lesson_recommendation", "field_code": "construction_lesson",
+      "summary_text": "코로나로 집행하기 어려운 역량강화 예산을 건축에 전용해 리모델링 범위를 확대한 판단을 긍정적으로 평가했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "사업비 전용 교훈",
+      "pdf_page_start": 61, "pdf_page_end": 61, "printed_page_label": null, "evidence_excerpt": "특히 코로나19로 사업수행이 어려웠던 경찰관 역량강화 부분 사업비를 전용하여 건축 사업에 투입하여, 리모델링 범위를 넓히는 과정에서 사업적, 정무적 판단이 본 사업의 효과를 더욱 크게 만든 요소라고 평가됨.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-018658-area", "match_id": "match-2015-00012-018658", "category": "facility_scope", "field_code": "facility_area",
+      "summary_text": "사업은 연면적 1,400㎡ 규모의 IT 강의동을 구축했다.", "value_text": "1,400㎡", "value_numeric": 1400, "unit": "m2", "value_context": "IT 강의동 연면적",
+      "pdf_page_start": 17, "pdf_page_end": 17, "printed_page_label": "1", "evidence_excerpt": "IT강의동 구축(연면적 1,400㎡)",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018658-handover", "match_id": "match-2015-00012-018658", "category": "schedule", "field_code": "handover_status",
+      "summary_text": "IT 강의동은 2020년 12월 최종 준공됐고 2021년 1월 준공검사에 합격했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "준공 및 검사",
+      "pdf_page_start": 25, "pdf_page_end": 25, "printed_page_label": "9", "evidence_excerpt": "2020.12. ∙ IT 강의동 최종 준공 완료(12.28) 2021.01. ∙ IT 강의동 준공검사(1.15) 합격",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018658-use", "match_id": "match-2015-00012-018658", "category": "utilization_results", "field_code": "facility_utilization",
+      "summary_text": "IT 강의동은 ICT 연수와 LMS 연계 원격연수에 적극적으로 활용됐다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "교육시설 활용",
+      "pdf_page_start": 20, "pdf_page_end": 20, "printed_page_label": "4", "evidence_excerpt": "본 사업을 통해 구축된 IT 강의 동은 ICT 분야 연수를 위해 매우 적극적으로 활용되고 있음. 특히 LMS와 연계하여 원격 연수에 활용되고 있어, 향후 교원 연수에 있어서 혁신적인 변화를 가져올 수 있을 것으로 예측됨.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018658-limit", "match_id": "match-2015-00012-018658", "category": "lesson_recommendation", "field_code": "construction_lesson",
+      "summary_text": "시설은 구축했지만 해당 사업에서 IT 강의동을 활용한 ICT 교육을 수행하지 못한 점이 기획 한계로 지적됐다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "시설-교육 연계",
+      "pdf_page_start": 57, "pdf_page_end": 57, "printed_page_label": "41", "evidence_excerpt": "IT 강의동을 활용한 ICT 교육 등이 본 사업을 통해 이루어지지 못한 부분이 사업기획에 있어 한계로 볼 수 있으나 전반적으로 사업이 현지 수요와 우선순위를 반영하여 설계되었으며 사업 구성요소가 유기적으로 구성될 수 있는 현실적 설계가 이루어졌다고 판단됨.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-018001-scope", "match_id": "match-2016-00028-018001", "category": "facility_scope", "field_code": "facility_scope_summary",
+      "summary_text": "IT센터 건축과 5개 강의실 등에 150만불이 계획대로 집행됐다.", "value_text": "150만 불", "value_numeric": null, "unit": null, "value_context": "IT센터 건축 계획·집행",
+      "pdf_page_start": 14, "pdf_page_end": 14, "printed_page_label": "11", "evidence_excerpt": "사업은 IT센터 건물 신축에 투입한 150만 불을 포함하여 멀티미디어 스튜 디오와 서버시스템 구축, 신축건물에 5개의 강의실과 100대의 컴퓨터 등 기자 재 지원 102만 불",
+      "conflict_group": null, "review_note": "보고서의 분야별 집행 설명이며 DB 입찰금액과 가격단계가 다를 수 있음", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018001-capacity", "match_id": "match-2016-00028-018001", "category": "utilization_results", "field_code": "facility_utilization",
+      "summary_text": "5개 강의실을 1인 1PC로 구성해 동시에 100명을 수용할 수 있다.", "value_text": "100명", "value_numeric": 100, "unit": "person", "value_context": "동시 교육 수용인원",
+      "pdf_page_start": 20, "pdf_page_end": 20, "printed_page_label": "17", "evidence_excerpt": "5개 강의실이 모두 1인 1PC로 구성되어 동시 활용 시 100명 수용 가능, 라오스 내 최대 IT교육 시설로 평가됨.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018001-network", "match_id": "match-2016-00028-018001", "category": "risk_issue", "field_code": "infrastructure_risk",
+      "summary_text": "건물 규모와 콘크리트 벽 특성에 비해 무선 AP가 부족해 일부 공간에서만 와이파이를 쓸 수 있었다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "무선 네트워크",
+      "pdf_page_start": 23, "pdf_page_end": 23, "printed_page_label": "20", "evidence_excerpt": "IT센터 규모와 건축물 특성에 비하여 무선공유기(Access Point, AP)가 부족함. 주로 건물 입구에 AP가 설치되어 건물 반대쪽에서는 신호가 미약하고, 두꺼운 콘크리벽을 가로 지르지 못하는 전파 특성으로 인하여 극히 일부지역에서만 WiFi를 이용할 수 있음.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018001-maintenance", "match_id": "match-2016-00028-018001", "category": "operations_maintenance", "field_code": "maintenance_arrangement",
+      "summary_text": "전용 예산은 없고 교육비로 건물 유지비와 교육운영비를 충당하며 별도 조직·예산 편성을 준비했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "센터 운영재원",
+      "pdf_page_start": 24, "pdf_page_end": 24, "printed_page_label": "21", "evidence_excerpt": "현재 IT센터만을 목적으로 배정된 예산은 없는 상황이지만, 교육생이 지불하는 ‘교육비’로 ‘건물 유지비’, ‘교육 운영비’ 등을 충당하고 잔액은 LYU 수입처리 하 는 방식으로 IT센터를 운영하고 있으며, 2020년 LYU 사업 계획에서는 IT센터를 별도의 조직화 하고 예산을 배정하는 등의 계획을 수립하는 등 IT센터의 지속적 운영을 준비하고 있음.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-017821-scope", "match_id": "match-2016-00220-017821", "category": "facility_scope", "field_code": "facility_scope_summary",
+      "summary_text": "수자원 확보 구성요소는 저류지·점적관개·우수집수탱크·토사유입방지 시설을 포함했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "수자원 인프라 범위",
+      "pdf_page_start": 33, "pdf_page_end": 33, "printed_page_label": "6", "evidence_excerpt": "1-1-1 소규모 저류지 및 점적관개시설 설치 1-1-2 우수 집수 탱크 설치 ∘한국측 805만불 1-2-1 Ditch 및 토사유입방지 시설 구축",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-017821-delay", "match_id": "match-2016-00220-017821", "category": "schedule", "field_code": "schedule_delay",
+      "summary_text": "수자원 확보 계약은 설계변경으로 82일 연장되고 계약액도 증액됐다.", "value_text": "82일", "value_numeric": 82, "unit": "day", "value_context": "수자원 확보 PC 계약 연장",
+      "pdf_page_start": 61, "pdf_page_end": 61, "printed_page_label": "34", "evidence_excerpt": "계약기간: 기존 계약기간: 2019.08.30.~2020.08.29. 2019.08.30.~2020.11.19. (총 82일 추가연장) 사업요소 1 ·설계변경에 따른 증액 수자원 확보 PC 계약금",
+      "conflict_group": "2016-00220-contract-change", "review_note": "동일 페이지의 최종 계약금 변경과 연결되는 기간 변경", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-017821-cost", "match_id": "match-2016-00220-017821", "category": "cost_procurement", "field_code": "project_budget",
+      "summary_text": "전체 사업예산은 당초 800만불에서 최종 805만불로 5만불 증가했다.", "value_text": "805만", "value_numeric": null, "unit": null, "value_context": "최종 사업사용액",
+      "pdf_page_start": 65, "pdf_page_end": 65, "printed_page_label": "38", "evidence_excerpt": "당초 사업예산은 800만 불이었으나 최종사용액은 805만으로 5만불이 증가함 - 사업요소1(수자원 확보시설 구축)에서 설계변경에 따른 17,300불이 증가하였음.",
+      "conflict_group": "2016-00220-contract-change", "review_note": "DB 공고의 800만불 표기와 종료평가 최종사용액을 구분", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-017821-maintenance", "match_id": "match-2016-00220-017821", "category": "operations_maintenance", "field_code": "maintenance_arrangement",
+      "summary_text": "구획 내 관개시설과 설비는 소농이 직접 유지관리하는 체계로 파악됐다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "수혜농 유지관리",
+      "pdf_page_start": 50, "pdf_page_end": 50, "printed_page_label": "23", "evidence_excerpt": "현재도 구획내 관개시설 및 설비들은 소 농들이 직접 유지관리를 하고 있다고 함. - 이러한 특성으로 본 사업의 지속가능성은 좋은 것으로 파악됨.",
+      "conflict_group": null, "review_note": null, "confidence": "medium", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-017746-scope", "match_id": "match-201701-017746", "category": "facility_scope", "field_code": "facility_scope_summary",
+      "summary_text": "CIPA 건축은 교실·기숙사·행정동·농기계 실습실 신축과 기존건물 개보수로 구성됐다.", "value_text": "161만불", "value_numeric": null, "unit": null, "value_context": "건축 분야 계획예산·범위",
+      "pdf_page_start": 33, "pdf_page_end": 33, "printed_page_label": "8", "evidence_excerpt": "(건축) ▣ 소요예산 : 161만불 (1,830백만원) ◾ 교육시설 신축 및 기존건물 개보수 - 교실, 기숙사, 행정동, 농기계 실습실 등",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-017746-quality", "match_id": "match-201701-017746", "category": "quality_safety", "field_code": "construction_quality",
+      "summary_text": "구조적 균열·침하·변형은 없지만 금속부 녹과 물끊기 미시공이 확인됐다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "준공 시공품질",
+      "pdf_page_start": 57, "pdf_page_end": 57, "printed_page_label": "22", "evidence_excerpt": "건물 구조적 문제점(균열, 침하, 변형 등)은 없는 상태임 - 철제(금속)부분에 일부 녹이 발생되었으며, 방청페인트의 부실로 파악됨 (보완 시공 이 필요함) - 옥외에 노출된 슬래브 하단면으로 우수의 유입이 예상되는 부분에 물끊기(선형 홈파 기)가 미시공되어 보완 시공이 필요함",
+      "conflict_group": null, "review_note": "누수는 별도 문장에 보수 완료로 기재되어 요약에만 병합하지 않음", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-017746-delay", "match_id": "match-201701-017746", "category": "schedule", "field_code": "schedule_delay",
+      "summary_text": "건축 마감과 기자재 조달 지연으로 전체 사업 진도가 당초 계획보다 늦어졌다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "사업 진도 지연",
+      "pdf_page_start": 58, "pdf_page_end": 58, "printed_page_label": "23", "evidence_excerpt": "건축 마감과 기자재 조달 지연으로 전체 사업 진도가 당 초 계획보다 다소 지연되고 있었음.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-017746-maintenance", "match_id": "match-201701-017746", "category": "operations_maintenance", "field_code": "maintenance_arrangement",
+      "summary_text": "페인트 마감은 내구성이 낮아 정기점검·사용지침과 훼손 시 즉각 유지관리가 필요하다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "마감재 유지관리",
+      "pdf_page_start": 63, "pdf_page_end": 63, "printed_page_label": "28", "evidence_excerpt": "내·외부 벽, 천정 등의 마감은 페인트마감. 세네갈내에서 일반적인 마감재이나 내구 성을 갖는 재료로 보기 어려우므로, 사용시 주의 및 훼손시 즉각적인 유지 관리를 요하는 등 정기점검 및 사용지침을 마련하고 유지관리 할 필요 있음.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-017830-area", "match_id": "match-201701-017830", "category": "facility_scope", "field_code": "facility_area",
+      "summary_text": "ISEP의 ICT·자동차 공과 교육시설과 강당 등은 총 6,568㎡로 완공됐다.", "value_text": "6,568m2", "value_numeric": 6568, "unit": "m2", "value_context": "완공 교육시설 연면적",
+      "pdf_page_start": 59, "pdf_page_end": 59, "printed_page_label": "37", "evidence_excerpt": "ISEP DD는 ICT와 자동차 공과 2개학과 교육 시설, 강당 등 약 연면 적 6,568m2의 교육 시설로 계획 연면적 6,398m2를 약간 초과하며 성공적으로 구축됨.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-017830-delay", "match_id": "match-201701-017830", "category": "schedule", "field_code": "schedule_delay",
+      "summary_text": "환차손·물류비·코로나 영향으로 예산이 40만불 늘고 사업기간이 1년 지연됐다.", "value_text": "1년", "value_numeric": 1, "unit": "year", "value_context": "전체 사업기간 지연",
+      "pdf_page_start": 15, "pdf_page_end": 15, "printed_page_label": "ix", "evidence_excerpt": "동 사업은 40만불 예산 증액과 1년 사업기간이 지연되었지만, 환차손 문제와 물류비 소요로 인한 예산 증액과 COVID-19인한 사업 기간 연장 등의 필수불가결한 상황이 었기 때문에 예산 운용 및 기간 운용은 효율적이었다고 평가함.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-017830-quality", "match_id": "match-201701-017830", "category": "quality_safety", "field_code": "construction_quality",
+      "summary_text": "일부 벽 균열이 우기에 재발해 현지 시공사가 추가 사후보수를 할 예정이었다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "벽체 균열 보수",
+      "pdf_page_start": 61, "pdf_page_end": 61, "printed_page_label": "39", "evidence_excerpt": "학교 일부 벽에 균열이 발생하였지만 심각한 상태는 아니였음. GE에서 수리를 했지만 현지 자연환경 (우기)으로 인해 균열이 재발생한 상황이며, 이에 대해 GE에서 사후관 리로 추가 보수작업을 진행할 예정임.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-017830-infra", "match_id": "match-201701-017830", "category": "risk_issue", "field_code": "infrastructure_risk",
+      "summary_text": "외부 우·오수 관로 지연으로 임시 정화조가 한계에 이르러 화장실 이용이 제한됐다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "외부 기반시설 지연",
+      "pdf_page_start": 60, "pdf_page_end": 61, "printed_page_label": "38-39", "evidence_excerpt": "하지만 우수 관로, 오수관로 등 기반 시설 구축 지연으로 임시 정화조가 설치되어 화장실 사용 제한 등 시설 이용에 불편이 있음.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-018257-area", "match_id": "match-L2017-0004-018257", "category": "facility_scope", "field_code": "facility_area",
+      "summary_text": "과야스주 두란시에 2층·연면적 2,450㎡의 C2형 보건의료센터 1개소를 건립했다.", "value_text": "2,450㎡", "value_numeric": 2450, "unit": "m2", "value_context": "보건의료센터 연면적",
+      "pdf_page_start": 14, "pdf_page_end": 14, "printed_page_label": "9", "evidence_excerpt": "과야스주 두란시내 보건의료센터 1개소 건립(2층 연면적 2,450㎡/C2타입)",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018257-delay", "match_id": "match-L2017-0004-018257", "category": "schedule", "field_code": "schedule_delay",
+      "summary_text": "수원기관 분담 지연·설계변경·재난·정부개편으로 사업기간이 2년 연장됐다.", "value_text": "2년", "value_numeric": 2, "unit": "year", "value_context": "계획 대비 사업기간 연장",
+      "pdf_page_start": 8, "pdf_page_end": 8, "printed_page_label": "3", "evidence_excerpt": "사업기간의 경우, 당초 2014년 – 2017년으로 계획되었으나, 2014년 – 2019년으로 변경(총 2년 연장)됨. 이는 △건축단계의 수원기관 분담사 항 이행지연 및 설계변경요청, △재난재해발생, △정권교체로 인한 조직개편 등 주로 수원국측 요인으로 불가피하게 지연이 발생된 것으로 확인됨.",
+      "conflict_group": "L2017-0004-project-period", "review_note": "표지·평가대상 기간 2014-2020과 실제 사업 종료 2019를 구분", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018257-procurement", "match_id": "match-L2017-0004-018257", "category": "cost_procurement", "field_code": "procurement_issue",
+      "summary_text": "시공사의 하도급 대금 지연에 대해 기성금 지급을 보류하고 정산 확인 후 잔금을 지급했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "하도급 대금 통제",
+      "pdf_page_start": 28, "pdf_page_end": 28, "printed_page_label": "23", "evidence_excerpt": "시공사가 하도급업체에게 대금지급을 지연하여 하도급 업체가 직접 KOICA에 대금지불을 요구하는 사태가 발생하자, 사무소는 기성금 지급을 보류하며, 시공사의 잔여 기성금으로 하도급 업체와 인부들의 밀린 대금을 정산하는 조건으로 기성금의 반액을 지급한 뒤, 하도급 대금정산 여부를 확인한 후에 정산 잔금을 시공사에 지급함으로 문제를 해결함.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018257-quality", "match_id": "match-L2017-0004-018257", "category": "quality_safety", "field_code": "construction_quality",
+      "summary_text": "조적부와 콘크리트 조인트 균열로 누수·페인트 박리·외부 조적 파쇄가 발생했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "준공 후 건축하자",
+      "pdf_page_start": 29, "pdf_page_end": 29, "printed_page_label": "24", "evidence_excerpt": "El Recreo II 보건의료센터 시공 이후 건물 전면의 조적부와 콘크리트면 사이의 조인트 부분에 균열 이 생겨, 균열부를 통한 누수 및 페인트 박리가 발생하고 외부의 조적부분 일부가 파쇄되는 등 전반적으로 건축 하자가 다수 발생한 점은 다소 아쉬운 측면이 있음.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-018257-maintenance", "match_id": "match-L2017-0004-018257", "category": "operations_maintenance", "field_code": "maintenance_arrangement",
+      "summary_text": "운영·유지관리는 관할 보건국 지원체계이며 확대된 의료수요에 따라 지원 지속이 전망됐다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "의료센터 유지관리 체계",
+      "pdf_page_start": 35, "pdf_page_end": 35, "printed_page_label": "30", "evidence_excerpt": "엘 레크레오 의료센터의 운영 및 유지관리는 관할 보건국에서 지원하는 체계를 갖추고 있음. 동 의료센터는 또한 관할지역이 확대되었고 보건소의 핵심적 기능인 분만과 응급분야의 의료서비스에 대한 수요는 계속 증가하고 있어 해당 보건국이 꾸준히 지원하여 유지관리가 될 것으로 전망함.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-official-2042-facility-count", "match_id": "match-2016-00002-official-2042", "category": "facility_scope", "field_code": "facility_count",
+      "summary_text": "보건소 17개를 신축하고 3개를 증개축해 총 20개소를 확보했으며 2021년 4월 30일 공식 운영을 시작했다.", "value_text": "20개", "value_numeric": 20, "unit": "site", "value_context": "신축·증개축 보건소 합계",
+      "pdf_page_start": 56, "pdf_page_end": 56, "printed_page_label": null, "evidence_excerpt": "동 사업을 통해 총 17개의 보건소가 신축, 3개소가 증개축 되었으며, 20개 보 건소에 전산기자재 지원 및 인터넷 설치를 통해 보건정보시스템(HIS)를 활용할 수 있게 되었음(2021년 4월 30일 개소식 및 공식 운영 시작).",
+      "conflict_group": null, "review_note": "17개 신축과 3개 증개축을 합산한 보고서 기재 범위", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2042-delay", "match_id": "match-2016-00002-official-2042", "category": "schedule", "field_code": "schedule_delay",
+      "summary_text": "건축 예산 전용과 코로나19로 보건소 완공·개소가 지연돼 사업기간을 1년 연장했다.", "value_text": "1년", "value_numeric": 1, "unit": "year", "value_context": "사업기간 연장",
+      "pdf_page_start": 48, "pdf_page_end": 48, "printed_page_label": null, "evidence_excerpt": "기존 사업비 내에서도 건축 등을 위한 예산 전용 수요가 발생함. 이에 따른 예산 전용과정에 상당 시간이 소요되었으며, 이와 함께 코로나19 유행 등으로 인해 보 건소 완공 및 개소 일정이 기존 ‘20.1월에서 ’21.5월로 지연을 초래하였으나, 사업기간 을 1년 연장함으로써 순연된 연관 과업(보건소 운영활성화 활동, 인력 역량강화, 지역사 회참여 프로그램 등)을 진행 완료함.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2042-maintenance", "match_id": "match-2016-00002-official-2042", "category": "operations_maintenance", "field_code": "maintenance_arrangement",
+      "summary_text": "운영비가 편성되지 않아 시설관리·청소·보안을 직원 자체 해결과 주민의 비정기 지원에 의존했다.", "value_text": "보건소 운영비 예산이 전혀 편성되어 있지 않아", "value_numeric": null, "unit": null, "value_context": "보건소 운영·시설관리 재원",
+      "pdf_page_start": 56, "pdf_page_end": 56, "printed_page_label": null, "evidence_excerpt": "다만, 보건소 운영비 예산이 전혀 편성되어 있지 않아, 시설 관리 및 청소비, 보안관리 인력 운용 등을 위한 비용이 없고 보건소 인력이 자체적으로 해결을 하거나 주민들의 비정기적 도움으로 보건소를 운영하고 있는 실정이었음.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2042-utilization", "match_id": "match-2016-00002-official-2042", "category": "utilization_results", "field_code": "facility_utilization",
+      "summary_text": "2018~2022년 림삐오 보건소 이용은 198.8% 증가한 반면 병원 이용은 25.94% 감소했다.", "value_text": "198.8%", "value_numeric": 198.8, "unit": "percent", "value_context": "림삐오 보건소 이용 증가율",
+      "pdf_page_start": 46, "pdf_page_end": 46, "printed_page_label": null, "evidence_excerpt": "림삐오 보건소 32,835 98,120 198.8% 증가 림삐오 병원 303,424 224,706 25.94% 감소",
+      "conflict_group": null, "review_note": "건축 단독 인과가 아니라 보건체계 사업 전체 기간의 이용 변화", "confidence": "medium", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-official-1890-budget", "match_id": "match-2016-00003-official-1890", "category": "cost_procurement", "field_code": "construction_budget",
+      "summary_text": "건축 패키지 650만불 중 500만불을 노인요양시설·전문외래병원·교육센터 건축비로 계획했다.", "value_text": "500만불", "value_numeric": null, "unit": null, "value_context": "건축 계획액",
+      "pdf_page_start": 23, "pdf_page_end": 23, "printed_page_label": null, "evidence_excerpt": "▣ 소요예산 : 650만불 ▪ 건축비 : 500만불(노인요양시설, 노인전문외래병원, 노인보건복지 교육센터)",
+      "conflict_group": "2016-00003-construction-cost-stage", "review_note": "종료평가의 계획액으로 DB 입찰 한도·계약액과 통합하지 않음", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-1890-handover", "match_id": "match-2016-00003-official-1890", "category": "schedule", "field_code": "handover_status",
+      "summary_text": "센터 신축건물은 사업기간 안에 완공돼 종료평가 당시 활발히 활용되고 있었다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "완공·운영 상태",
+      "pdf_page_start": 54, "pdf_page_end": 54, "printed_page_label": null, "evidence_excerpt": "센터 신축건물은 사업 기간 내 완공되어 현재 활발히 활용되고 있으며 설문 및 면담조사를 통해 환자와 직원을 포함한 대다수 이용자가 시설에 대한 만족도가 높은 것을 확인함.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-1890-quality", "match_id": "match-2016-00003-official-1890", "category": "quality_safety", "field_code": "construction_quality",
+      "summary_text": "주간보호 기능 추가를 위한 테라스 차양 설치 과정에서 바닥재·아래층 벽 훼손과 누수가 발생했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "용도변경·차양 설치 하자",
+      "pdf_page_start": 54, "pdf_page_end": 54, "printed_page_label": null, "evidence_excerpt": "사업추진 도중 센터의 주간보호소 기능이 추가되면서 해당 활동 공간을 마련하기 위해 직원 휴게실을 용도 변경하고 테라스에 차양막을 설치하여 활용하는 등의 보완 책을 강구하였으나, 차양막 설치 과정에서 바닥재 파손으로 아래층의 물리치료실 벽이 훼손되고 누수 문제 등이 발생함.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-1890-utilization", "match_id": "match-2016-00003-official-1890", "category": "utilization_results", "field_code": "facility_utilization",
+      "summary_text": "요양원 수용능력은 115명으로 확대됐지만 예산·인력 제약 때문에 80명까지만 입소시켰다.", "value_text": "80명", "value_numeric": 80, "unit": "person", "value_context": "실제 입소 상한",
+      "pdf_page_start": 62, "pdf_page_end": 62, "printed_page_label": null, "evidence_excerpt": "이 사업을 통해 요양원의 수용능력을 115명까지 제고하였으나, 현재 산토도밍고센터의 예산 및 인력의 가용성을 감안, 80명까지만 입소 노인을 받고 있는 것으로 확인되어",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-official-2317-scope", "match_id": "match-2016-00213-official-2317", "category": "facility_scope", "field_code": "facility_scope_summary",
+      "summary_text": "강의동 699㎡와 기숙사동 1,230㎡를 신축하고 기존 실습동·기숙사동을 개보수했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "신축·개보수 범위",
+      "pdf_page_start": 32, "pdf_page_end": 32, "printed_page_label": null, "evidence_excerpt": "강의동 신축(699㎡) 및 기숙사동 신축(1,230㎡) - 기존 실습동 및 기숙사동 개보수",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2317-budget", "match_id": "match-2016-00213-official-2317", "category": "cost_procurement", "field_code": "construction_budget",
+      "summary_text": "건축 집행계획 26.70억원 중 25.25억원을 집행해 집행률 94.56%였다.", "value_text": "2,524,918,605", "value_numeric": 2524918605, "unit": "KRW", "value_context": "건축 집행액",
+      "pdf_page_start": 65, "pdf_page_end": 65, "printed_page_label": null, "evidence_excerpt": "건축 2,670,279,300 2,524,918,605 94.56",
+      "conflict_group": "2016-00213-construction-cost-stage", "review_note": "보고서 집행액으로 DB 입찰 한도와 가격단계가 다름", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2317-dormitory", "match_id": "match-2016-00213-official-2317", "category": "facility_scope", "field_code": "facility_scope_summary",
+      "summary_text": "200명 수용 여자기숙사를 신축하고 기존 기숙사 거주공간 16개와 사감실·독서실·위생시설을 개보수했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "여학생 기숙시설",
+      "pdf_page_start": 79, "pdf_page_end": 79, "printed_page_label": null, "evidence_excerpt": "인프라 지원 측면에서 여자 기숙사 신축(수용인원 200명)과 기존 기숙사 개보수(거주공 간 16개, 사감실･독서실･위생시설 설치)가 이루어져, 여학생의 안정적인 거주화 학습 환 경을 보장함.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2317-maintenance", "match_id": "match-2016-00213-official-2317", "category": "operations_maintenance", "field_code": "maintenance_budget",
+      "summary_text": "실습재료와 기자재 유지보수 등 필수 운영예산 부족이 훈련과정 운영을 제약했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "운영·유지보수 예산",
+      "pdf_page_start": 72, "pdf_page_end": 72, "printed_page_label": null, "evidence_excerpt": "실습재료 구매, 기자재 유지와 보수, 교사 실습지도 수당 등 LAKISD 운영에 필요한 필수 적인 예산이 부족하여 훈련과정 운영에 어려움이 있었음",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-official-2031-area", "match_id": "match-2017-07115-official-2031", "category": "facility_scope", "field_code": "facility_area",
+      "summary_text": "연면적 5,455㎡의 페르가나 직업훈련원 건물을 신축했다.", "value_text": "5,455㎡", "value_numeric": 5455, "unit": "m2", "value_context": "훈련원 신축 연면적",
+      "pdf_page_start": 19, "pdf_page_end": 19, "printed_page_label": null, "evidence_excerpt": "훈련원 건물(연면적 5,455㎡) 신축",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2031-quality", "match_id": "match-2017-07115-official-2031", "category": "quality_safety", "field_code": "construction_quality",
+      "summary_text": "행정동·강의실습동·기숙사·경비동을 준공하고 2024년 1월 하자보수를 완료했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "준공·하자보수",
+      "pdf_page_start": 48, "pdf_page_end": 48, "printed_page_label": null, "evidence_excerpt": "페르가나 직업훈련원은 행정동(2층), 강의/실습동(3층), 기숙사(2층), 경비동(1동)으로 구성 되어 있으며, 사용승인허가, 직업훈련원 공식 인수인계(2022.6.1.)에 따라 준공, 하자보수 조치 완료(2024.1.11.) 되었음을 확인함.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2031-maintenance", "match_id": "match-2017-07115-official-2031", "category": "operations_maintenance", "field_code": "maintenance_budget",
+      "summary_text": "2024년 운영비가 26.6% 삭감돼 실습동과 기숙사 급수가 제한됐다.", "value_text": "26.6%", "value_numeric": 26.6, "unit": "percent", "value_context": "운영비 삭감률",
+      "pdf_page_start": 64, "pdf_page_end": 64, "printed_page_label": null, "evidence_excerpt": "2024년의 경우, 운영비가 정부 재정상황으로 전년 대비 5천만솜(약 26.6%)이 대폭 삭감되었으며, 현장확인 시 실습동 및 기숙사에 대한 제한적 급수가 이루어지는 등의 영향을 주고 있음을 확인함.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2031-handover", "match_id": "match-2017-07115-official-2031", "category": "schedule", "field_code": "handover_status",
+      "summary_text": "정식 준공승인이 지연되자 4자 서명으로 사용승인을 받아 2022년 6월 개원·최종 인수인계를 했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "사용승인·인수인계",
+      "pdf_page_start": 68, "pdf_page_end": 68, "printed_page_label": null, "evidence_excerpt": "2021년 11월 시공 완료 이후, 주재국 내 준공 허가 승인을 위한 위원회 구성 어려움에 따라 준공 승인 지연이 발생하여, 대신 관계부처 (고용빈곤퇴치부(페르가나지부)) 지원을 받아, 고용빈곤퇴치부(페르가나지부)-수원기관(페르 가나 직훈원)-발주처(KOICA)-시공사(일진건설사업-엠데살 컨소시엄) 간 4자 서명을 통해 사용승인허가가 이루어진 후 2022년 6월 개원 및 최종 인수인계를 진행한 것으로 파악함.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-official-1868-area", "match_id": "match-2017-07192-official-1868", "category": "facility_scope", "field_code": "facility_area",
+      "summary_text": "앙두엉병원 ENT 시설은 5층·연면적 4,177㎡로 수술실 7개와 병상 114개 등을 갖췄다.", "value_text": "4,177㎡", "value_numeric": 4177, "unit": "m2", "value_context": "ENT 시설 연면적",
+      "pdf_page_start": 24, "pdf_page_end": 24, "printed_page_label": null, "evidence_excerpt": "▪ 5층, 4,177㎡ (7개 수술실, 114개 병상, 원무과, 진료실, 검사실 등)",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-1868-budget", "match_id": "match-2017-07192-official-1868", "category": "cost_procurement", "field_code": "construction_budget",
+      "summary_text": "건축 계획예산은 471만불, 원화 환산 표기는 5,325백만원이었다.", "value_text": "471만불", "value_numeric": null, "unit": null, "value_context": "건축 계획액",
+      "pdf_page_start": 24, "pdf_page_end": 24, "printed_page_label": null, "evidence_excerpt": "▣ 소요예산 : 471만불 (5,325백만원)",
+      "conflict_group": "2017-07192-construction-cost-stage", "review_note": "종료평가 계획액으로 DB 입찰 한도·계약액과 통합하지 않음", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-1868-delay", "match_id": "match-2017-07192-official-1868", "category": "schedule", "field_code": "schedule_delay",
+      "summary_text": "코로나19로 시공계약을 2022년 3월까지 연장했고 준공 순연에 따라 기자재 계약도 2022년 7월까지 연장했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "시공·기자재 계약 연장",
+      "pdf_page_start": 26, "pdf_page_end": 26, "printed_page_label": null, "evidence_excerpt": "⚪ 2021.10. 코로나에 따른 시공 계약기간 연장(‘20.03.12.~’22.03.26.) ⚪ 2021.11. 병원 준공 순연에 따른 의료기자재 계약기간 연장('21.06.02.~’22.07.15.)",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-1868-quality", "match_id": "match-2017-07192-official-1868", "category": "quality_safety", "field_code": "construction_quality",
+      "summary_text": "폭우로 테라스 우수관 용량 초과가 한 차례 발생해 2023년 8월 하자보수를 진행했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "우수관 용량·하자보수",
+      "pdf_page_start": 67, "pdf_page_end": 67, "printed_page_label": null, "evidence_excerpt": "최근 기후변화로 인한 우수관 용량을 초과한 사례가 한차례 있었으나 즉각 하자보수를 통해 23년 8월 기준 보수 작업이 진행되고 있고 병원 부원장측에서도 이에 대한 하자보수 절차 등에 관한 문제가 없음을 확인.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-official-2307-budget", "match_id": "match-2019-00066-official-2307", "category": "cost_procurement", "field_code": "construction_budget",
+      "summary_text": "보건소 3개와 병원 2개의 모자보건센터 신축에 126.5만불을 계획했다.", "value_text": "126.5만불", "value_numeric": null, "unit": null, "value_context": "모자보건센터 신축 계획액",
+      "pdf_page_start": 39, "pdf_page_end": 39, "printed_page_label": null, "evidence_excerpt": "소요예산 : 126.5만불 (1,428백만원) 건축 ▪ 3개 보건소 및 2개 병원 모자보건센터 신축",
+      "conflict_group": "2019-00066-construction-cost-stage", "review_note": "종료평가 계획액으로 DB 입찰 한도·계약액과 통합하지 않음", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2307-count", "match_id": "match-2019-00066-official-2307", "category": "facility_scope", "field_code": "facility_count",
+      "summary_text": "모자보건센터 신축 대상은 보건소 3개와 병원 2개였다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "신축 대상시설 수",
+      "pdf_page_start": 39, "pdf_page_end": 39, "printed_page_label": null, "evidence_excerpt": "소요예산 : 126.5만불 (1,428백만원) 건축 ▪ 3개 보건소 및 2개 병원 모자보건센터 신축",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2307-quality", "match_id": "match-2019-00066-official-2307", "category": "quality_safety", "field_code": "construction_quality",
+      "summary_text": "라따나끼리 주립병원 신축동은 보수가 필요 없고 진찰·검사·분만·산후 병실이 기능별로 구획됐다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "신축동 상태·공간구획",
+      "pdf_page_start": 161, "pdf_page_end": 161, "printed_page_label": null, "evidence_excerpt": "신축된 건물 상태는 깨끗했고, 보수가 필요한 부분은 없었으며 진찰실, 검사실, 분만실, 분만 후 병실 등 분만의 필수 과정에 따라 공간 구분이 되어 있었음",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2307-recommendation", "match_id": "match-2019-00066-official-2307", "category": "lesson_recommendation", "field_code": "construction_recommendation",
+      "summary_text": "오춤 보건소 모자보건센터에는 식사 준비공간이 없어 시설 개선이 필요하다고 평가했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "보조공간 개선",
+      "pdf_page_start": 161, "pdf_page_end": 161, "printed_page_label": null, "evidence_excerpt": "오춤 보건소에서는 식사를 준비할 수 있는 공간이 없어 이러한 시설의 개선 필요성을 제시함",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-official-2039-budget", "match_id": "match-2016-00202-official-2039", "category": "cost_procurement", "field_code": "construction_budget",
+      "summary_text": "신청사 시공비는 545만달러였고 보고서 기재 연면적 5,625㎡ 기준 명목 공사비는 947.55달러/㎡였다.", "value_text": "545만 달러", "value_numeric": null, "unit": null, "value_context": "신청사 시공비",
+      "pdf_page_start": 66, "pdf_page_end": 66, "printed_page_label": null, "evidence_excerpt": "시공비는 총 545만 달러로, 연 면적 5,625㎡ 기준으로 면적당 공사비는 $947.55/㎡이 고, 이를 다시 현재 물가로 환산했을 때 $2,160.11/㎡임.",
+      "conflict_group": "2016-00202-construction-cost-stage", "review_note": "보고서 시공비·면적은 DB 공고의 단계·범위와 구분", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2039-performance", "match_id": "match-2016-00202-official-2039", "category": "utilization_results", "field_code": "facility_performance",
+      "summary_text": "이민국 직원의 85% 이상이 신청사 건축 후 업무 효율성이 증가했다고 응답했다.", "value_text": "85% 이상", "value_numeric": null, "unit": null, "value_context": "직원 인식 성과",
+      "pdf_page_start": 63, "pdf_page_end": 63, "printed_page_label": null, "evidence_excerpt": "신청사 건축과 관련하여 85% 이상의 이민국 직원이 “업무 효율성이 증가” 했다고 응답함. 당초 계획 대비 시공 면적이 확대됨에 따라, 1인당 근무 면적이 넓어졌으 며 직원들이 업무처리를 위한 공간이 충분히 확보됨.",
+      "conflict_group": null, "review_note": "직원 설문 기반 인식 성과", "confidence": "medium", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2039-maintenance", "match_id": "match-2016-00202-official-2039", "category": "operations_maintenance", "field_code": "maintenance_arrangement",
+      "summary_text": "서버실·보안시스템 등으로 늘어난 운영·유지보수비를 입주 3개 부서가 분담했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "신청사 유지관리 분담",
+      "pdf_page_start": 74, "pdf_page_end": 74, "printed_page_label": null, "evidence_excerpt": "신축 청사는 기존 청사에 비해 더 큰 규모와 복잡한 기술적 설비(서버실, 보안 시스템 등)를 갖추고 있어, 운영과 유지보수 비용이 증가 했으나 청사를 사용하는 3개 부서가 이를 나누어 부담하고 있음.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2039-safety", "match_id": "match-2016-00202-official-2039", "category": "quality_safety", "field_code": "safety_issue",
+      "summary_text": "출입 경사로를 설치했지만 일부 바닥 타일이 미끄러운 재질이라 이용상 위험이 남았다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "장애인 경사로 바닥",
+      "pdf_page_start": 74, "pdf_page_end": 74, "printed_page_label": null, "evidence_excerpt": "출입 경 사로는 주 출입구 부출입구 각각 1개소에 적정 기울기와 손스침으로 설치되어 있음. 다만 경사로 바닥 타일은 부분적으로 미끄러운 재질로 되어 있어서 사용에 어려움이 있을 수 있음.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-official-2365-scope", "match_id": "match-2016-20150-official-2365", "category": "facility_scope", "field_code": "facility_scope_summary",
+      "summary_text": "Q-LiFE 가공센터·종축장·육묘장을 구축했고 종료 후 주정부가 예산과 인력을 투입해 운영했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "핵심 시설 범위",
+      "pdf_page_start": 11, "pdf_page_end": 11, "printed_page_label": null, "evidence_excerpt": "Q-LiFE 가공센터, 종축장, 육묘장이라는 인프라 구축 후 자체적으로 운영되 는 시스템이 구축되어 사업 종료 후에도 퀴리노 주정부가 예산과 인력을 투입하여 운영하 고 있는 것은 동 사업의 큰 성과임.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2365-delay", "match_id": "match-2016-20150-official-2365", "category": "schedule", "field_code": "schedule_delay",
+      "summary_text": "건축·조달 문제로 사업이 2년 연장되고 두 차례 증액·여섯 차례 계약변경이 있었으며 최초 시공계약이 타절됐다.", "value_text": "2년", "value_numeric": 2, "unit": "year", "value_context": "전체 사업기간 연장",
+      "pdf_page_start": 68, "pdf_page_end": 68, "printed_page_label": null, "evidence_excerpt": "사업 기간이 2018년부터 2024년까지로 2년 연장되며 2 차례의 예산 증액과 6차례의 계약변경이 포함됨. 특히, 2021년에는 코로나 팬데믹의 여파 로 시공사가 자재구매에 어려움을 겪으면서 사업이 지연되고 결국 초기 계약이 타절되는 결과를 낳기도 함.",
+      "conflict_group": "2016-20150-contract-change", "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2365-handover", "match_id": "match-2016-20150-official-2365", "category": "schedule", "field_code": "handover_status",
+      "summary_text": "종축장·육묘장·Q-Life센터를 주정부에 이양했고 정부 인력과 예산으로 계속 운영했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "시설 이양·운영",
+      "pdf_page_start": 68, "pdf_page_end": 68, "printed_page_label": null, "evidence_excerpt": "종축장, 육묘장, Q-Life센터 건축물이 사업 기획 당시부터 정부 운영으로 계획되었고, 종료 이 후에도 모두 정부에 이양됨. 실제 현재에도 각 인력을 정부 직원으로 구성하며 상황 변 화에 맞는 인력 구성과 예산을 지속 투입 중인 것으로 확인함.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-2365-utilization", "match_id": "match-2016-20150-official-2365", "category": "utilization_results", "field_code": "facility_utilization",
+      "summary_text": "농민의 20%만 Q-LiFE 센터를 이용했고 낮은 인지도와 원거리 접근성이 활용을 제약했다.", "value_text": "20%", "value_numeric": 20, "unit": "percent", "value_context": "농민 센터 이용률",
+      "pdf_page_start": 71, "pdf_page_end": 71, "printed_page_label": null, "evidence_excerpt": "농민대상 설문조사 결과 농민들의 20%만 센터를 활용 하고 있는 것으로 나타났으며, 상당 수의 농민들이 센터 기능에 대해 잘 모르거나 원 거리에 위치하여 접근성이 부족해서 활용하고 있지 않은 것으로 나타남.",
+      "conflict_group": null, "review_note": "농민 설문 결과", "confidence": "medium", "review_status": "accepted", "public_excerpt_approved": true
+    },
+
+    {
+      "finding_id": "f-official-1843-area", "match_id": "match-2013-00007-official-1843", "category": "facility_scope", "field_code": "facility_area",
+      "summary_text": "엘알또 한국병원에 4층·연면적 2,652㎡ 규모의 현대식 3병동을 증축했다.", "value_text": "2,652㎡", "value_numeric": 2652, "unit": "m2", "value_context": "3병동 증축 연면적",
+      "pdf_page_start": 34, "pdf_page_end": 34, "printed_page_label": null, "evidence_excerpt": "∙ 4층, 연면적 2,652㎡ 증축 건물(3병동) 설립, 현대식 병동 완공",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-1843-procurement", "match_id": "match-2013-00007-official-1843", "category": "cost_procurement", "field_code": "procurement_issue",
+      "summary_text": "3병동에 예산이 집중됐고 과업 추가로 130만불을 증액했으며 코로나19 대응에 12만불을 전용했다.", "value_text": "과업의 추가로 사업비가 130만불 증액되었고", "value_numeric": null, "unit": null, "value_context": "예산 증액·전용",
+      "pdf_page_start": 24, "pdf_page_end": 24, "printed_page_label": null, "evidence_excerpt": "(사업비용 효율성) 3병동 신축에 예산이 집중 편성되었기 때문에 3병동 신축 외 한국병 원의 수요를 충족하기에 예산이 충분하지 않았음. 또한, 과업의 추가로 사업비가 130만불 증액되었고, 코로나19 대응을 위해 12만불이 전용되었음. 그러나 코로나19 등 외부 영향에도 불구하고 제한된 예산으로 사업의 핵심요소인 3병동 신축과 그 외 과업을 완수하였고, 당초 예산 840만불 대비 집행률 115.5%로 예산 운용하였음.",
+      "conflict_group": "2013-00007-project-budget", "review_note": "DB 입찰 당시 840만불과 종료평가의 최종 970만불을 변경 전후 값으로 구분", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-1843-period", "match_id": "match-2013-00007-official-1843", "category": "schedule", "field_code": "implementation_period",
+      "summary_text": "3병동 시공기간은 최초 24개월에서 33개월로 변경됐다.", "value_text": "33개월", "value_numeric": 33, "unit": "month", "value_context": "변경 후 시공기간",
+      "pdf_page_start": 66, "pdf_page_end": 66, "printed_page_label": null, "evidence_excerpt": "최초 24개월(2018.12.20.~2020.12.19.)에서 33개월(2018.12.20.~2021.09.20.)로 변경",
+      "conflict_group": null, "review_note": "설계변경·사회불안·코로나19·가스 인입·통관 문제가 연장 원인으로 같은 페이지에 기재됨", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-1843-quality", "match_id": "match-2013-00007-official-1843", "category": "quality_safety", "field_code": "construction_quality",
+      "summary_text": "페인트 얼룩과 내부벽 균열은 보수했지만 외벽 마감은 엘알또 기후에서 내구연한 단축 우려가 있었다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "3병동 결함·외벽 내구성",
+      "pdf_page_start": 79, "pdf_page_end": 79, "printed_page_label": null, "evidence_excerpt": "신축된 3병동의 페인트 얼룩과 내부벽 균열 등 건물의 결함73)이 발견되어 현지 시공업체가 보수하였음. 그러나, 3병동 준공 이후 개소하기 전까지 약 1년간 3병동을 미사용했기 때문에 시공상의 문제인지 한국병원의 관리 소홀인지 책임 소재가 불명확하였음. 또한, 건물 외벽 1층은 석재를 사용하여 내구성이 좋지만, 2층부터 몰탈 위 페인트로 마감 처리를 하였음. 엘알또 지역의 기후74)를 고려하면 건물의 예상 수명을 단축하고 내구연한이 짧을 가능성이 있음.",
+      "conflict_group": null, "review_note": null, "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    },
+    {
+      "finding_id": "f-official-1843-staffing", "match_id": "match-2013-00007-official-1843", "category": "risk_issue", "field_code": "infrastructure_risk",
+      "summary_text": "신축 3병동에 안과·이비인후과 전담의와 감염관리 전문인력이 없어 일부 서비스를 제공하지 못했다.", "value_text": null, "value_numeric": null, "unit": null, "value_context": "시설 운영 전문인력",
+      "pdf_page_start": 79, "pdf_page_end": 79, "printed_page_label": null, "evidence_excerpt": "이에 신축된 3병동의 안과, 이비인후과 전담 의사가 배치되지 않아 서비스를 제공하지 못하고 있으며, 사업을 통해 통과한 한국병원의 감염관리 인증 성과를 유지하기 위한 전문인력이 부재함.",
+      "conflict_group": null, "review_note": "시설 완공과 실제 서비스 제공을 구분", "confidence": "high", "review_status": "accepted", "public_excerpt_approved": true
+    }
+  ]
+}
