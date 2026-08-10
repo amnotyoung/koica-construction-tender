@@ -30,12 +30,14 @@ DEFAULT_OUTPUT_DIR = ROOT / "outputs" / "koica-search"
 
 CASE_FIELDS = [
     "case_id",
+    "case_kind",
     "project_no",
     "representative_bid_no",
     "display_name",
     "official_project_name",
     "country_ko",
     "facility_type",
+    "facility_family",
     "work_type",
     "notice_date",
     "gross_floor_area_m2",
@@ -54,6 +56,21 @@ CASE_FIELDS = [
     "audit_date",
     "is_published",
 ]
+
+CONSTRUCTION_NOTICE = "CONSTRUCTION_NOTICE"
+DESIGN_SUPERVISION_REFERENCE = "DESIGN_SUPERVISION_REFERENCE"
+PUBLISHABLE_REFERENCE_GRADES = {"A", "B", "C"}
+PUBLISHABLE_REFERENCE_AMOUNT_STAGES = {"DESIGN_ESTIMATE", "CONSTRUCTION_BUDGET"}
+
+FACILITY_FAMILY_ALIASES = {
+    "보건·의료시설": "병원 의료 보건 보건의료 의료인프라 모자보건 병동 진료",
+    "교육·훈련시설": "학교 교육 훈련 대학 직업교육 TVET",
+    "농업·생산시설": "농업 농촌 생산 가공 저장",
+    "연구·실험시설": "연구 실험 실험실 연구소",
+    "행정·공공시설": "정부 행정 공공 청사",
+    "환경·기반시설": "상하수 환경 위생 기반시설",
+    "기타·미분류": "",
+}
 
 RELATED_NOTICE_FIELDS = [
     "case_id",
@@ -107,6 +124,29 @@ def join_notes(*values: Any) -> str | None:
         if text and text not in notes:
             notes.append(text)
     return " | ".join(notes) if notes else None
+
+
+def facility_family(*values: Any) -> str:
+    text = " ".join(filter(None, (clean_text(value) for value in values))).lower()
+    if re.search(
+        r"병원|의료|보건|의과|간호|진료|병동|hospital|medical|health|clinic|matern",
+        text,
+    ):
+        return "보건·의료시설"
+    if re.search(
+        r"학교|교육|훈련|대학|직업|tvet|school|education|training|university|college",
+        text,
+    ):
+        return "교육·훈련시설"
+    if re.search(r"농업|농촌|영농|축산|수산|가공|저장|agri|farm", text):
+        return "농업·생산시설"
+    if re.search(r"연구|실험|laborator|research", text):
+        return "연구·실험시설"
+    if re.search(r"정부|행정|공공|청사|government|administr", text):
+        return "행정·공공시설"
+    if re.search(r"상하수|환경|위생|폐기물|water|sanitation|environment", text):
+        return "환경·기반시설"
+    return "기타·미분류"
 
 
 def compact_grade(value: Any) -> str | None:
@@ -223,6 +263,43 @@ def build_snapshot(database: Path) -> dict[str, Any]:
             for row in rows
         )
     }
+    construction_project_nos = {
+        project_no
+        for rows in construction_groups.values()
+        for row in rows
+        if (project_no := clean_text(row.get("project_no")))
+    }
+    published_groups = dict(construction_groups)
+    case_kinds = {base_no: CONSTRUCTION_NOTICE for base_no in construction_groups}
+    for project_no, project_review in project_reviews.items():
+        if project_no in construction_project_nos:
+            continue
+        if clean_text(project_review.get("compact_grade")) not in PUBLISHABLE_REFERENCE_GRADES:
+            continue
+        if (
+            clean_text(project_review.get("representative_amount_stage"))
+            not in PUBLISHABLE_REFERENCE_AMOUNT_STAGES
+        ):
+            continue
+        if not project_review.get("representative_area_m2") or not project_review.get(
+            "representative_construction_cost_usd"
+        ):
+            continue
+        representative_bid_no = clean_text(project_review.get("display_representative_bid"))
+        representative = by_bid.get(representative_bid_no or "")
+        if not representative:
+            continue
+        representative_relation = relation_type(
+            representative.get("bid_title_ko") or representative.get("source_bid_title"),
+            representative.get("contract_type") or representative.get("source_contract_type"),
+        )
+        if representative_relation not in {"DESIGN", "SUPERVISION"}:
+            continue
+        case_id = clean_text(representative.get("bid_base_no"))
+        if not case_id or case_id not in by_base:
+            continue
+        published_groups[case_id] = by_base[case_id]
+        case_kinds[case_id] = DESIGN_SUPERVISION_REFERENCE
     global_audit_date = max(
         (
             clean_text(row.get("audit_date")) or ""
@@ -234,8 +311,8 @@ def build_snapshot(database: Path) -> dict[str, Any]:
     data_version = f"sqlite-{schema_version}-area-review-{global_audit_date or 'unreviewed'}"
 
     cases: list[dict[str, Any]] = []
-    for case_id in sorted(construction_groups):
-        raw_latest = latest_row(construction_groups[case_id])
+    for case_id in sorted(published_groups):
+        raw_latest = latest_row(published_groups[case_id])
         group_review = group_reviews.get(case_id, {})
         representative_bid_no = (
             clean_text(group_review.get("representative_bid_no")) or raw_latest["bid_no"]
@@ -270,21 +347,34 @@ def build_snapshot(database: Path) -> dict[str, Any]:
         area = as_float(
             notice_review.get("selected_area_m2")
             if notice_review.get("selected_area_m2") is not None
-            else group_review.get("area_m2")
+            else (
+                group_review.get("area_m2")
+                if group_review.get("area_m2") is not None
+                else project_review.get("representative_area_m2")
+            )
         )
         cost = as_float(
             notice_review.get("selected_construction_cost_usd")
             if notice_review.get("selected_construction_cost_usd") is not None
-            else group_review.get("construction_cost_usd")
+            else (
+                group_review.get("construction_cost_usd")
+                if group_review.get("construction_cost_usd") is not None
+                else project_review.get("representative_construction_cost_usd")
+            )
         )
-        amount_stage = clean_text(notice_review.get("amount_stage"))
+        amount_stage = clean_text(
+            notice_review.get("amount_stage")
+            or project_review.get("representative_amount_stage")
+        )
         if cost is None:
             cost = parse_usd_ceiling(representative.get("ceiling_usd_raw"))
             if cost is not None:
                 amount_stage = "NOTICE_EXECUTION_CEILING_RAW"
         unit_cost = round(cost / area, 2) if cost and area else None
         evidence_grade = compact_grade(
-            notice_review.get("compact_grade") or group_review.get("best_grade")
+            notice_review.get("compact_grade")
+            or group_review.get("best_grade")
+            or project_review.get("compact_grade")
         )
         audit_date = clean_text(notice_review.get("audit_date")) or global_audit_date
 
@@ -293,14 +383,21 @@ def build_snapshot(database: Path) -> dict[str, Any]:
             notice_review.get("record_scope_status"),
             notice_review.get("same_scope_status"),
             group_review.get("duplicate_rule"),
+            project_review.get("duplicate_and_scope_warning"),
         )
         evidence_note = join_notes(
             notice_review.get("grade_detail"),
             notice_review.get("manual_note"),
             notice_review.get("area_quote"),
+            project_review.get("grade_detail"),
         )
         facility_type = clean_text(representative.get("facility_type"))
         work_type = clean_text(representative.get("work_type"))
+        normalized_facility_family = facility_family(
+            facility_type,
+            display_name,
+            official_project_name,
+        )
         procurement_url = (
             clean_text(notice_review.get("source_url"))
             or clean_text(representative.get("detail_url"))
@@ -312,6 +409,8 @@ def build_snapshot(database: Path) -> dict[str, Any]:
                 official_project_name,
                 country_ko,
                 facility_type,
+                normalized_facility_family,
+                FACILITY_FAMILY_ALIASES[normalized_facility_family],
                 work_type,
                 scope_note,
                 evidence_note,
@@ -323,12 +422,14 @@ def build_snapshot(database: Path) -> dict[str, Any]:
         cases.append(
             {
                 "case_id": case_id,
+                "case_kind": case_kinds[case_id],
                 "project_no": project_no,
                 "representative_bid_no": representative_bid_no,
                 "display_name": display_name,
                 "official_project_name": official_project_name,
                 "country_ko": country_ko,
                 "facility_type": facility_type,
+                "facility_family": normalized_facility_family,
                 "work_type": work_type,
                 "notice_date": (
                     clean_text(notice_review.get("notice_date"))
@@ -340,11 +441,19 @@ def build_snapshot(database: Path) -> dict[str, Any]:
                 "amount_stage_code": amount_stage,
                 "nominal_unit_usd_m2": unit_cost,
                 "evidence_grade": evidence_grade,
-                "verification_level": clean_text(notice_review.get("verification_level")),
+                "verification_level": clean_text(
+                    notice_review.get("verification_level")
+                    or project_review.get("verification_level")
+                ),
                 "scope_note": scope_note,
                 "evidence_note": evidence_note,
-                "allowed_use": clean_text(notice_review.get("unit_cost_allowed_use")),
-                "notice_count": int(group_review.get("notice_count") or len(construction_groups[case_id])),
+                "allowed_use": clean_text(
+                    notice_review.get("unit_cost_allowed_use")
+                    or project_review.get("unit_cost_allowed_use")
+                ),
+                "notice_count": int(
+                    group_review.get("notice_count") or len(published_groups[case_id])
+                ),
                 "procurement_url": procurement_url,
                 "search_text": search_text,
                 "data_version": data_version,
@@ -394,6 +503,7 @@ def build_snapshot(database: Path) -> dict[str, Any]:
 
     return {
         "data_version": data_version,
+        "source_schema_version": schema_version,
         "source_db_sha256": source_sha256(database),
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "cases": cases,

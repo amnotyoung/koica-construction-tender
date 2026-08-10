@@ -99,6 +99,12 @@ class PublicDistributionTests(unittest.TestCase):
         self.assertIn("public Supabase read-only RPC", AGENT_GUIDE)
         self.assertIn("query", AGENT_GUIDE)
         self.assertIn("Do not repeat", AGENT_GUIDE)
+        self.assertIn("DESIGN_SUPERVISION_REFERENCE", README)
+        self.assertIn("DESIGN_SUPERVISION_REFERENCE", PUBLIC_ACCESS_DOC)
+        self.assertIn("source_db_sha256", SEARCH_SERVICE_DOC)
+        self.assertIn("source_db_sha256", AGENT_GUIDE)
+        self.assertIn("공사 공고군 156건", README)
+        self.assertRegex(README, r"설계·감리 참고사례\s+5건")
         self.assertIn(EXPECTED_SHA256, README)
         self.assertIn(EXPECTED_SHA256, PUBLIC_ACCESS_DOC)
 

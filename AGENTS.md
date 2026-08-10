@@ -26,12 +26,18 @@ GitHub policy or a data absence.
 
 ## Result integrity
 
-- Check `data_status`, `observed_at`, and `missing_is_zero` before interpreting results.
+- Check `data_status`, `observed_at`, `missing_is_zero`, `source_schema_version`, and
+  `source_db_sha256` before interpreting results. A shared audit date does not prove that
+  two snapshots use the same schema or source file.
 - Treat `null` as unconfirmed, never as zero.
 - For a user-facing project list, group repeated tenders by `project_no`; keep re-bids and
   related design, supervision, goods, and construction notices subordinate to that project.
+- Check `case_kind`. `DESIGN_SUPERVISION_REFERENCE` is a reviewed design/supervision-stage
+  comparator, not a construction contract; label its amount stage explicitly.
 - Verify returned country, facility type, work type, and area. Search inputs affect ranking
   and must not be described as strict filters without checking the returned fields.
+- Use `facility_family` and text search as well as `facility_type`; coarse source values such
+  as `기타·미분류` must not silently exclude medical or education cases.
 - Label execution ceilings, estimates, and bid limits accurately. Nominal USD/m2 is an
   unadjusted screening value, not a future-project recommendation.
 - Do not say data has been collected or structured before a query succeeds. Do not repeat

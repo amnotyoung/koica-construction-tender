@@ -4,6 +4,7 @@ import json
 import sys
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,28 +16,94 @@ SPEC.loader.exec_module(MODULE)
 
 
 class KoicaSearchSyncTests(unittest.TestCase):
-    def test_rejects_forbidden_internal_fields(self):
+    @staticmethod
+    def snapshot(**overrides):
         snapshot = {
-            "data_version": "test",
-            "cases": [{"case_id": "L2025-00001", "source_file": "private.pdf"}],
+            "data_version": "sqlite-1.9-test",
+            "source_schema_version": "1.9",
+            "source_db_sha256": "a" * 64,
+            "generated_at": "2026-08-10T12:00:00+00:00",
+            "cases": [
+                {
+                    "case_id": "L2025-00001",
+                    "case_kind": "CONSTRUCTION_NOTICE",
+                    "facility_family": "보건·의료시설",
+                }
+            ],
             "related_notices": [],
         }
+        snapshot.update(overrides)
+        return snapshot
+
+    def test_rejects_forbidden_internal_fields(self):
+        snapshot = self.snapshot()
+        snapshot["cases"][0]["source_file"] = "private.pdf"
         with self.assertRaisesRegex(ValueError, "forbidden keys"):
             MODULE.validate_snapshot(snapshot)
 
     def test_rejects_related_notice_for_unknown_case(self):
-        snapshot = {
-            "data_version": "test",
-            "cases": [{"case_id": "L2025-00001"}],
-            "related_notices": [
+        snapshot = self.snapshot(
+            related_notices=[
                 {
                     "case_id": "L2025-99999",
                     "related_bid_base_no": "L2024-00001",
                 }
-            ],
-        }
+            ]
+        )
         with self.assertRaisesRegex(ValueError, "unknown case"):
             MODULE.validate_snapshot(snapshot)
+
+    def test_rejects_missing_source_identity_and_invalid_case_kind(self):
+        for field, value, message in (
+            ("source_schema_version", "", "source_schema_version"),
+            ("source_db_sha256", "not-a-hash", "source_db_sha256"),
+            ("generated_at", "2026-08-10", "timezone"),
+        ):
+            with self.subTest(field=field):
+                with self.assertRaisesRegex(ValueError, message):
+                    MODULE.validate_snapshot(self.snapshot(**{field: value}))
+
+        invalid_case_snapshot = self.snapshot()
+        invalid_case_snapshot["cases"][0]["case_kind"] = "CONTRACT"
+        with self.assertRaisesRegex(ValueError, "invalid case_kind"):
+            MODULE.validate_snapshot(invalid_case_snapshot)
+
+    def test_sync_payload_carries_source_identity(self):
+        snapshot = self.snapshot()
+
+        class Response:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *_args):
+                return False
+
+            @staticmethod
+            def read():
+                return b'{"cases":1}'
+
+        captured = {}
+
+        def fake_urlopen(request, timeout):
+            captured["request"] = request
+            captured["timeout"] = timeout
+            return Response()
+
+        with mock.patch.object(MODULE.urllib.request, "urlopen", fake_urlopen):
+            MODULE.sync_snapshot(
+                snapshot,
+                "https://project-ref.supabase.co",
+                "sb_secret_test-placeholder-0123456789",
+                timeout_seconds=12,
+            )
+
+        payload = json.loads(captured["request"].data)
+        self.assertEqual(payload["p_source_schema_version"], "1.9")
+        self.assertEqual(payload["p_source_db_sha256"], "a" * 64)
+        self.assertEqual(
+            payload["p_snapshot_generated_at"], "2026-08-10T12:00:00+00:00"
+        )
+        self.assertEqual(captured["timeout"], 12)
 
     def test_modern_secret_is_not_used_as_bearer_token(self):
         headers = MODULE.rpc_headers("sb_secret_example")

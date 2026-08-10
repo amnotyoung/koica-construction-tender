@@ -18,6 +18,12 @@ PUBLIC_READ_MIGRATION = next(
     )
 )
 PUBLIC_READ_SQL = PUBLIC_READ_MIGRATION.read_text(encoding="utf-8")
+REVIEWED_REFERENCE_MIGRATION = next(
+    (ROOT / "supabase" / "migrations").glob(
+        "*_include_reviewed_reference_cases.sql"
+    )
+)
+REVIEWED_REFERENCE_SQL = REVIEWED_REFERENCE_MIGRATION.read_text(encoding="utf-8")
 CONFIG = (ROOT / "supabase" / "config.toml").read_text(encoding="utf-8")
 
 
@@ -170,6 +176,87 @@ class KoicaSupabaseMigrationTests(unittest.TestCase):
     def test_storage_schema_stays_outside_data_api(self):
         self.assertIn('schemas = ["public", "graphql_public"]', CONFIG)
         self.assertIn("auto_expose_new_tables = false", CONFIG)
+
+    def test_reviewed_references_are_labeled_separately_from_contracts(self):
+        self.assertIn("add column case_kind text not null", REVIEWED_REFERENCE_SQL)
+        self.assertIn("'CONSTRUCTION_NOTICE'", REVIEWED_REFERENCE_SQL)
+        self.assertIn("'DESIGN_SUPERVISION_REFERENCE'", REVIEWED_REFERENCE_SQL)
+        self.assertIn("add column facility_family text not null", REVIEWED_REFERENCE_SQL)
+        self.assertIn("cases_case_kind_valid", REVIEWED_REFERENCE_SQL)
+        self.assertIn("cases_facility_family_not_blank", REVIEWED_REFERENCE_SQL)
+
+    def test_updated_public_projection_is_invoker_only_and_exposes_labels(self):
+        view = re.search(
+            r"create or replace view public\.koica_construction_cases.*?;",
+            REVIEWED_REFERENCE_SQL,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(view)
+        self.assertIn("security_invoker = true", view.group(0))
+        self.assertIn("security_barrier = true", view.group(0))
+        self.assertIn("c.case_kind", view.group(0))
+        self.assertIn("c.facility_family", view.group(0))
+        self.assertNotIn("c.search_text", view.group(0))
+
+        projection = re.search(
+            r"create or replace function public\.search_koica_construction_cases"
+            r".*?\$\$;",
+            REVIEWED_REFERENCE_SQL,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(projection)
+        self.assertIn("security invoker", projection.group(0))
+        self.assertIn("'case_kind'", projection.group(0))
+        self.assertIn("'facility_family'", projection.group(0))
+
+    def test_snapshot_identity_is_publicly_auditable_but_read_only(self):
+        self.assertIn(
+            "alter table koica_search.snapshot_metadata enable row level security",
+            REVIEWED_REFERENCE_SQL,
+        )
+        self.assertRegex(
+            REVIEWED_REFERENCE_SQL,
+            r'(?s)create policy "public reads snapshot metadata".*?'
+            r"for select.*?to anon, authenticated.*?using \(true\)",
+        )
+        self.assertIn(
+            "grant select on table koica_search.snapshot_metadata\n"
+            "  to anon, authenticated, service_role",
+            REVIEWED_REFERENCE_SQL,
+        )
+        for field in (
+            "source_schema_version",
+            "source_db_sha256",
+            "snapshot_generated_at",
+            "construction_notice_count",
+            "reviewed_reference_count",
+        ):
+            self.assertIn(field, REVIEWED_REFERENCE_SQL)
+        self.assertNotRegex(
+            REVIEWED_REFERENCE_SQL,
+            r"grant\s+(?:all|insert|update|delete|truncate|references|trigger)\b",
+        )
+
+    def test_replacement_sync_rpc_remains_service_role_only(self):
+        sync_function = re.search(
+            r"create function public\.sync_koica_search_snapshot.*?as \$\$",
+            REVIEWED_REFERENCE_SQL,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(sync_function)
+        self.assertIn("security definer", sync_function.group(0))
+        self.assertIn("set search_path = ''", sync_function.group(0))
+        self.assertIn("p_source_db_sha256", sync_function.group(0))
+        self.assertRegex(
+            REVIEWED_REFERENCE_SQL,
+            r"(?s)grant execute on function public\.sync_koica_search_snapshot\("
+            r".*?\) to service_role",
+        )
+        self.assertNotRegex(
+            REVIEWED_REFERENCE_SQL,
+            r"(?s)grant execute on function public\.sync_koica_search_snapshot\("
+            r".*?\) to (?:anon|authenticated)",
+        )
 
 
 if __name__ == "__main__":

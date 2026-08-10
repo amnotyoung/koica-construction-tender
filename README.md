@@ -47,10 +47,12 @@ manifest에 기록된 상대경로, 원문 URL, SHA-256으로 추적한다.
 ### 1. Supabase 공개 DB에 접근해 조회 (권장)
 
 Supabase Data API의 공개 뷰와 읽기 전용 RPC를 publishable key로 호출할 수
-있다. 발행된 사례 156건과 관련 공고 295건이 공개되어 있으며 쓰기와 동기화
-권한은 공개하지 않는다. 대부분의 사용자는 DB를 내려받거나 Supabase SDK를
-설치할 필요 없이 웹 브라우저, `curl` 등 HTTP를 지원하는 도구로 바로 조회할
-수 있으므로 이 방식을 권장한다. 종료평가 테이블은 현재 SQLite 배포에만 있고
+있다. 이 버전의 검색 스냅샷은 공사 공고군 156건과 검증된 설계·감리 참고사례
+5건을 합친 161건, 관련 공고 295건이다. `case_kind`로 둘을 구분하므로 설계
+참고사례는 `DESIGN_SUPERVISION_REFERENCE`로 표시하며, 설계 추정금액을
+공사계약으로 오인하지 않는다. 실제 원격 배포 건수와 원본 DB
+버전·SHA-256은 `get_koica_search_status()` 결과를 기준으로 확인한다. 쓰기와
+동기화 권한은 공개하지 않는다. 종료평가 테이블은 현재 SQLite 배포에만 있고
 Supabase 공개 검색 스냅샷에는 투영하지 않는다.
 
 - Project URL: `https://syzvicjmwnqennthhhcv.supabase.co`
@@ -86,7 +88,7 @@ sqlite3 "KOICA_건축사업_사례DB_2016-2025.sqlite"
 국가·시설유형·공사유형·연면적·검색어 기반 자연어 조회를 실행한다.
 
 1. `koica_construction_data_status`: 데이터 상태·버전·관찰일 확인
-2. `search_koica_construction_cases`: 유사 건축공사 공고군 검색
+2. `search_koica_construction_cases`: 공사 공고군과 검증된 설계·감리 참고사례 검색
 3. `get_koica_construction_case`: 선택 사례와 동일 사업의 관련 공고 확인
 
 도구가 없는 환경에서도 데이터가 없는 것은 아니다. 위 공개 Supabase RPC를
@@ -111,7 +113,8 @@ SQLite 경로로 계속 조회한다. 플러그인 부재를 저장소나 데이
 - 원 첨부파일은 저장소에 포함하지 않지만, SQLite의 자동 추출 근거에는 공개
   조달문서에 기재된 담당자명·이메일·전화번호 등의 문자열이 포함될 수 있다.
 - 연락처 정보는 원문 근거 확인 외의 목적으로 사용하지 않는다.
-- Supabase에는 공개 검색에 필요한 축약 사례와 관련 공고만 적재하며, 원문
-  근거·파일경로·해시는 적재하지 않는다.
+- Supabase에는 공개 검색에 필요한 축약 사례와 관련 공고만 적재한다. 원문
+  근거·파일경로·개별 첨부 해시는 제외하고, 동기화 원본을 식별하는 SQLite
+  스키마 버전과 DB SHA-256만 상태 RPC에 공개한다.
 - 종료평가의 `no_accepted_same_project_report`는 이 코퍼스에서 동일사업 매칭을
   채택하지 않았다는 뜻이며 보고서가 존재하지 않는다는 판정이 아니다.

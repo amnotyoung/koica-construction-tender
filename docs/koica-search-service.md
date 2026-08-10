@@ -12,10 +12,16 @@ GitHub 공개 SQLite (기준 데이터·원 첨부 제외)
   -> MCP 도구를 제공하는 플러그인
 ```
 
-SQLite의 `attachments`, `documents`, `evidence`, 로컬 상대경로와 해시는
+SQLite의 `attachments`, `documents`, `evidence`, 로컬 상대경로와 개별 파일 해시는
 Supabase에 올리지 않는다. GitHub에서는 기준 SQLite를 내려받아 전체 색인과
 추출근거를 조회할 수 있고, Supabase에는 세 도구에 필요한 축약 검색 데이터만
-공개한다. 공개 사례의 고정 근거등급과 검색 요청별 동적 우선순위도 분리한다.
+공개한다. 단, 상태 RPC에는 동기화 원본을 정확히 식별하도록 SQLite 스키마
+버전·DB SHA-256·스냅샷 생성시각을 공개한다. 공개 사례의 고정 근거등급과 검색
+요청별 동적 우선순위도 분리한다.
+
+상태 필드는 `source_schema_version`, `source_db_sha256`,
+`snapshot_generated_at`, `construction_notice_count`,
+`reviewed_reference_count`를 포함한다.
 
 SQLite 1.9에 추가된 `evaluation_*` 테이블과
 `v_project_evaluation_findings`도 현재 검색 스냅샷·동기화 RPC의 범위 밖이다.
@@ -28,8 +34,11 @@ SQLite 1.9에 추가된 `evaluation_*` 테이블과
 python3 scripts/export_koica_search_data.py
 ```
 
-생성 파일은 `outputs/koica-search/`의 CSV 두 개와 JSON 스냅샷이다. 사례 단위는
-재공고를 합친 `bid_base_no`이며 현재 DB에서는 건축공사 공고군 156건이다.
+생성 파일은 `outputs/koica-search/`의 CSV 두 개와 JSON 스냅샷이다. 현재 DB의
+발행 대상은 재공고를 합친 건축공사 공고군 156건과, 공사 공고가 없어도
+설계·감리 공고에서 면적·공사비·A~C 근거등급이 검토된 참고사례 5건이다.
+후자는 `case_kind=DESIGN_SUPERVISION_REFERENCE`로 표시해 공사계약과 구분한다.
+`facility_family`는 제목·사업명까지 사용해 거친 원 시설분류를 보완한다.
 
 ## 2. Supabase 스키마 적용
 
@@ -41,9 +50,9 @@ supabase db push
 ```
 
 마이그레이션은 `koica_search` 저장 스키마, RLS, PGroonga 한국어 검색 인덱스,
-조회 RPC와 동기화 RPC를 만든다. 저장 스키마는 Data API의 exposed schema에
-추가하지 않는다. 대신 `public`의 다음 두 `security_invoker` 뷰만 직접 조회할 수
-있다.
+스냅샷 메타데이터, 조회 RPC와 동기화 RPC를 만든다. 저장 스키마는 Data API의
+exposed schema에 추가하지 않는다. 대신 `public`의 다음 두 `security_invoker`
+뷰만 직접 조회할 수 있다.
 
 - `koica_construction_cases`: 발행된 사례의 공개 필드
 - `koica_construction_related_notices`: 발행된 관련 공고의 공개 필드
@@ -68,7 +77,8 @@ python3 scripts/sync_koica_search_to_supabase.py --apply
 ```
 
 동기화 RPC는 전체 스냅샷을 한 트랜잭션에서 upsert하고 사라진 공고군을 정리한다.
-빈 사례 배열은 원격 데이터 오삭제를 막기 위해 거부한다.
+빈 사례 배열뿐 아니라 잘못된 사례유형, 빈 시설대분류, 누락된 원본 스키마 버전,
+잘못된 DB SHA-256과 시간대 없는 생성시각도 적용 전에 거부한다.
 
 ## 4. 공개 읽기
 
@@ -113,10 +123,16 @@ RPC만 호출하게 한다. 동기화 작업만 별도의 secret key를 사용�
 
 ## 검색 결과 해석
 
+- `case_kind`: 공사 공고군인지 검증된 설계·감리 단계 참고사례인지 구분
+- `facility_type`, `facility_family`: 원 세부분류와 검색 누락을 줄이는 정규화 대분류
 - `priority`, `match_score`, `match_reason`: 국가·시설기능·공종·연면적을 반영한 요청별 순위
 - `evidence_grade`: 원자료 준비도와 검토상태에 대한 고정 등급
 - `nominal_unit_usd_m2`: 물가·환율·세금·범위 보정 전 스크리닝 값
 - `scope_note`, `evidence_note`: 비교 사용 시 확인할 범위와 근거
+
+검색 인수는 엄격한 필터가 아니라 점수 신호이므로 반환 행의 국가·시설·공종을
+검증한다. `DESIGN_SUPERVISION_REFERENCE`의 금액은 반드시 `amount_stage_code`와
+함께 표시한다.
 
 명목 USD/㎡는 미래 사업비의 직접 산정값이 아니다. 현지 QS 견적, BOQ, 물가,
 환율, 세금과 공사범위를 함께 검토해야 한다.

@@ -7,10 +7,12 @@ import argparse
 import base64
 import json
 import os
+import re
 import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +26,10 @@ FORBIDDEN_PUBLIC_KEYS = {
     "sha256",
     "evidence_text",
     "stored_name",
+}
+PUBLISHABLE_CASE_KINDS = {
+    "CONSTRUCTION_NOTICE",
+    "DESIGN_SUPERVISION_REFERENCE",
 }
 
 
@@ -67,6 +73,18 @@ def validate_snapshot(snapshot: dict[str, Any]) -> None:
         raise ValueError("snapshot related_notices must be a list")
     if not str(snapshot.get("data_version") or "").strip():
         raise ValueError("snapshot data_version must not be blank")
+    if not str(snapshot.get("source_schema_version") or "").strip():
+        raise ValueError("snapshot source_schema_version must not be blank")
+    source_db_sha256 = str(snapshot.get("source_db_sha256") or "").strip()
+    if not re.fullmatch(r"[0-9a-f]{64}", source_db_sha256):
+        raise ValueError("snapshot source_db_sha256 must be a lowercase SHA-256 digest")
+    generated_at = str(snapshot.get("generated_at") or "").strip()
+    try:
+        parsed_generated_at = datetime.fromisoformat(generated_at.replace("Z", "+00:00"))
+    except ValueError as error:
+        raise ValueError("snapshot generated_at must be an ISO-8601 timestamp") from error
+    if parsed_generated_at.tzinfo is None:
+        raise ValueError("snapshot generated_at must include a timezone")
 
     case_ids: set[str] = set()
     for row in snapshot["cases"]:
@@ -76,6 +94,10 @@ def validate_snapshot(snapshot: dict[str, Any]) -> None:
         if not case_id or case_id in case_ids:
             raise ValueError(f"missing or duplicate case_id: {case_id!r}")
         case_ids.add(case_id)
+        if row.get("case_kind") not in PUBLISHABLE_CASE_KINDS:
+            raise ValueError(f"case {case_id} has invalid case_kind: {row.get('case_kind')!r}")
+        if not str(row.get("facility_family") or "").strip():
+            raise ValueError(f"case {case_id} has a blank facility_family")
         forbidden = FORBIDDEN_PUBLIC_KEYS.intersection(row)
         if forbidden:
             raise ValueError(f"case {case_id} contains forbidden keys: {sorted(forbidden)}")
@@ -123,6 +145,9 @@ def sync_snapshot(
             "p_cases": snapshot["cases"],
             "p_related_notices": snapshot["related_notices"],
             "p_data_version": snapshot["data_version"],
+            "p_source_schema_version": snapshot["source_schema_version"],
+            "p_source_db_sha256": snapshot["source_db_sha256"],
+            "p_snapshot_generated_at": snapshot["generated_at"],
         },
         ensure_ascii=False,
         separators=(",", ":"),

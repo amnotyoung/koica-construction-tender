@@ -24,12 +24,20 @@ publishable key는 공개 클라이언트용 식별자이며 비밀키가 아니
 
 | 뷰 | 내용 |
 |---|---|
-| `koica_construction_cases` | 발행된 건축사례 156건 |
+| `koica_construction_cases` | 공사 공고군 156건 + 검증된 설계·감리 참고사례 5건 |
 | `koica_construction_related_notices` | 같은 사업의 설계·감리 등 관련 공고 295건 |
 
-종료평가 관련 테이블과 페이지 근거는 현재 SQLite 배포에만 제공한다. 기존
-Supabase 동기화 스냅샷은 위 두 공개 뷰의 사례·관련 공고만 다루며, 새 평가
-테이블을 자동 공개하거나 동기화하지 않는다.
+`case_kind`가 `CONSTRUCTION_NOTICE`이면 공사 공고군이고,
+`DESIGN_SUPERVISION_REFERENCE`이면 면적·공사비·근거등급이 검토된 설계·감리
+단계 참고사례다. 후자의 `construction_cost_usd`는 공사계약액이 아니며
+`amount_stage_code`의 `DESIGN_ESTIMATE` 또는 `CONSTRUCTION_BUDGET`과 함께
+해석한다. `facility_family`는 `facility_type`이 `기타·미분류`처럼 거친 경우를
+보완하는 대분류다.
+
+위 161건은 이 버전의 동기화 대상이다. 실제 원격 배포 상태는
+`get_koica_search_status()`의 전체·유형별 건수와 원본 DB 버전·SHA-256으로
+확인한다. 종료평가 관련 테이블과 페이지 근거는 현재 SQLite 배포에만 제공하며,
+평가 테이블을 자동 공개하거나 동기화하지 않는다.
 
 ```bash
 SUPABASE_URL="https://syzvicjmwnqennthhhcv.supabase.co"
@@ -38,7 +46,7 @@ SUPABASE_KEY="sb_publishable_N2e3PjwiSxGl3MkJokCD-Q_ap6BkmMb"
 curl -sS --get \
   "$SUPABASE_URL/rest/v1/koica_construction_cases" \
   -H "apikey: $SUPABASE_KEY" \
-  --data-urlencode "select=case_id,country_ko,facility_type,gross_floor_area_m2,construction_cost_usd,nominal_unit_usd_m2,evidence_grade,procurement_url" \
+  --data-urlencode "select=case_id,case_kind,country_ko,facility_type,facility_family,gross_floor_area_m2,construction_cost_usd,amount_stage_code,nominal_unit_usd_m2,evidence_grade,procurement_url" \
   --data-urlencode "country_ko=eq.우간다" \
   --data-urlencode "limit=10"
 ```
@@ -52,7 +60,7 @@ curl -sS --get \
 | `get_koica_construction_case` | `get_koica_reference_case(p_case_id)` |
 
 ```bash
-# DB 버전·감사일·동기화일·건수
+# 원본 DB 버전·SHA-256·감사일·동기화일·유형별 건수
 curl -sS -X POST \
   "$SUPABASE_URL/rest/v1/rpc/get_koica_search_status" \
   -H "apikey: $SUPABASE_KEY" \
@@ -83,7 +91,8 @@ curl -sS -X POST \
 
 검색 결과는 최대 50건으로 제한된다. `anon`과 `authenticated`에는 `SELECT`와
 위 조회 RPC 실행 권한만 있고 `INSERT`, `UPDATE`, `DELETE`와 동기화 RPC 실행
-권한은 없다.
+권한은 없다. 검색 인수는 순위 신호이지 SQL의 엄격한 필터가 아니므로, 답변에
+사용할 행의 국가·시설대분류·공종·면적과 `case_kind`를 다시 확인한다.
 
 ## 2. SQLite DB 직접 이용 (선택)
 
@@ -196,6 +205,10 @@ SQLite 공개 경로는 그대로 사용할 수 있다.
   밝힌다.
 - 성공한 검색 결과는 `project_no`로 재공고를 묶고, 같은 진행 문구를 반복하는
   대신 실제 사례와 근거를 제시한다.
+- `facility_type`만으로 의료·교육 사례를 제외하지 않는다. `facility_family`와
+  검색어를 함께 보고, `case_kind`로 공사 공고와 설계·감리 참고사례를 구분한다.
+- 감사일이 같아도 DB 스키마 버전이 같다는 뜻은 아니다. 상태 RPC의
+  `source_schema_version`과 `source_db_sha256`을 확인한다.
 
 ## 데이터 이용 시 주의
 
@@ -205,8 +218,9 @@ SQLite 공개 경로는 그대로 사용할 수 있다.
 - SQLite의 `evidence`에는 공개 조달문서에서 자동 추출한 근거 문장과 원문에
   기재된 담당자명·이메일·전화번호가 포함될 수 있다. 원문 근거 확인 외의
   목적으로 연락처를 사용하지 않는다.
-- Supabase 공개 데이터에는 원문 근거, 로컬 파일경로와 SHA-256을 포함하지
-  않는다.
+- Supabase 공개 데이터에는 원문 근거, 로컬 파일경로와 개별 첨부 SHA-256을
+  포함하지 않는다. 상태 RPC에는 현재 원본 SQLite를 식별하는 DB SHA-256만
+  공개한다.
 - `no_accepted_same_project_report`는 이 코퍼스에서 동일사업 매칭을 채택하지
   않았다는 의미일 뿐, 종료평가 보고서의 부재를 입증하지 않는다. OCR 필요 파일과
   코퍼스 밖 자료는 별도 확인해야 한다.
