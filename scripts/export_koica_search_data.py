@@ -87,6 +87,73 @@ RELATED_NOTICE_FIELDS = [
     "is_published",
 ]
 
+EVALUATION_PROJECT_FIELDS = [
+    "project_no",
+    "country_ko",
+    "project_name",
+    "in_area_cost_review",
+    "has_works_contract",
+    "has_construction_candidate",
+    "manual_construction_relevance",
+    "match_status",
+    "screening_note",
+    "data_version",
+    "is_published",
+]
+
+EVALUATION_REPORT_FIELDS = [
+    "report_id",
+    "source_kind",
+    "source_collection",
+    "report_title",
+    "report_type",
+    "project_period",
+    "publication_date",
+    "publication_date_precision",
+    "source_page_url",
+    "source_download_url",
+    "page_count",
+    "extraction_status",
+    "data_version",
+    "is_published",
+]
+
+EVALUATION_MATCH_FIELDS = [
+    "match_id",
+    "report_id",
+    "project_no",
+    "report_project_name",
+    "match_method",
+    "relation_scope",
+    "match_score",
+    "match_basis",
+    "reviewed_at",
+    "data_version",
+    "is_published",
+]
+
+EVALUATION_FINDING_FIELDS = [
+    "finding_id",
+    "match_id",
+    "category",
+    "field_code",
+    "field_description",
+    "summary_text",
+    "value_text",
+    "value_numeric",
+    "unit",
+    "value_context",
+    "pdf_page_start",
+    "pdf_page_end",
+    "printed_page_label",
+    "evidence_excerpt",
+    "conflict_group",
+    "confidence",
+    "search_text",
+    "data_version",
+    "is_published",
+]
+
 
 def clean_text(value: Any) -> str | None:
     if value is None:
@@ -244,6 +311,97 @@ def build_snapshot(database: Path) -> dict[str, Any]:
             row["project_no"]: row
             for row in row_dicts(connection, "SELECT * FROM area_cost_project_review")
         }
+        evaluation_project_rows = row_dicts(
+            connection,
+            """
+            SELECT
+              project_no,
+              country_ko,
+              project_name,
+              in_area_cost_review,
+              has_works_contract,
+              has_construction_candidate,
+              manual_construction_relevance,
+              status AS match_status,
+              note AS screening_note
+            FROM evaluation_project_screening
+            ORDER BY project_no
+            """,
+        )
+        evaluation_report_rows = row_dicts(
+            connection,
+            """
+            SELECT
+              report_id,
+              source_kind,
+              source_collection,
+              report_title,
+              report_type,
+              project_period,
+              publication_date,
+              publication_date_precision,
+              source_page_url,
+              source_download_url,
+              page_count,
+              extraction_status
+            FROM evaluation_reports
+            ORDER BY report_id
+            """,
+        )
+        evaluation_match_rows = row_dicts(
+            connection,
+            """
+            SELECT
+              match_id,
+              report_id,
+              project_no,
+              report_project_name,
+              match_method,
+              relation_scope,
+              match_score,
+              match_basis,
+              reviewed_at
+            FROM evaluation_project_matches
+            WHERE review_status = 'accepted'
+            ORDER BY match_id
+            """,
+        )
+        evaluation_finding_rows = row_dicts(
+            connection,
+            """
+            SELECT
+              f.finding_id,
+              f.match_id,
+              f.category,
+              f.field_code,
+              d.description AS field_description,
+              f.summary_text,
+              f.value_text,
+              f.value_numeric,
+              f.unit,
+              f.value_context,
+              f.pdf_page_start,
+              f.pdf_page_end,
+              f.printed_page_label,
+              f.evidence_excerpt,
+              f.conflict_group,
+              f.confidence,
+              s.country_ko,
+              s.project_name,
+              r.report_title
+            FROM evaluation_findings AS f
+            JOIN evaluation_project_matches AS m USING (match_id)
+            JOIN evaluation_project_screening AS s USING (project_no)
+            JOIN evaluation_reports AS r USING (report_id)
+            JOIN evaluation_field_definitions AS d
+              USING (field_code, category)
+            WHERE
+              f.review_status = 'accepted'
+              AND f.public_excerpt_approved = 1
+              AND m.review_status = 'accepted'
+            ORDER BY f.finding_id
+            """,
+        )
 
     by_bid = {row["bid_no"]: row for row in project_rows}
     by_base: dict[str, list[dict[str, Any]]] = {}
@@ -501,6 +659,69 @@ def build_snapshot(database: Path) -> dict[str, Any]:
                 }
             )
 
+    evaluation_projects = [
+        {
+            **row,
+            "in_area_cost_review": bool(row["in_area_cost_review"]),
+            "has_works_contract": bool(row["has_works_contract"]),
+            "has_construction_candidate": bool(row["has_construction_candidate"]),
+            "manual_construction_relevance": bool(
+                row["manual_construction_relevance"]
+            ),
+            "data_version": data_version,
+            "is_published": True,
+        }
+        for row in evaluation_project_rows
+    ]
+    evaluation_reports = [
+        {
+            **row,
+            "data_version": data_version,
+            "is_published": True,
+        }
+        for row in evaluation_report_rows
+    ]
+    evaluation_matches = [
+        {
+            **row,
+            "match_score": float(row["match_score"]),
+            "data_version": data_version,
+            "is_published": True,
+        }
+        for row in evaluation_match_rows
+    ]
+    evaluation_findings: list[dict[str, Any]] = []
+    for row in evaluation_finding_rows:
+        public_row = {
+            field: row.get(field)
+            for field in EVALUATION_FINDING_FIELDS
+            if field not in {"search_text", "data_version", "is_published"}
+        }
+        public_row.update(
+            {
+                "search_text": " ".join(
+                    filter(
+                        None,
+                        (
+                            clean_text(row.get("country_ko")),
+                            clean_text(row.get("project_name")),
+                            clean_text(row.get("report_title")),
+                            clean_text(row.get("category")),
+                            clean_text(row.get("field_code")),
+                            clean_text(row.get("field_description")),
+                            clean_text(row.get("summary_text")),
+                            clean_text(row.get("value_text")),
+                            clean_text(row.get("value_context")),
+                            clean_text(row.get("evidence_excerpt")),
+                        ),
+                    )
+                ),
+                "data_version": data_version,
+                "is_published": True,
+            }
+        )
+        evaluation_findings.append(public_row)
+
     return {
         "data_version": data_version,
         "source_schema_version": schema_version,
@@ -508,6 +729,10 @@ def build_snapshot(database: Path) -> dict[str, Any]:
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "cases": cases,
         "related_notices": related_notices,
+        "evaluation_projects": evaluation_projects,
+        "evaluation_reports": evaluation_reports,
+        "evaluation_matches": evaluation_matches,
+        "evaluation_findings": evaluation_findings,
     }
 
 
@@ -526,6 +751,26 @@ def write_snapshot(snapshot: dict[str, Any], output_dir: Path) -> None:
         snapshot["related_notices"],
         RELATED_NOTICE_FIELDS,
     )
+    write_csv(
+        output_dir / "koica_evaluation_projects.csv",
+        snapshot["evaluation_projects"],
+        EVALUATION_PROJECT_FIELDS,
+    )
+    write_csv(
+        output_dir / "koica_evaluation_reports.csv",
+        snapshot["evaluation_reports"],
+        EVALUATION_REPORT_FIELDS,
+    )
+    write_csv(
+        output_dir / "koica_evaluation_matches.csv",
+        snapshot["evaluation_matches"],
+        EVALUATION_MATCH_FIELDS,
+    )
+    write_csv(
+        output_dir / "koica_evaluation_findings.csv",
+        snapshot["evaluation_findings"],
+        EVALUATION_FINDING_FIELDS,
+    )
     (output_dir / "koica_search_snapshot.json").write_text(
         json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
@@ -543,7 +788,11 @@ def main() -> None:
     write_snapshot(snapshot, args.output_dir)
     print(
         f"Exported {len(snapshot['cases'])} cases and "
-        f"{len(snapshot['related_notices'])} related notices to {args.output_dir}"
+        f"{len(snapshot['related_notices'])} related notices; "
+        f"{len(snapshot['evaluation_projects'])} evaluation project screenings, "
+        f"{len(snapshot['evaluation_reports'])} reports, "
+        f"{len(snapshot['evaluation_matches'])} matches, and "
+        f"{len(snapshot['evaluation_findings'])} findings to {args.output_dir}"
     )
 
 

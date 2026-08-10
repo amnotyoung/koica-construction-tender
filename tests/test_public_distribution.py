@@ -105,6 +105,19 @@ class PublicDistributionTests(unittest.TestCase):
         self.assertIn("source_db_sha256", AGENT_GUIDE)
         self.assertIn("공사 공고군 156건", README)
         self.assertRegex(README, r"설계·감리 참고사례\s+5건")
+        for rpc_name in (
+            "search_koica_evaluation_findings",
+            "get_koica_project_evaluation_findings",
+        ):
+            self.assertIn(rpc_name, PUBLIC_ACCESS_DOC)
+            self.assertIn(rpc_name, SEARCH_SERVICE_DOC)
+            self.assertIn(rpc_name, AGENT_GUIDE)
+        self.assertIn("공개 승인된 건축 근거 158건", README)
+        self.assertIn("koica_evaluation_findings", PUBLIC_ACCESS_DOC)
+        self.assertNotIn(
+            "종료평가 관련 테이블과 페이지 근거는 현재 SQLite 배포에만 제공",
+            PUBLIC_ACCESS_DOC,
+        )
         self.assertIn(EXPECTED_SHA256, README)
         self.assertIn(EXPECTED_SHA256, PUBLIC_ACCESS_DOC)
 

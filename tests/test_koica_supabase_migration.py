@@ -24,6 +24,18 @@ REVIEWED_REFERENCE_MIGRATION = next(
     )
 )
 REVIEWED_REFERENCE_SQL = REVIEWED_REFERENCE_MIGRATION.read_text(encoding="utf-8")
+EVALUATION_MIGRATION = next(
+    (ROOT / "supabase" / "migrations").glob(
+        "*_publish_evaluation_findings.sql"
+    )
+)
+EVALUATION_SQL = EVALUATION_MIGRATION.read_text(encoding="utf-8")
+RELAX_PROJECT_ID_MIGRATION = next(
+    (ROOT / "supabase" / "migrations").glob(
+        "*_relax_evaluation_project_no_format.sql"
+    )
+)
+RELAX_PROJECT_ID_SQL = RELAX_PROJECT_ID_MIGRATION.read_text(encoding="utf-8")
 CONFIG = (ROOT / "supabase" / "config.toml").read_text(encoding="utf-8")
 
 
@@ -257,6 +269,115 @@ class KoicaSupabaseMigrationTests(unittest.TestCase):
             r"(?s)grant execute on function public\.sync_koica_search_snapshot\("
             r".*?\) to (?:anon|authenticated)",
         )
+
+    def test_evaluation_tables_use_rls_and_public_select_only(self):
+        for table_name in (
+            "evaluation_projects",
+            "evaluation_reports",
+            "evaluation_matches",
+            "evaluation_findings",
+        ):
+            self.assertIn(
+                f"alter table koica_search.{table_name} enable row level security",
+                EVALUATION_SQL,
+            )
+            self.assertRegex(
+                EVALUATION_SQL,
+                rf'(?s)create policy "public reads published [^"]+"'
+                rf".*?on koica_search\.{table_name} for select"
+                r".*?to anon, authenticated.*?using \(is_published\)",
+            )
+            self.assertRegex(
+                EVALUATION_SQL,
+                rf"grant select on table koica_search\.{table_name}"
+                r"\s+to anon, authenticated, service_role",
+            )
+        self.assertNotRegex(
+            EVALUATION_SQL,
+            r"grant\s+(?:all|insert|update|delete|truncate|references|trigger)\b",
+        )
+
+    def test_evaluation_public_views_are_invoker_and_sanitized(self):
+        for view_name in (
+            "koica_evaluation_projects",
+            "koica_evaluation_reports",
+            "koica_evaluation_findings",
+        ):
+            view = re.search(
+                rf"create view public\.{view_name}.*?;",
+                EVALUATION_SQL,
+                flags=re.DOTALL,
+            )
+            self.assertIsNotNone(view)
+            self.assertIn("security_invoker = true", view.group(0))
+            self.assertIn("security_barrier = true", view.group(0))
+            self.assertNotIn("security definer", view.group(0))
+
+        for private_field in (
+            "source_file",
+            "ocr_text_digest",
+            "review_note",
+            "extraction_method",
+        ):
+            self.assertNotIn(private_field, EVALUATION_SQL)
+        self.assertNotIn("\n  sha256 text", EVALUATION_SQL)
+
+    def test_evaluation_read_rpcs_and_existing_case_reads_include_findings(self):
+        for function_name in (
+            "search_koica_evaluation_findings",
+            "get_koica_project_evaluation_findings",
+        ):
+            function = re.search(
+                rf"create function public\.{function_name}.*?as \$\$",
+                EVALUATION_SQL,
+                flags=re.DOTALL,
+            )
+            self.assertIsNotNone(function)
+            self.assertIn("security invoker", function.group(0))
+        for field in (
+            "evaluation_match_status",
+            "evaluation_report_count",
+            "evaluation_finding_count",
+            "evaluation_findings",
+        ):
+            self.assertIn(field, EVALUATION_SQL)
+        self.assertIn("operator(extensions.&@~)", EVALUATION_SQL)
+
+    def test_evaluation_sync_is_identity_checked_and_service_role_only(self):
+        sync_function = re.search(
+            r"create function public\.sync_koica_evaluation_snapshot.*?as \$\$",
+            EVALUATION_SQL,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(sync_function)
+        self.assertIn("security definer", sync_function.group(0))
+        self.assertIn("set search_path = ''", sync_function.group(0))
+        self.assertIn(
+            "evaluation snapshot identity must match the current construction snapshot",
+            EVALUATION_SQL,
+        )
+        self.assertRegex(
+            EVALUATION_SQL,
+            r"(?s)grant execute on function public\.sync_koica_evaluation_snapshot\("
+            r".*?\) to service_role",
+        )
+        self.assertNotRegex(
+            EVALUATION_SQL,
+            r"(?s)grant execute on function public\.sync_koica_evaluation_snapshot\("
+            r".*?\) to (?:anon|authenticated)",
+        )
+
+    def test_historical_project_identifiers_are_preserved_verbatim(self):
+        self.assertIn(
+            "drop constraint evaluation_projects_project_no_format",
+            RELAX_PROJECT_ID_SQL,
+        )
+        self.assertIn(
+            "evaluation_projects_project_no_not_blank",
+            RELAX_PROJECT_ID_SQL,
+        )
+        for example in ("201601", "EC2016001", "IDKOICA2016001", "L2017-0004"):
+            self.assertIn(example, RELAX_PROJECT_ID_SQL)
 
 
 if __name__ == "__main__":

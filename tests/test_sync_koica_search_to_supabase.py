@@ -31,6 +31,35 @@ class KoicaSearchSyncTests(unittest.TestCase):
                 }
             ],
             "related_notices": [],
+            "evaluation_projects": [
+                {
+                    "project_no": "2025-00001",
+                    "match_status": "accepted_match",
+                    "is_published": True,
+                }
+            ],
+            "evaluation_reports": [
+                {
+                    "report_id": "koica-eval-test-01",
+                    "is_published": True,
+                }
+            ],
+            "evaluation_matches": [
+                {
+                    "match_id": "match-test-01",
+                    "report_id": "koica-eval-test-01",
+                    "project_no": "2025-00001",
+                    "is_published": True,
+                }
+            ],
+            "evaluation_findings": [
+                {
+                    "finding_id": "finding-test-01",
+                    "match_id": "match-test-01",
+                    "search_text": "병원 시설 범위",
+                    "is_published": True,
+                }
+            ],
         }
         snapshot.update(overrides)
         return snapshot
@@ -68,6 +97,17 @@ class KoicaSearchSyncTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "invalid case_kind"):
             MODULE.validate_snapshot(invalid_case_snapshot)
 
+    def test_rejects_private_evaluation_fields_and_unknown_links(self):
+        private_snapshot = self.snapshot()
+        private_snapshot["evaluation_reports"][0]["ocr_text_digest"] = "a" * 64
+        with self.assertRaisesRegex(ValueError, "forbidden keys"):
+            MODULE.validate_snapshot(private_snapshot)
+
+        unknown_match_snapshot = self.snapshot()
+        unknown_match_snapshot["evaluation_findings"][0]["match_id"] = "unknown"
+        with self.assertRaisesRegex(ValueError, "unknown match"):
+            MODULE.validate_snapshot(unknown_match_snapshot)
+
     def test_sync_payload_carries_source_identity(self):
         snapshot = self.snapshot()
 
@@ -82,11 +122,10 @@ class KoicaSearchSyncTests(unittest.TestCase):
             def read():
                 return b'{"cases":1}'
 
-        captured = {}
+        captured = []
 
         def fake_urlopen(request, timeout):
-            captured["request"] = request
-            captured["timeout"] = timeout
+            captured.append((request, timeout))
             return Response()
 
         with mock.patch.object(MODULE.urllib.request, "urlopen", fake_urlopen):
@@ -97,13 +136,32 @@ class KoicaSearchSyncTests(unittest.TestCase):
                 timeout_seconds=12,
             )
 
-        payload = json.loads(captured["request"].data)
-        self.assertEqual(payload["p_source_schema_version"], "1.9")
-        self.assertEqual(payload["p_source_db_sha256"], "a" * 64)
-        self.assertEqual(
-            payload["p_snapshot_generated_at"], "2026-08-10T12:00:00+00:00"
+        self.assertEqual(len(captured), 2)
+        construction_request, construction_timeout = captured[0]
+        evaluation_request, evaluation_timeout = captured[1]
+        construction_payload = json.loads(construction_request.data)
+        evaluation_payload = json.loads(evaluation_request.data)
+        for payload in (construction_payload, evaluation_payload):
+            self.assertEqual(payload["p_source_schema_version"], "1.9")
+            self.assertEqual(payload["p_source_db_sha256"], "a" * 64)
+            self.assertEqual(
+                payload["p_snapshot_generated_at"],
+                "2026-08-10T12:00:00+00:00",
+            )
+        self.assertIn(
+            "/rpc/sync_koica_search_snapshot",
+            construction_request.full_url,
         )
-        self.assertEqual(captured["timeout"], 12)
+        self.assertIn(
+            "/rpc/sync_koica_evaluation_snapshot",
+            evaluation_request.full_url,
+        )
+        self.assertEqual(
+            evaluation_payload["p_findings"],
+            snapshot["evaluation_findings"],
+        )
+        self.assertEqual(construction_timeout, 12)
+        self.assertEqual(evaluation_timeout, 12)
 
     def test_modern_secret_is_not_used_as_bearer_token(self):
         headers = MODULE.rpc_headers("sb_secret_example")

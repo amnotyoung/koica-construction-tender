@@ -60,6 +60,33 @@ class KoicaSearchExportTests(unittest.TestCase):
         self.assertEqual(self.snapshot["source_schema_version"], "1.9")
         self.assertRegex(self.snapshot["source_db_sha256"], r"^[0-9a-f]{64}$")
 
+    def test_evaluation_snapshot_has_reviewed_public_counts(self):
+        self.assertEqual(len(self.snapshot["evaluation_projects"]), 175)
+        self.assertEqual(len(self.snapshot["evaluation_reports"]), 42)
+        self.assertEqual(len(self.snapshot["evaluation_matches"]), 46)
+        self.assertEqual(len(self.snapshot["evaluation_findings"]), 158)
+        self.assertEqual(
+            sum(
+                row["match_status"] == "accepted_match"
+                for row in self.snapshot["evaluation_projects"]
+            ),
+            45,
+        )
+
+    def test_evaluation_findings_keep_public_page_evidence(self):
+        findings = {
+            row["finding_id"]: row
+            for row in self.snapshot["evaluation_findings"]
+        }
+        finding = findings["f-017729-area"]
+        self.assertEqual(finding["match_id"], "match-2016-00043-017729")
+        self.assertEqual(finding["field_code"], "facility_area")
+        self.assertEqual(finding["value_numeric"], 950.0)
+        self.assertEqual(finding["unit"], "m2")
+        self.assertEqual(finding["pdf_page_start"], 42)
+        self.assertIn("약 950", finding["evidence_excerpt"])
+        self.assertIn("나이지리아", finding["search_text"])
+
     def test_current_review_overrides_legacy_amount_and_country(self):
         jordan = self.cases["L2018-00020"]
         self.assertEqual(jordan["country_ko"], "요르단")
@@ -96,8 +123,21 @@ class KoicaSearchExportTests(unittest.TestCase):
             "relative_path",
             "sha256",
             "evidence_text",
+            "ocr_text_digest",
+            "review_note",
+            "extraction_method",
         }
-        for row in self.snapshot["cases"] + self.snapshot["related_notices"]:
+        public_rows = []
+        for collection in (
+            "cases",
+            "related_notices",
+            "evaluation_projects",
+            "evaluation_reports",
+            "evaluation_matches",
+            "evaluation_findings",
+        ):
+            public_rows.extend(self.snapshot[collection])
+        for row in public_rows:
             self.assertTrue(forbidden.isdisjoint(row))
 
 

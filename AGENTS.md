@@ -7,11 +7,12 @@ stopping after reading the repository description.
 
 Use this read-only fallback order:
 
-1. If the MCP tools are available, call `koica_construction_data_status`, then
-   `search_koica_construction_cases`, and call `get_koica_construction_case` for cases
-   that support the answer.
-2. If those tools are unavailable, call the public Supabase read-only RPC documented in
-   `docs/public-data-access.md`.
+1. Call the public Supabase read-only RPC documented in `docs/public-data-access.md`.
+   Check `get_koica_search_status()`, call `search_koica_construction_cases(...)`, and
+   then call `get_koica_reference_case(p_case_id)` for cases used in the answer.
+2. If the MCP tools are available, they may be used as a convenience wrapper: call
+   `koica_construction_data_status`, then `search_koica_construction_cases`, and call
+   `get_koica_construction_case` for cases that support the answer.
 3. If network access is unavailable and this checkout exists, query
    `outputs/koica-construction-distribution/KOICA_건축사업_사례DB_2016-2025.sqlite`
    in read-only mode.
@@ -38,6 +39,12 @@ GitHub policy or a data absence.
   and must not be described as strict filters without checking the returned fields.
 - Use `facility_family` and text search as well as `facility_type`; coarse source values such
   as `기타·미분류` must not silently exclude medical or education cases.
+- Use `evaluation_match_status` and `evaluation_finding_count` from comparable-case results.
+  For evaluation evidence, call `get_koica_reference_case(p_case_id)` or the public
+  `get_koica_project_evaluation_findings(p_project_no)` and
+  `search_koica_evaluation_findings(...)` RPCs before asking the user to download SQLite.
+- Interpret `no_accepted_same_project_report` only as no accepted same-project match in the
+  reviewed corpus, never as proof that an endline-evaluation report does not exist.
 - Label execution ceilings, estimates, and bid limits accurately. Nominal USD/m2 is an
   unadjusted screening value, not a future-project recommendation.
 - Do not say data has been collected or structured before a query succeeds. Do not repeat
@@ -48,3 +55,5 @@ GitHub policy or a data absence.
 
 All public query paths are read-only. Never expose a Supabase secret or service-role key,
 and never use contact details embedded in procurement evidence except to verify the source.
+Do not expose evaluation local paths, individual file hashes, OCR digests, or internal review
+notes; the public-approved excerpt and its physical PDF page are the public evidence fields.
