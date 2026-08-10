@@ -8,8 +8,8 @@ GitHub 공개 SQLite (기준 데이터·원 첨부 제외)
   -> service-role 전용 동기화 RPC
   -> Supabase 비공개 저장 스키마 + 공개 읽기 전용 뷰/RPC
   -> publishable key를 쓰는 공개 클라이언트
-  -> oda-survey-team MCP (To be continued)
-  -> oda-survey-team 플러그인 (To be continued)
+  -> 구성된 실행 환경의 MCP 도구
+  -> MCP 도구를 제공하는 플러그인
 ```
 
 SQLite의 `attachments`, `documents`, `evidence`, 로컬 상대경로와 해시는
@@ -96,14 +96,18 @@ curl "$KOICA_CONSTRUCTION_SUPABASE_URL/rest/v1/rpc/get_koica_search_status" \
 키는 비밀이 아니며, 이 키를 가진 누구나 공개 행을 읽을 수 있다는 전제로 RLS와
 권한을 설정한다.
 
-## 5. MCP·플러그인 공개 배포
+## 5. MCP·플러그인 연동과 실패 처리
 
-**To be continued.** 검색 도구와 플러그인은 현재 비공개인
-[`amnotyoung/oda-survey-team`](https://github.com/amnotyoung/oda-survey-team)을
-공개 전환한 뒤 배포한다. 배포 서버의 공개 조회에는 위 URL과 publishable key를
-설정하고 고정된 Supabase RPC만 호출하게 한다. 동기화 작업만 별도의 secret
-key를 사용한다. MCP 도구 인수에는 URL·키·RPC 이름을 받지 않으며 임의 SQL이나
-동기화 RPC도 노출하지 않는다.
+MCP·플러그인이 구성된 실행 환경에서는 위 세 검색 도구가 공개 읽기 RPC만
+호출하게 한다. 도구의 설치·배포 상태는 실행 환경에 따라 다르며, 도구가 없거나
+호출이 실패해도 공개 Supabase RPC 또는 GitHub·로컬 SQLite로 조회할 수 있다.
+GitHub 웹 리더의 robots 정책이나 바이너리 처리 실패를 저장소 비공개 또는
+데이터 부재로 일반화하지 않는다.
+
+배포 서버의 공개 조회에는 위 URL과 publishable key를 설정하고 고정된 Supabase
+RPC만 호출하게 한다. 동기화 작업만 별도의 secret key를 사용한다. MCP 도구
+인수에는 URL·키·RPC 이름을 받지 않으며 임의 SQL이나 동기화 RPC도 노출하지
+않는다.
 
 플러그인 저장소·설정·실행 산출물에는 secret/service-role 키를 넣지 않는다.
 

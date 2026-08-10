@@ -166,19 +166,36 @@ GROUP BY status;
 
 ## 3. MCP 도구로 LLM 자연어 조회
 
-**To be continued.** 현재
-[`amnotyoung/oda-survey-team`](https://github.com/amnotyoung/oda-survey-team)은
-비공개 저장소다. 공개 전환 후 MCP 서버 설치·연결 방법과 다음 도구를 안내할
-예정이다.
+지원 환경에 다음 MCP 도구가 노출되어 있으면 공개 검색 RPC를 감싼 읽기 전용
+자연어 조회 경로로 사용한다.
 
 - `koica_construction_data_status`
 - `search_koica_construction_cases`
 - `get_koica_construction_case`
 
+먼저 상태 도구로 `data_status`, `observed_at`, `missing_is_zero`를 확인하고,
+검색한 뒤 답변에 실제 사용할 사례만 상세조회한다. MCP 도구가 보이지 않거나
+호출에 실패하면 이 문서의 Supabase RPC를 직접 호출한다. 네트워크 자체를 사용할
+수 없고 저장소 체크아웃이 있으면 SQLite를 읽기 전용으로 조회한다.
+
 ## 4. 플러그인으로 LLM 자연어 조회
 
-**To be continued.** `oda-survey-team` 공개 전환 후 Codex 등 지원 환경에
-플러그인을 설치하고 대화형으로 위 세 도구를 사용하는 절차를 제공할 예정이다.
+`ODA Survey Agents` 또는 위 세 도구를 제공하는 호환 플러그인이 설치된 Codex 등
+지원 환경에서는 대화형으로 조회할 수 있다. 플러그인 배포·설치 상태는 실행
+환경의 기능이며 공개 데이터의 가용성과는 별개다. 플러그인이 없어도 Supabase와
+SQLite 공개 경로는 그대로 사용할 수 있다.
+
+## 에이전트 실패 처리 원칙
+
+- 이 GitHub 저장소와 기준 SQLite는 공개 자료다.
+- GitHub 웹 리더의 robots 정책 또는 바이너리 처리 오류는 해당 리더의 실패일
+  뿐, 저장소 비공개나 데이터 부재의 근거가 아니다.
+- 전용 MCP 도구, 공개 Supabase RPC, 로컬 SQLite, GitHub raw 파일 중 사용할 수
+  있는 다음 경로로 재시도한다.
+- 모든 경로가 실패한 경우에만 판단을 유보하며, 시도한 경로와 실제 오류를 각각
+  밝힌다.
+- 성공한 검색 결과는 `project_no`로 재공고를 묶고, 같은 진행 문구를 반복하는
+  대신 실제 사례와 근거를 제시한다.
 
 ## 데이터 이용 시 주의
 

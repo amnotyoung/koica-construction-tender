@@ -17,6 +17,10 @@ README = (ROOT / "README.md").read_text(encoding="utf-8")
 PUBLIC_ACCESS_DOC = (ROOT / "docs" / "public-data-access.md").read_text(
     encoding="utf-8"
 )
+SEARCH_SERVICE_DOC = (ROOT / "docs" / "koica-search-service.md").read_text(
+    encoding="utf-8"
+)
+AGENT_GUIDE = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 EXPECTED_SHA256 = "9546ff7f35ebbb42c5b3f7a068a42e2059e507b4a77cc5bb331dc9c2284a538d"
 
 
@@ -79,7 +83,22 @@ class PublicDistributionTests(unittest.TestCase):
             self.assertIn(heading, PUBLIC_ACCESS_DOC)
         self.assertIn("Supabase 공개 DB에 접근해 조회 (권장)", README)
         self.assertIn("SQLite DB를 내려받아 직접 조회 (선택)", README)
-        self.assertGreaterEqual(PUBLIC_ACCESS_DOC.count("To be continued"), 2)
+        for document in (README, PUBLIC_ACCESS_DOC, SEARCH_SERVICE_DOC, AGENT_GUIDE):
+            self.assertNotIn("To be continued", document)
+        for tool_name in (
+            "koica_construction_data_status",
+            "search_koica_construction_cases",
+            "get_koica_construction_case",
+        ):
+            self.assertIn(tool_name, README)
+            self.assertIn(tool_name, PUBLIC_ACCESS_DOC)
+            self.assertIn(tool_name, AGENT_GUIDE)
+        self.assertIn("robots", README)
+        self.assertIn("robots", PUBLIC_ACCESS_DOC)
+        self.assertIn("robots-policy", AGENT_GUIDE)
+        self.assertIn("public Supabase read-only RPC", AGENT_GUIDE)
+        self.assertIn("query", AGENT_GUIDE)
+        self.assertIn("Do not repeat", AGENT_GUIDE)
         self.assertIn(EXPECTED_SHA256, README)
         self.assertIn(EXPECTED_SHA256, PUBLIC_ACCESS_DOC)
 

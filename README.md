@@ -37,6 +37,13 @@ manifest에 기록된 상대경로, 원문 URL, SHA-256으로 추적한다.
 
 ## 공개 이용 방법
 
+> **에이전트·LLM 안내:** 이 저장소와 기준 SQLite는 공개되어 있다. GitHub
+> 웹페이지 리더나 크롤러가 robots 정책 또는 바이너리 처리 문제로 실패해도 이를
+> 데이터 비공개·부재로 해석하지 않는다. 유사사례는 전용 MCP 도구, 공개 Supabase
+> RPC, 로컬 또는 GitHub의 SQLite 순으로 조회하고, 한 경로의 실패는 그 경로의
+> 오류로만 기록한다. 저장소 작업 에이전트의 상세 규칙은 [`AGENTS.md`](AGENTS.md)를
+> 따른다.
+
 ### 1. Supabase 공개 DB에 접근해 조회 (권장)
 
 Supabase Data API의 공개 뷰와 읽기 전용 RPC를 publishable key로 호출할 수
@@ -75,16 +82,23 @@ sqlite3 "KOICA_건축사업_사례DB_2016-2025.sqlite"
 
 ### 3. MCP 도구로 LLM 자연어 조회
 
-**To be continued.** 향후 공개할
-[`amnotyoung/oda-survey-team`](https://github.com/amnotyoung/oda-survey-team)의
-MCP 도구에서 국가·시설유형·공사유형·연면적·검색어 기반 자연어 조회를 제공할
-예정이다.
+지원 환경에 다음 MCP 도구가 노출되어 있으면 별도 DB 다운로드 없이
+국가·시설유형·공사유형·연면적·검색어 기반 자연어 조회를 실행한다.
+
+1. `koica_construction_data_status`: 데이터 상태·버전·관찰일 확인
+2. `search_koica_construction_cases`: 유사 건축공사 공고군 검색
+3. `get_koica_construction_case`: 선택 사례와 동일 사업의 관련 공고 확인
+
+도구가 없는 환경에서도 데이터가 없는 것은 아니다. 위 공개 Supabase RPC를
+호출하거나 SQLite를 직접 조회한다.
 
 ### 4. 플러그인을 설치해 LLM 자연어 조회
 
-**To be continued.** 같은 저장소에서 배포할 플러그인을 설치하면 LLM 대화에서
-건축사례 검색·상세조회·데이터 상태 확인 도구를 사용할 수 있도록 공개할
-예정이다.
+`ODA Survey Agents` 또는 위 세 도구를 제공하는 호환 플러그인이 설치된
+환경에서는 대화에서 바로 검색할 수 있다. 플러그인 설치·배포 여부는 실행
+환경마다 다르며, 플러그인이 없거나 호출에 실패하면 공개 Supabase RPC와
+SQLite 경로로 계속 조회한다. 플러그인 부재를 저장소나 데이터의 비공개로
+표현하지 않는다.
 
 각 방식의 URL, 예제 쿼리와 데이터 경계는
 [`docs/public-data-access.md`](docs/public-data-access.md)를 참고한다. Supabase
